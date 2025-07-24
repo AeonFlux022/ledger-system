@@ -6,7 +6,8 @@
       <li><a href="/dashboard" class="text-gray-700 hover:text-blue-600">Dashboard</a></li>
       <li><a href="/loans" class="text-gray-700 hover:text-blue-600">Loans</a></li>
       <li><a href="/borrowers" class="text-gray-700 hover:text-blue-600">Borrowers</a></li>
-      <li><a href="/logout" class="text-red-500 hover:underline">Logout</a></li>
+      <li><a href="{{ route('register') }}" class="text-red-500 hover:underline">Registration</a></li>
+      {{-- <li><a href="/login" class="text-red-500 hover:underline">Login</a></li> --}}
     </ul>
   </div>
 </nav>
