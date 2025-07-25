@@ -30,7 +30,16 @@ class UserController extends Controller
         if (Auth::attempt($credentials)) {
             // Authentication passed
             $request->session()->regenerate();
-            return redirect('/')->with('success', 'Logged in successfully.');
+            $user = Auth::user();
+
+            if ($user->role === 'super_admin') {
+                return redirect('/dashboard')->with('success', 'Welcome Super Admin!');
+            } elseif ($user->role === 'admin') {
+                return redirect('/')->with('success', 'Welcome Admin!');
+            } else {
+                Auth::logout();
+                return redirect('/login')->withErrors(['username' => 'Unauthorized role.']);
+            }
         }
 
         return redirect()->back()->withErrors(['username' => 'Invalid credentials.']);
@@ -55,16 +64,16 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'username'=> ['required', 'string', 'max:255', Rule::unique('users', 'username')],
-            'email' => ['required', 'string', 'email', 'max:255',Rule::unique('users', 'email')],
-            'password' => ['required', 'string', 'min:8', 'confirmed'], 
+            'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         User::create([
-        'username' => $validated['username'],
-        'email' => $validated['email'],
-        'password' => Hash::make($validated['password']),
-    ]);
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+        ]);
 
         // Automatically log in the newly registered user
         // Auth::login(User::where('email', $validated['email'])->first());
