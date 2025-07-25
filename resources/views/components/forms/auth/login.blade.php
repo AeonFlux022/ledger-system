@@ -12,12 +12,12 @@
     </div>
   @endif
 
-  <form method="POST" action="{{ route('login') }}" class="space-y-5">
+  <form method="POST" action="{{ route('login') }}" class="space-y-5 mb-4">
     @csrf
 
     <div>
-      <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-      <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus
+      <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+      <input id="username" name="username" type="text" value="{{ old('username') }}" required autofocus
         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
     </div>
 
@@ -41,7 +41,11 @@
     </div>
   </form>
 
+  <div class="text-sm text-gray-600 mb-4">
+    Don't have an account yet? <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Create here</a>.
+  </div>
+  {{--
   <div class="mt-4 text-sm text-center">
     <a href="{{ route('password.request') }}" class="text-blue-600 hover:underline">Forgot your password?</a>
-  </div>
+  </div> --}}
 </div>

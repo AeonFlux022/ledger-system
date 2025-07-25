@@ -3,5 +3,5 @@
 @section('title', 'ABG Finance')
 
 @section('content')
-  <x-hero title="Empower Your Finances" subtitle="Apply for a loan in just a few clicks." />
+  <h1>You are logged in.</h1>
 @endsection

@@ -1,7 +1,7 @@
 @extends('layouts.guest')
 
-@section('title', 'Login')
+@section('title', 'ABG Finance - Login')
 
 @section('content')
-  <x-auth.login />
+  <x-forms.auth.login />
 @endsection
