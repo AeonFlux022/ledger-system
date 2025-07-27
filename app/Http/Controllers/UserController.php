@@ -56,31 +56,57 @@ class UserController extends Controller
         return redirect('/')->with('success', 'Logged out successfully.');
     }
 
-    // registration function
-    public function showRegistrationForm()
+
+    // view all users
+    public function index()
     {
-        return view('pages.auth.register');
+        $users = User::all();
+        return view('pages.admin.users.index', compact('users'));
     }
-    public function register(Request $request)
+
+
+    // create user function
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'in:admin,super_admin'],
         ]);
 
         User::create([
             'username' => $validated['username'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
         ]);
 
-        // Automatically log in the newly registered user
-        // Auth::login(User::where('email', $validated['email'])->first());
 
-        return redirect('/')->with('success', 'User registered successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
+    // update user function
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'role' => ['required', 'in:admin,super_admin'],
+        ], [], [], "edit_{$user->id}");
+
+        $user->update($validated);
+
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
+    }
+
+    // delete user function
+    public function destroy(User $user)
+    {
+        $user->delete();
+
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+    }
 
 
 

@@ -41,9 +41,9 @@
     </div>
   </form>
 
-  <div class="text-sm text-gray-600 mb-4">
+  {{-- <div class="text-sm text-gray-600 mb-4">
     Don't have an account yet? <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Create here</a>.
-  </div>
+  </div> --}}
   {{--
   <div class="mt-4 text-sm text-center">
     <a href="{{ route('password.request') }}" class="text-blue-600 hover:underline">Forgot your password?</a>

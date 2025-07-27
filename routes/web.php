@@ -3,14 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
-// view routes
+// view home page
 Route::get('/', function () {
     return view('welcome');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
 });
 
 
@@ -27,3 +24,38 @@ Route::post('/logout', function () {
     request()->session()->regenerateToken();
     return redirect('/');
 })->name('logout');
+
+
+
+// view admin panel
+Route::get('/dashboard', function () {
+    return view('pages.admin.dashboard');
+});
+
+
+// get all users from the database
+Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+
+// create a new user
+Route::post('/users', [UserController::class, 'store'])->name('admin.users.store');
+
+// update user
+Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+
+// delete user
+Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+
+
+
+
+
+// template routes
+Route::get('/borrowers', function () {
+    return view('pages.admin.borrowers');
+});
+Route::get('/loans', function () {
+    return view('pages.admin.loans');
+});
+Route::get('/transactions', function () {
+    return view('pages.admin.transactions');
+});
