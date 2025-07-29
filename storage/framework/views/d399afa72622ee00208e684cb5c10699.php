@@ -6,29 +6,30 @@
       <li><a href="/" class="text-gray-700 hover:text-blue-600">Home</a></li>
 
 
-      {{-- If user is NOT logged in --}}
-      @guest
-      {{-- <li><a href="{{ route('register') }}" class="text-gray-700 hover:text-blue-600">Register</a></li> --}}
+      
+      <?php if(auth()->guard()->guest()): ?>
+      
       <li><a href="/about" class="text-gray-700 hover:text-blue-600">About Us</a></li>
       <li><a href="/service" class="text-gray-700 hover:text-blue-600">Services</a></li>
       <li><a href="/contact" class="text-gray-700 hover:text-blue-600">Contact</a></li>
-      <li><a href="{{ route('login') }}" class="text-red-500 hover:underline">Login</a></li>
-    @endguest
+      <li><a href="<?php echo e(route('login')); ?>" class="text-red-500 hover:underline">Login</a></li>
+    <?php endif; ?>
 
-      {{-- If user IS logged in --}}
-      @auth
+      
+      <?php if(auth()->guard()->check()): ?>
       <li><a href="/borrowers-client" class="text-gray-700 hover:text-blue-600">Borrowers</a></li>
       <li><a href="/loans-list" class="text-gray-700 hover:text-blue-600">Loans</a></li>
       <li><a href="/transactions-list" class="text-gray-700 hover:text-blue-600">Transactions</a></li>
-      <li class="text-gray-700">Hello, <span class="font-semibold">{{ auth()->user()->username }}</span></li>
+      <li class="text-gray-700">Hello, <span class="font-semibold"><?php echo e(auth()->user()->username); ?></span></li>
 
       <li>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
+      <form method="POST" action="<?php echo e(route('logout')); ?>">
+        <?php echo csrf_field(); ?>
         <button type="submit" class="text-red-500 hover:underline">Logout</button>
       </form>
       </li>
-    @endauth
+    <?php endif; ?>
     </ul>
   </div>
 </nav>
+<?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/components/navbar.blade.php ENDPATH**/ ?>

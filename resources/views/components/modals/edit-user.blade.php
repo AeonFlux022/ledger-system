@@ -45,7 +45,7 @@
 
         <div class="mb-3">
           <label class="block mb-1">Role</label>
-          <select name="role" class="w-full border px-3 py-2 rounded" required>
+          <select name="role" class=" " required>
             <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>
               Admin
             </option>

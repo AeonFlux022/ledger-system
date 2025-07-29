@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BorrowerController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
@@ -12,8 +13,8 @@ Route::get('/', function () {
 
 
 // create user routes
-Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [UserController::class, 'register']);
+// Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('register');
+// Route::post('/register', [UserController::class, 'register']);
 
 // login and logout routes
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
@@ -32,6 +33,11 @@ Route::get('/dashboard', function () {
     return view('pages.admin.dashboard');
 });
 
+// client borrowers page
+Route::get('/borrowers-client', function () {
+    return view('pages.borrowers-client');
+});
+
 
 // get all users from the database
 Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
@@ -45,6 +51,10 @@ Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.user
 // delete user
 Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
+
+
+// borrower routes
+Route::post('/borrowers', [BorrowerController::class, 'store']);
 
 
 
