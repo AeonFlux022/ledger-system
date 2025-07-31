@@ -57,7 +57,8 @@ class UserController extends Controller
     }
 
 
-    // view all users
+    // admin panel
+    // view all users 
     public function index()
     {
         $users = User::all();

@@ -12,7 +12,7 @@
     <table class="w-full bg-white border rounded shadow">
     <thead>
       <tr class="bg-gray-100 text-left">
-      <th class="py-2 px-4 border-b">ID</th>
+      <th class="py-2 px-4 border-b">#</th>
       <th class="py-2 px-4 border-b">Username</th>
       <th class="py-2 px-4 border-b">Email</th>
       <th class="py-2 px-4 border-b">Role</th>
@@ -22,7 +22,7 @@
     <tbody>
       @forelse ($users as $user)
       <tr class="border-t hover:bg-gray-50">
-      <td class="py-2 px-4">{{ $user->id }}</td>
+      <td class="px-4 py-2">{{ $loop->iteration }}</td>
       <td class="py-2 px-4">{{ $user->username }}</td>
       <td class="py-2 px-4">{{ $user->email }}</td>
       <td class="py-2 px-4 capitalize">{{ $user->role }}</td>

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class BorrowerController extends Controller
 {
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -23,13 +24,10 @@ class BorrowerController extends Controller
         ]);
 
         if ($request->hasFile('id_image')) {
-            $filename = time() . '.' . $request->file('id_image')->extension();
-
-            // Save to storage/app/public/ids
-            $path = $request->file('id_image')->storeAs('public/ids', $filename);
-
-            // Save to DB as a browser-accessible path
+            $filename = time() . '.' . $request->id_image->extension();
+            $path = $request->id_image->storeAs('ids', $filename, 'public');
             $validated['id_image'] = 'storage/ids/' . $filename;
+
         }
 
 
@@ -37,4 +35,19 @@ class BorrowerController extends Controller
 
         return redirect('/borrowers-client')->with('success', 'Borrower added successfully.');
     }
+
+
+    // admin panel
+    // view all borrowers in admin index side
+    public function index()
+    {
+        $borrowers = Borrower::all();
+        return view('pages.admin.borrowers.index', compact('borrowers'));
+    }
+    public function show($id)
+    {
+        $borrower = Borrower::findOrFail($id);
+        return view('pages.admin.borrowers.show', compact('borrower'));
+    }
+
 }

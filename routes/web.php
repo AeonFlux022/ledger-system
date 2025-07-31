@@ -56,16 +56,12 @@ Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.
 // borrower routes
 Route::post('/borrowers', [BorrowerController::class, 'store']);
 
+// get all borrowers from the database
+Route::get('/borrowers', [BorrowerController::class, 'index'])->name('admin.borrowers.index');
+
+// get a specific borrower
+Route::get('/admin/borrowers/{borrower}', [BorrowerController::class, 'show'])->name('admin.borrowers.show');
 
 
 
-// template routes
-Route::get('/borrowers', function () {
-    return view('pages.admin.borrowers');
-});
-Route::get('/loans', function () {
-    return view('pages.admin.loans');
-});
-Route::get('/transactions', function () {
-    return view('pages.admin.transactions');
-});
+
