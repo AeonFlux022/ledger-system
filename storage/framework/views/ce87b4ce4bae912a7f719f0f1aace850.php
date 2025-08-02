@@ -1,6 +1,6 @@
 <div x-data="{ open: false }" x-init="
   <?php if($errors->any()): ?>
-    open = true
+  open = true
   <?php endif; ?>
 ">
   <!-- Button to open modal -->

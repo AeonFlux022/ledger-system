@@ -4,8 +4,8 @@
 
 <?php $__env->startSection('content'); ?>
 
-  <div class="p-4">
-    <h2 class="text-xl font-semibold mb-4">All Users</h2>
+  <div class="px-6 py-6">
+    <h2 class="text-2xl font-bold mb-4">All Users</h2>
 
     <?php if (isset($component)) { $__componentOriginal3a20a4b44ede0aa67600cb329d2394bc = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal3a20a4b44ede0aa67600cb329d2394bc = $attributes; } ?>

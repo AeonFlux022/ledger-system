@@ -3,25 +3,67 @@
 <?php $__env->startSection('title', 'Borrower Details'); ?>
 
 <?php $__env->startSection('content'); ?>
-  <div class="max-w-4xl mx-auto py-10">
-    <h1 class="text-3xl font-bold mb-6">Borrower Details</h1>
+  <div class="max-w-4xl mx-auto px-6 py-10">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Borrower Details</h1>
+    <p class="text-sm text-gray-500 mb-6">
+    Created at: <?php echo e($borrower->created_at->format('F j, Y g:i A')); ?>
 
-    <div class="bg-white shadow-md rounded p-6 space-y-4">
-    <div class="grid grid-cols-2 gap-4">
-      <div><strong>First Name:</strong> <?php echo e($borrower->fname); ?></div>
-      <div><strong>Last Name:</strong> <?php echo e($borrower->lname); ?></div>
-      <div><strong>Address:</strong> <?php echo e($borrower->address); ?></div>
-      <div><strong>Contact Number:</strong> <?php echo e($borrower->contact_number); ?></div>
-      <div><strong>Email:</strong> <?php echo e($borrower->email); ?></div>
-      <div><strong>ID Type:</strong> <?php echo e(ucwords(str_replace('_', ' ', $borrower->id_card))); ?></div>
-      <div><strong>Income:</strong> ₱<?php echo e(number_format($borrower->income, 2)); ?></div>
-      <div><strong>Employment Status:</strong> <?php echo e(ucfirst($borrower->employment_status)); ?></div>
+    </p>
+
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 space-y-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+      <div>
+      <label class="text-sm text-gray-500">First Name</label>
+      <p class="mt-1 font-medium"><?php echo e($borrower->fname); ?></p>
+      </div>
+      <div>
+      <label class="text-sm text-gray-500">Last Name</label>
+      <p class="mt-1 font-medium"><?php echo e($borrower->lname); ?></p>
+      </div>
+      <div>
+      <label class="text-sm text-gray-500">Address</label>
+      <p class="mt-1 font-medium"><?php echo e($borrower->address); ?></p>
+      </div>
+      <div>
+      <label class="text-sm text-gray-500">Contact Number</label>
+      <p class="mt-1 font-medium"><?php echo e($borrower->contact_number); ?></p>
+      </div>
+      <div>
+      <label class="text-sm text-gray-500">Email</label>
+      <p class="mt-1 font-medium"><?php echo e($borrower->email); ?></p>
+      </div>
+      <div>
+      <label class="text-sm text-gray-500">ID Type</label>
+      <p class="mt-1 font-medium"><?php echo e(ucwords(str_replace('_', ' ', $borrower->id_card))); ?></p>
+      </div>
+      <div>
+      <label class="text-sm text-gray-500">Income</label>
+      <p class="mt-1 font-medium">₱<?php echo e(number_format($borrower->income, 2)); ?></p>
+      </div>
+      <div>
+      <label class="text-sm text-gray-500">Employment Status</label>
+      <p class="mt-1 font-medium"><?php echo e(ucfirst($borrower->employment_status)); ?></p>
+      </div>
+      <div>
+      <label class="text-sm text-gray-500">Status</label>
+      <p class="mt-1 font-medium"><?php echo e(ucfirst($borrower->status)); ?></p>
+      </div>
     </div>
 
-    <div class="mt-6">
+    <div class="mt-6" x-data="{ open: false }">
       <h2 class="text-lg font-semibold mb-2">Uploaded ID Image</h2>
+
       <?php if($borrower->id_image): ?>
-      <img src="<?php echo e(asset($borrower->id_image)); ?>" alt="ID Image" class="w-full rounded shadow">
+      <!-- Thumbnail Image -->
+      <img @click="open = true" src="<?php echo e(asset($borrower->id_image)); ?>" alt="ID Image"
+      class="w-56 h-auto rounded shadow cursor-pointer hover:scale-105 transition-transform duration-200">
+
+      <!-- Fullscreen Modal -->
+      <div x-show="open" x-transition @click.away="open = false"
+      class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+      <img :src="'<?php echo e(asset($borrower->id_image)); ?>'" class="max-w-full max-h-full rounded shadow-lg"
+      @click="open = false">
+      </div>
     <?php else: ?>
       <p class="text-gray-500">No ID image uploaded.</p>
     <?php endif; ?>
@@ -29,9 +71,9 @@
     </div>
 
     <div class="mt-6">
-    <a href="<?php echo e(route('admin.borrowers.index')); ?>" class="text-blue-600 hover:underline">← Back to list</a>
+    <a href="<?php echo e(route('admin.borrowers.index')); ?>" class="text-blue-600 hover:underline text-sm">← Back to list</a>
     </div>
   </div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/pages/admin/borrowers/show.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/pages/admin/borrowers/show.blade.php ENDPATH**/ ?>

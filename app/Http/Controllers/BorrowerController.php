@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Storage;
 class BorrowerController extends Controller
 {
 
+    public function create()
+    {
+        return view('pages.admin.borrowers.create');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -33,7 +38,11 @@ class BorrowerController extends Controller
 
         Borrower::create($validated);
 
-        return redirect('/borrowers-client')->with('success', 'Borrower added successfully.');
+        if (auth()->user()->role === 'super_admin') {
+            return redirect()->route('admin.borrowers.index')->with('success', 'Borrower added successfully.');
+        } else {
+            return redirect('/borrowers-client')->with('success', 'Borrower added successfully.');
+        }
     }
 
 
@@ -41,7 +50,7 @@ class BorrowerController extends Controller
     // view all borrowers in admin index side
     public function index()
     {
-        $borrowers = Borrower::all();
+        $borrowers = Borrower::orderBy('created_at', 'desc')->get();
         return view('pages.admin.borrowers.index', compact('borrowers'));
     }
     public function show($id)

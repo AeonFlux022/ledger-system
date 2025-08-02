@@ -56,7 +56,9 @@
     </div>
     <div class="mb-4 flex space-x-4">
         <div class="w-1/2">
-            <label for="income" class="block text-sm font-medium text-gray-700">Income</label>
+            <label for="income" class="block text-sm font-medium text-gray-700">
+                Income <span class="text-xs text-gray-500">(Average income per month)</span>
+            </label>
             <input type="number" id="income" name="income"
                 class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
         </div>

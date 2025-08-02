@@ -39,6 +39,7 @@ Route::get('/borrowers-client', function () {
 });
 
 
+
 // get all users from the database
 Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
 
@@ -62,6 +63,10 @@ Route::get('/borrowers', [BorrowerController::class, 'index'])->name('admin.borr
 // get a specific borrower
 Route::get('/admin/borrowers/{borrower}', [BorrowerController::class, 'show'])->name('admin.borrowers.show');
 
+// add a borrower in admin panel
+Route::get('/borrowers/create', [BorrowerController::class, 'create'])->name('admin.borrowers.create');
 
+// store a borrower in admin panel
+// Route::post('/borrowers', [BorrowerController::class, 'store'])->name('admin.borrowers.store');
 
 

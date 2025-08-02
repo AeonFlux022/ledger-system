@@ -1,5 +1,5 @@
 <nav class="bg-white shadow-md">
-  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+  <div class="container mx-auto px-6 py-4 flex justify-between items-center">
     <a href="/" class="text-xl font-bold text-blue-600">ABG Finance</a>
 
     <ul class="flex space-x-4 items-center">

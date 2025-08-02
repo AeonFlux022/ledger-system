@@ -4,8 +4,8 @@
 
 @section('content')
 
-  <div class="p-4">
-    <h2 class="text-xl font-semibold mb-4">All Users</h2>
+  <div class="px-6 py-6">
+    <h2 class="text-2xl font-bold mb-4">All Users</h2>
 
     <x-modals.create-user />
 

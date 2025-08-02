@@ -3,8 +3,15 @@
 @section('title', 'ABG Finance')
 
 @section('content')
-  <div class="container mx-auto px-4 py-6">
-    <h1 class="text-2xl font-bold mb-4">Borrowers</h1>
+  <div class="container mx-auto px-6 py-6">
+    <h1 class="text-2xl font-bold mb-6">Borrowers</h1>
+
+    <div class="mb-6">
+    <a href="{{ route('admin.borrowers.create') }}"
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+      + Add Borrower
+    </a>
+    </div>
 
     <table class="w-full bg-white shadow-md rounded border">
     <thead class="bg-gray-100 text-left">
@@ -14,6 +21,7 @@
       <th class="px-4 py-2">Contact</th>
       <th class="px-4 py-2">Email</th>
       <th class="px-4 py-2">Employment</th>
+      <th class="px-4 py-2">Status</th>
       <th class="px-4 py-2">Actions</th>
       </tr>
     </thead>
@@ -25,6 +33,7 @@
       <td class="px-4 py-2">{{ $borrower->contact_number }}</td>
       <td class="px-4 py-2">{{ $borrower->email }}</td>
       <td class="px-4 py-2">{{ ucfirst($borrower->employment_status) }}</td>
+      <td class="px-4 py-2">{{ ucfirst($borrower->status) }}</td>
       <td class="px-4 py-2">
       <a href="{{ route('admin.borrowers.show', $borrower->id) }}" class="text-blue-600 hover:underline">View</a>
 

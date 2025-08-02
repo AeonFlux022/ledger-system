@@ -1,6 +1,6 @@
 <div x-data="{ open: false }" x-init="
   @if ($errors->any())
-    open = true
+  open = true
   @endif
 ">
   <!-- Button to open modal -->
