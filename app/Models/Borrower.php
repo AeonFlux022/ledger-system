@@ -16,6 +16,5 @@ class Borrower extends Model
         'id_image',
         'income',
         'employment_status',
-        'status'
     ];
 }

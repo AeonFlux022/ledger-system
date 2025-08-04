@@ -1,6 +1,6 @@
 <div x-data="{ open: false }" x-init="
   <?php if($errors->get('edit_' . $user->id)): ?>
-  open = true
+    open = true
   <?php endif; ?>
 " class="inline">
   <!-- Trigger Button -->
@@ -45,7 +45,7 @@
 
         <div class="mb-3">
           <label class="block mb-1">Role</label>
-          <select name="role" class=" " required>
+          <select name="role" class="w-full border px-3 py-2 rounded" required>
             <option value="admin" <?php echo e(old('role', $user->role) === 'admin' ? 'selected' : ''); ?>>
               Admin
             </option>

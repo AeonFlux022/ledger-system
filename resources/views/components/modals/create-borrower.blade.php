@@ -10,8 +10,8 @@
     <div @click.outside="open = false" class="bg-white w-full max-w-2xl p-6 rounded shadow">
       <h2 class="text-lg font-bold mb-4">Create New Borrower</h2>
 
-      <form method="POST" action="<?php echo e(route('admin.borrowers.store')); ?>" enctype="multipart/form-data">
-        <?php echo csrf_field(); ?>
+      <form method="POST" action="{{ route('admin.borrowers.store') }}" enctype="multipart/form-data">
+        @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -31,7 +31,7 @@
 
           <div>
             <label class="block mb-1">Contact Number</label>
-            <input name="contact_number" class="w-full border px-3 py-2 rounded" required />
+            <input type="tel" name="contact_number" class="w-full border px-3 py-2 rounded" required />
           </div>
 
           <div>
@@ -45,8 +45,6 @@
               <option value="">Select</option>
               <option value="employed">Employed</option>
               <option value="unemployed">Unemployed</option>
-              <option value="student">Student</option>
-              <option value="other">Other</option>
             </select>
           </div>
 
@@ -87,4 +85,3 @@
     </div>
   </div>
 </div>
-<?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/components/modals/create-user.blade.php ENDPATH**/ ?>

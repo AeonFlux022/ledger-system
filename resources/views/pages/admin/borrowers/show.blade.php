@@ -54,13 +54,13 @@
 
       @if ($borrower->id_image)
       <!-- Thumbnail Image -->
-      <img @click="open = true" src="{{ asset($borrower->id_image) }}" alt="ID Image"
+      <img @click="open = true" src="{{ asset('storage/' . $borrower->id_image) }}" alt="ID Image"
       class="w-56 h-auto rounded shadow cursor-pointer hover:scale-105 transition-transform duration-200">
 
       <!-- Fullscreen Modal -->
       <div x-show="open" x-transition @click.away="open = false"
       class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-      <img :src="'{{ asset($borrower->id_image) }}'" class="max-w-full max-h-full rounded shadow-lg"
+      <img :src="'{{ asset('storage/' . $borrower->id_image) }}'" class="max-w-full max-h-full rounded shadow-lg"
       @click="open = false">
       </div>
     @else

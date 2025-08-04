@@ -5,13 +5,7 @@
 @section('content')
   <div class="container mx-auto px-6 py-6">
     <h1 class="text-2xl font-bold mb-6">Borrowers</h1>
-
-    <div class="mb-6">
-    <a href="{{ route('admin.borrowers.create') }}"
-      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-      + Add Borrower
-    </a>
-    </div>
+    <x-modals.create-borrower />
 
     <table class="w-full bg-white shadow-md rounded border">
     <thead class="bg-gray-100 text-left">
@@ -28,16 +22,23 @@
     <tbody>
       @forelse ($borrowers as $borrower)
       <tr class="border-t">
-      <td class="px-4 py-2">{{ $loop->iteration }}</td>
+      <td class="px-4 py-2">{{ ($borrowers->currentPage() - 1) * $borrowers->perPage() + $loop->iteration }}</td>
       <td class="px-4 py-2">{{ $borrower->fname }} {{ $borrower->lname }}</td>
       <td class="px-4 py-2">{{ $borrower->contact_number }}</td>
       <td class="px-4 py-2">{{ $borrower->email }}</td>
       <td class="px-4 py-2">{{ ucfirst($borrower->employment_status) }}</td>
       <td class="px-4 py-2">{{ ucfirst($borrower->status) }}</td>
       <td class="px-4 py-2">
-      <a href="{{ route('admin.borrowers.show', $borrower->id) }}" class="text-blue-600 hover:underline">View</a>
+      <div class="flex items-center space-x-2">
+      <a href="{{ route('admin.borrowers.show', $borrower->id) }}"
+        class="inline-block bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 transition">
+        View
+      </a>
 
-      {{-- Later add Edit/Delete --}}
+      <x-modals.edit-borrower :borrower="$borrower" :page="request()->query('page', 1)" />
+      <x-modals.delete-borrower :borrower="$borrower" />
+      </div>
+
       </td>
       </tr>
     @empty
@@ -47,5 +48,8 @@
     @endforelse
     </tbody>
     </table>
+    <div class="mt-4">
+    {{ $borrowers->links() }}
+    </div>
   </div>
 @endsection

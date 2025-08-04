@@ -1,61 +1,83 @@
-<div x-data="{ open: false }" x-init="
-  @if ($errors->any())
-  open = true
-  @endif
-">
+<div x-data="{ open: false }">
   <!-- Button to open modal -->
   <button @click="open = true" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4">
-    + Add User
+    + Add Borrower
   </button>
 
   <!-- Modal -->
-  <div x-show="open" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-transition>
-    <div @click.outside="open = false" class="bg-white w-full max-w-md p-6 rounded shadow">
-      <h2 class="text-lg font-bold mb-4">Create New User</h2>
+  <div x-show="open" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-transition
+    x-cloak>
+    <div @click.outside="open = false" class="bg-white w-full max-w-2xl p-6 rounded shadow">
+      <h2 class="text-lg font-bold mb-4">Create New Borrower</h2>
 
-      @if ($errors->any())
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-      <strong>Whoops!</strong> Please fix the following errors:
-      <ul class="mt-2 list-disc list-inside text-sm">
-        @foreach ($errors->all() as $error)
-      <li>{{ $error }}</li>
-      @endforeach
-      </ul>
-      </div>
-    @endif
-
-      <form method="POST" action="{{ route('admin.users.store') }}">
+      <form method="POST" action="{{ route('admin.borrowers.store') }}" enctype="multipart/form-data">
         @csrf
 
-        <div class="mb-3">
-          <label class="block mb-1">Username</label>
-          <input name="username" required class="w-full border px-3 py-2 rounded" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-1">First Name</label>
+            <input name="fname" class="w-full border px-3 py-2 rounded" required />
+          </div>
+
+          <div>
+            <label class="block mb-1">Last Name</label>
+            <input name="lname" class="w-full border px-3 py-2 rounded" required />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block mb-1">Address</label>
+            <input name="address" class="w-full border px-3 py-2 rounded" />
+          </div>
+
+          <div>
+            <label class="block mb-1">Contact Number</label>
+            <input name="contact_number" class="w-full border px-3 py-2 rounded" required />
+          </div>
+
+          <div>
+            <label class="block mb-1">Email</label>
+            <input type="email" name="email" class="w-full border px-3 py-2 rounded" required />
+          </div>
+
+          <div>
+            <label class="block mb-1">Employment Status</label>
+            <select name="employment_status" class="w-full border px-3 py-2 rounded" required>
+              <option value="">Select</option>
+              <option value="employed">Employed</option>
+              <option value="unemployed">Unemployed</option>
+              <option value="student">Student</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block mb-1">Income</label>
+            <input type="number" name="income" class="w-full border px-3 py-2 rounded" />
+          </div>
+
+          <div>
+            <label class="block mb-1">ID Type</label>
+            <select name="id_card" class="w-full border px-3 py-2 rounded" required>
+              <option value="">Select ID Type</option>
+              <option value="passport">Passport</option>
+              <option value="driver_license">Driver’s License</option>
+              <option value="sss">SSS</option>
+              <option value="philhealth">PhilHealth</option>
+              <option value="pagibig">Pag-IBIG</option>
+              <option value="national_id">National ID</option>
+              <option value="voter_id">Voter’s ID</option>
+              <option value="student_id">Student ID</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block mb-1">ID Image</label>
+            <input type="file" name="id_image" accept="image/*" class="w-full border px-3 py-2 rounded" />
+          </div>
         </div>
 
-        <div class="mb-3">
-          <label class="block mb-1">Email</label>
-          <input type="email" name="email" required class="w-full border px-3 py-2 rounded" />
-        </div>
-
-        <div class="mb-3">
-          <label class="block mb-1">Password</label>
-          <input type="password" name="password" required class="w-full border px-3 py-2 rounded" />
-        </div>
-
-        <div class="mb-3">
-          <label class="block mb-1">Confirm Password</label>
-          <input type="password" name="password_confirmation" required class="w-full border px-3 py-2 rounded" />
-        </div>
-
-        <div class="mb-3">
-          <label class="block mb-1">Role</label>
-          <select name="role" class="w-full border px-3 py-2 rounded">
-            <option value="admin">Admin</option>
-            <option value="super_admin">Super Admin</option>
-          </select>
-        </div>
-
-        <div class="flex justify-end space-x-2">
+        <div class="flex justify-end space-x-2 mt-6">
           <button type="button" @click="open = false" class="px-4 py-2 border rounded">Cancel</button>
           <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
             Save

@@ -3,28 +3,28 @@
 <?php $__env->startSection('title', 'ABG Finance'); ?>
 
 <?php $__env->startSection('content'); ?>
-  <div class="px-4 py-10 max-w-3xl mx-auto">
+  <div class="px-4 py-10 mx-auto max-w-4xl">
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Add New Borrower</h1>
 
-    <?php if (isset($component)) { $__componentOriginal7922fbef0b461d930310901d4bb23b63 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal7922fbef0b461d930310901d4bb23b63 = $attributes; } ?>
-<?php $component = App\View\Components\BorrowerForm::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('borrower-form'); ?>
+    <?php if (isset($component)) { $__componentOriginal05412d2965d952b27d0c6e9c996d501a = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal05412d2965d952b27d0c6e9c996d501a = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modals.create-borrower','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modals.create-borrower'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\App\View\Components\BorrowerForm::ignoredParameterNames()); ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
-<?php if (isset($__attributesOriginal7922fbef0b461d930310901d4bb23b63)): ?>
-<?php $attributes = $__attributesOriginal7922fbef0b461d930310901d4bb23b63; ?>
-<?php unset($__attributesOriginal7922fbef0b461d930310901d4bb23b63); ?>
+<?php if (isset($__attributesOriginal05412d2965d952b27d0c6e9c996d501a)): ?>
+<?php $attributes = $__attributesOriginal05412d2965d952b27d0c6e9c996d501a; ?>
+<?php unset($__attributesOriginal05412d2965d952b27d0c6e9c996d501a); ?>
 <?php endif; ?>
-<?php if (isset($__componentOriginal7922fbef0b461d930310901d4bb23b63)): ?>
-<?php $component = $__componentOriginal7922fbef0b461d930310901d4bb23b63; ?>
-<?php unset($__componentOriginal7922fbef0b461d930310901d4bb23b63); ?>
+<?php if (isset($__componentOriginal05412d2965d952b27d0c6e9c996d501a)): ?>
+<?php $component = $__componentOriginal05412d2965d952b27d0c6e9c996d501a; ?>
+<?php unset($__componentOriginal05412d2965d952b27d0c6e9c996d501a); ?>
 <?php endif; ?>
 
     <div class="mt-4">

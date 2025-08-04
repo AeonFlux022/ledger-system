@@ -31,7 +31,7 @@
 
           <div>
             <label class="block mb-1">Contact Number</label>
-            <input name="contact_number" class="w-full border px-3 py-2 rounded" required />
+            <input type="tel" name="contact_number" class="w-full border px-3 py-2 rounded" required />
           </div>
 
           <div>
@@ -45,8 +45,6 @@
               <option value="">Select</option>
               <option value="employed">Employed</option>
               <option value="unemployed">Unemployed</option>
-              <option value="student">Student</option>
-              <option value="other">Other</option>
             </select>
           </div>
 
@@ -87,4 +85,4 @@
     </div>
   </div>
 </div>
-<?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/components/modals/create-user.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/components/modals/create-borrower.blade.php ENDPATH**/ ?>

@@ -9,6 +9,21 @@ use Illuminate\Support\Facades\Storage;
 class BorrowerController extends Controller
 {
 
+
+    // admin panel
+    // view all borrowers in admin index side
+    public function index()
+    {
+        session(['borrowers_previous_url' => url()->previous()]);
+
+        // Use pagination: 10 borrowers per page, ordered by latest created
+        $borrowers = Borrower::orderBy('created_at', 'desc')->paginate(10);
+
+        return view('pages.admin.borrowers.index', compact('borrowers'));
+    }
+
+
+
     public function create()
     {
         return view('pages.admin.borrowers.create');
@@ -46,17 +61,64 @@ class BorrowerController extends Controller
     }
 
 
-    // admin panel
-    // view all borrowers in admin index side
-    public function index()
-    {
-        $borrowers = Borrower::orderBy('created_at', 'desc')->get();
-        return view('pages.admin.borrowers.index', compact('borrowers'));
-    }
     public function show($id)
     {
         $borrower = Borrower::findOrFail($id);
         return view('pages.admin.borrowers.show', compact('borrower'));
     }
+
+    //     // show edit form for borrower
+//     public function edit(Borrower $borrower)
+//     {
+//         return view('pages.admin.borrowers.edit', compact('borrower'));
+//     }
+
+    // update a borrower
+    public function update(Request $request, Borrower $borrower)
+    {
+        $validated = $request->validate([
+            'fname' => 'required|string|max:255',
+            'lname' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'contact_number' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
+            'employment_status' => 'required|string',
+            'income' => 'nullable|numeric',
+            'id_card' => 'required|string|max:50',
+            'id_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($request->hasFile('id_image')) {
+            // Optionally delete old image
+            if ($borrower->id_image && \Storage::disk('public')->exists($borrower->id_image)) {
+                \Storage::disk('public')->delete($borrower->id_image);
+            }
+
+            // Store the new file and assign path
+            $validated['id_image'] = $request->file('id_image')->store('ids', 'public');
+        } else {
+            // If no new image, retain the old one
+            $validated['id_image'] = $borrower->id_image;
+        }
+
+        $borrower->update($validated);
+
+        return redirect()->route('admin.borrowers.index', ['page' => $request->input('page', 1)])->with('success', 'Borrower updated successfully.');
+    }
+
+
+    public function destroy(Borrower $borrower)
+    {
+        // Optionally delete associated image
+        if ($borrower->id_image && \Storage::disk('public')->exists($borrower->id_image)) {
+            \Storage::disk('public')->delete($borrower->id_image);
+        }
+
+        $borrower->delete();
+
+        return redirect()->route('admin.borrowers.index')
+            ->with('success', 'Borrower deleted successfully.');
+    }
+
 
 }
