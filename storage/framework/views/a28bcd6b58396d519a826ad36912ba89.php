@@ -76,7 +76,7 @@ unset($__defined_vars); ?>
           <div>
             <label class="block mb-1">Employment Status</label>
             <select name="employment_status" class="w-full border px-3 py-2 rounded" required>
-              <?php $__currentLoopData = ['employed', 'unemployed', 'student', 'other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <?php $__currentLoopData = ['employed', 'unemployed']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
           <option value="<?php echo e($status); ?>" <?php if($borrower->employment_status === $status): echo 'selected'; endif; ?>>
           <?php echo e(ucfirst($status)); ?>
 
@@ -94,7 +94,7 @@ unset($__defined_vars); ?>
           <div>
             <label class="block mb-1">ID Type</label>
             <select name="id_card" class="w-full border px-3 py-2 rounded" required>
-              <?php $__currentLoopData = ['passport', 'driver_license', 'sss', 'philhealth', 'pagibig', 'national_id', 'voter_id', 'student_id', 'other']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <?php $__currentLoopData = ['passport', 'driver_license', 'sss', 'philhealth', 'pagibig', 'national_id', 'voter_id']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
           <option value="<?php echo e($id); ?>" <?php if($borrower->id_card === $id): echo 'selected'; endif; ?>>
           <?php echo e(ucwords(str_replace('_', ' ', $id))); ?>
 
@@ -107,8 +107,8 @@ unset($__defined_vars); ?>
             <label class="block mb-1">Current ID Image</label>
             <div class="mb-2">
               <?php if($borrower->id_image): ?>
-          <img src="<?php echo e(asset('storage/' . $borrower->id_image)); ?>" alt="ID Image"
-          class="h-32 object-contain rounded" />
+          <img src="<?php echo e(asset($borrower->id_image)); ?>" alt="ID Image" class="h-32 object-contain rounded" />
+
         <?php else: ?>
           <p class="text-sm text-gray-500">No image uploaded.</p>
         <?php endif; ?>

@@ -1,5 +1,5 @@
-<form method="POST" action="<?php echo e(route('admin.borrowers.store')); ?>" enctype="multipart/form-data">
-  <?php echo csrf_field(); ?>
+<form method="POST" action="{{ route('admin.borrowers.store') }}" enctype="multipart/form-data">
+  @csrf
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
@@ -68,4 +68,3 @@
     </button>
   </div>
 </form>
-<?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/components/borrower-form.blade.php ENDPATH**/ ?>

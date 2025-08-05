@@ -48,7 +48,7 @@
           <div>
             <label class="block mb-1">Employment Status</label>
             <select name="employment_status" class="w-full border px-3 py-2 rounded" required>
-              @foreach (['employed', 'unemployed', 'student', 'other'] as $status)
+              @foreach (['employed', 'unemployed'] as $status)
           <option value="{{ $status }}" @selected($borrower->employment_status === $status)>
           {{ ucfirst($status) }}
           </option>
@@ -65,7 +65,7 @@
           <div>
             <label class="block mb-1">ID Type</label>
             <select name="id_card" class="w-full border px-3 py-2 rounded" required>
-              @foreach (['passport', 'driver_license', 'sss', 'philhealth', 'pagibig', 'national_id', 'voter_id', 'student_id', 'other'] as $id)
+              @foreach (['passport', 'driver_license', 'sss', 'philhealth', 'pagibig', 'national_id', 'voter_id'] as $id)
           <option value="{{ $id }}" @selected($borrower->id_card === $id)>
           {{ ucwords(str_replace('_', ' ', $id)) }}
           </option>
@@ -77,8 +77,8 @@
             <label class="block mb-1">Current ID Image</label>
             <div class="mb-2">
               @if ($borrower->id_image)
-          <img src="{{ asset('storage/' . $borrower->id_image) }}" alt="ID Image"
-          class="h-32 object-contain rounded" />
+          <img src="{{ asset($borrower->id_image) }}" alt="ID Image" class="h-32 object-contain rounded" />
+
         @else
           <p class="text-sm text-gray-500">No image uploaded.</p>
         @endif

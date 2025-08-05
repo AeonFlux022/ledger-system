@@ -45,8 +45,6 @@
               <option value="">Select</option>
               <option value="employed">Employed</option>
               <option value="unemployed">Unemployed</option>
-              <option value="student">Student</option>
-              <option value="other">Other</option>
             </select>
           </div>
 
@@ -66,8 +64,6 @@
               <option value="pagibig">Pag-IBIG</option>
               <option value="national_id">National ID</option>
               <option value="voter_id">Voter’s ID</option>
-              <option value="student_id">Student ID</option>
-              <option value="other">Other</option>
             </select>
           </div>
 

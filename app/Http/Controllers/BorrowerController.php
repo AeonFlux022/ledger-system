@@ -46,7 +46,7 @@ class BorrowerController extends Controller
         if ($request->hasFile('id_image')) {
             $filename = time() . '.' . $request->id_image->extension();
             $path = $request->id_image->storeAs('ids', $filename, 'public');
-            $validated['id_image'] = 'storage/ids/' . $filename;
+            $validated['id_image'] = 'storage/ids/  ' . $filename;
 
         }
 
@@ -88,18 +88,34 @@ class BorrowerController extends Controller
             'id_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        // if ($request->hasFile('id_image')) {
+        //     // Optionally delete old image
+        //     if ($borrower->id_image && \Storage::disk('public')->exists($borrower->id_image)) {
+        //         \Storage::disk('public')->delete($borrower->id_image);
+        //     }
+
+        //     // Store the new file and assign path
+        //     // $validated['id_image'] = $request->file('id_image')->store('ids', 'public');
+        //     $validated['id_image'] = $request->file('id_image')->store('ids', 'public');
+        // } else {
+        //     // If no new image, retain the old one
+        //     $validated['id_image'] = $borrower->id_image;
+        // }
+
         if ($request->hasFile('id_image')) {
-            // Optionally delete old image
-            if ($borrower->id_image && \Storage::disk('public')->exists($borrower->id_image)) {
-                \Storage::disk('public')->delete($borrower->id_image);
+            // Delete old image if it exists
+            if ($borrower->id_image && \Storage::disk('public')->exists(str_replace('storage/', '', $borrower->id_image))) {
+                \Storage::disk('public')->delete(str_replace('storage/', '', $borrower->id_image));
             }
 
-            // Store the new file and assign path
-            $validated['id_image'] = $request->file('id_image')->store('ids', 'public');
+            $filename = time() . '.' . $request->id_image->extension();
+            $path = $request->file('id_image')->storeAs('ids', $filename, 'public');
+            $validated['id_image'] = 'storage/' . $path; // Correct path for asset()
         } else {
-            // If no new image, retain the old one
+            // Retain existing image
             $validated['id_image'] = $borrower->id_image;
         }
+
 
         $borrower->update($validated);
 
