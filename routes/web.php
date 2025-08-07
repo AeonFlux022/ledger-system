@@ -1,10 +1,11 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BorrowerController;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+use App\Http\Controllers\DashboardController;
 
 // view home page
 Route::get('/', function () {
@@ -29,9 +30,11 @@ Route::post('/logout', function () {
 
 
 // view admin panel
-Route::get('/dashboard', function () {
-    return view('pages.admin.dashboard');
-});
+// Route::get('/dashboard', function () {
+//     return view('pages.admin.dashboard');
+// });
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
 
 // client borrowers page
 Route::get('/borrowers-client', function () {

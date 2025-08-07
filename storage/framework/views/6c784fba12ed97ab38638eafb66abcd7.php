@@ -6,7 +6,7 @@
   <div class="max-w-4xl mx-auto px-6 py-10">
     <h1 class="text-3xl font-bold text-gray-800 mb-2">Borrower Details</h1>
     <p class="text-sm text-gray-500 mb-6">
-    Created at: <?php echo e($borrower->created_at->format('F j, Y g:i A')); ?>
+    Submitted at <?php echo e($borrower->created_at->format('F j, Y g:i A')); ?>
 
     </p>
 
@@ -38,6 +38,7 @@
       </div>
       <div>
       <label class="text-sm text-gray-500">Income</label>
+      <small class="block text-xs text-gray-400">Average income per month</small>
       <p class="mt-1 font-medium">₱<?php echo e(number_format($borrower->income, 2)); ?></p>
       </div>
       <div>

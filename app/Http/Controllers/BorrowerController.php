@@ -46,7 +46,7 @@ class BorrowerController extends Controller
         if ($request->hasFile('id_image')) {
             $filename = time() . '.' . $request->id_image->extension();
             $path = $request->id_image->storeAs('ids', $filename, 'public');
-            $validated['id_image'] = 'storage/ids/  ' . $filename;
+            $validated['id_image'] = 'storage/ids/' . $filename;
 
         }
 

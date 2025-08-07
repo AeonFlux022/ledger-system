@@ -44,7 +44,7 @@
       <td class="px-4 py-2"><?php echo e($loop->iteration); ?></td>
       <td class="py-2 px-4"><?php echo e($user->username); ?></td>
       <td class="py-2 px-4"><?php echo e($user->email); ?></td>
-      <td class="py-2 px-4 capitalize"><?php echo e($user->role); ?></td>
+      <td class="py-2 px-4"><?php echo e(ucwords(str_replace('_', ' ', $user->role))); ?></td>
       <td class="py-2 px-4">
       <?php if (isset($component)) { $__componentOriginal2e59eabd9e214f2f072383a77675086f = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal2e59eabd9e214f2f072383a77675086f = $attributes; } ?>

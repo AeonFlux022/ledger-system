@@ -25,7 +25,7 @@
       <td class="px-4 py-2">{{ $loop->iteration }}</td>
       <td class="py-2 px-4">{{ $user->username }}</td>
       <td class="py-2 px-4">{{ $user->email }}</td>
-      <td class="py-2 px-4 capitalize">{{ $user->role }}</td>
+      <td class="py-2 px-4">{{ ucwords(str_replace('_', ' ', $user->role)) }}</td>
       <td class="py-2 px-4">
       <x-modals.edit-user :user="$user" />
       <x-modals.delete-user :user="$user" />

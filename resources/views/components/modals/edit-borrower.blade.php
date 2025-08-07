@@ -57,10 +57,14 @@
           </div>
 
           <div>
-            <label class="block mb-1">Income</label>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-sm text-gray-700">Income</label>
+              <span class="text-xs text-gray-500">Average income per month</span>
+            </div>
             <input type="number" name="income" value="{{ $borrower->income }}"
               class="w-full border px-3 py-2 rounded" />
           </div>
+
 
           <div>
             <label class="block mb-1">ID Type</label>

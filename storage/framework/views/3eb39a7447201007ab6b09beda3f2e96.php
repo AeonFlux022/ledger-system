@@ -72,4 +72,29 @@
 </html>
 
 <script src="//unpkg.com/alpinejs" defer></script>
+<script>
+  function updatePhilippineTime() {
+    const now = new Date();
+
+    // Convert to Philippine Time (UTC+8)
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const phTime = new Date(utc + 3600000 * 8);
+
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    };
+
+    document.getElementById('ph-time').textContent = phTime.toLocaleString('en-PH', options);
+  }
+
+  // Update every second
+  setInterval(updatePhilippineTime, 1000);
+  updatePhilippineTime(); // Initial call
+</script>
 <?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/layouts/admin.blade.php ENDPATH**/ ?>

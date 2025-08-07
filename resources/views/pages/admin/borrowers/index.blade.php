@@ -1,4 +1,4 @@
-@extends('layouts.admin') {{-- or layouts.app if you don’t have separate admin layout --}}
+@extends('layouts.admin')
 
 @section('title', 'ABG Finance')
 
@@ -15,7 +15,6 @@
       <th class="px-4 py-2">Contact</th>
       <th class="px-4 py-2">Email</th>
       <th class="px-4 py-2">Employment</th>
-      <th class="px-4 py-2">Status</th>
       <th class="px-4 py-2">Actions</th>
       </tr>
     </thead>
@@ -27,7 +26,6 @@
       <td class="px-4 py-2">{{ $borrower->contact_number }}</td>
       <td class="px-4 py-2">{{ $borrower->email }}</td>
       <td class="px-4 py-2">{{ ucfirst($borrower->employment_status) }}</td>
-      <td class="px-4 py-2">{{ ucfirst($borrower->status) }}</td>
       <td class="px-4 py-2">
       <div class="flex items-center space-x-2">
       <a href="{{ route('admin.borrowers.show', $borrower->id) }}"
