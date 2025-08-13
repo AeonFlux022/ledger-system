@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\DashboardController;
@@ -30,9 +31,6 @@ Route::post('/logout', function () {
 
 
 // view admin panel
-// Route::get('/dashboard', function () {
-//     return view('pages.admin.dashboard');
-// });
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
 
@@ -58,6 +56,13 @@ Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.
 
 
 // borrower routes
+// display borrowers in client side
+Route::get('/borrowers-client', [BorrowerController::class, 'indexClient'])->name('borrowers.client');
+
+// show a single borrower in client side
+Route::get('/showBorrower/{borrower}', [BorrowerController::class, 'showClient'])->name('showBorrower');
+
+
 // list all borrowers from the database
 Route::get('/borrowers', [BorrowerController::class, 'index'])->name('admin.borrowers.index');
 
@@ -77,6 +82,11 @@ Route::put('/borrowers/{borrower}', [BorrowerController::class, 'update'])->name
 Route::delete('/borrowers/{borrower}', [BorrowerController::class, 'destroy'])->name('admin.borrowers.destroy');
 
 
+
+// admin side loans
+// loan routes
+Route::get('/loans', [LoanController::class, 'index'])->name('admin.loans.index');
+Route::post('/loans', [LoanController::class, 'store'])->name('admin.loans.store');
 
 
 

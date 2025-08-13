@@ -1,36 +1,32 @@
-<!-- Success Message -->
-@if(session('success'))
-  <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" x-transition
-    class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 flex justify-between items-center">
-    <span>{{ session('success') }}</span>
-    <button @click="show = false" class="text-green-800 font-bold">&times;</button>
-  </div>
-@endif
+<?php if(session('success')): ?>
+  <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">
+    <?php echo e(session('success')); ?>
 
-<!-- Error Message -->
-@if(session('error'))
-  <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" x-transition
-    class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
-    <strong class="block font-bold mb-1">Oops! Something went wrong.</strong>
-    <span>{{ session('error') }}</span>
   </div>
-@endif
+<?php endif; ?>
+
+<?php if(session('error')): ?>
+  <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
+    <?php echo e(session('error')); ?>
+
+  </div>
+<?php endif; ?>
+
 
 <!-- Trigger Button -->
+<button @click="open = true" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+  Add Borrower
+</button>
+
+<!-- Modal -->
 <div x-data="{ open: false }">
-  <button @click="open = true" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-    Add Borrower
-  </button>
-
-  <!-- Modal -->
-
   <div x-show="open" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-transition>
     <div @click.outside="open = false" class="bg-white max-w-2xl w-full p-6 rounded shadow relative">
       <h2 class="text-lg font-bold mb-4">New Borrower</h2>
 
       <!-- Form Starts Here -->
-      <form method="POST" action="{{ route('admin.borrowers.store') }}" enctype="multipart/form-data">
-        @csrf
+      <form method="POST" action="<?php echo e(route('admin.borrowers.store')); ?>" enctype="multipart/form-data">
+        <?php echo csrf_field(); ?>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -100,3 +96,4 @@
     </div>
   </div>
 </div>
+<?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/components/modals/borrower-form.blade.php ENDPATH**/ ?>

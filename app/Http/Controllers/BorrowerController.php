@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Borrower;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class BorrowerController extends Controller
 {
@@ -24,41 +25,71 @@ class BorrowerController extends Controller
 
 
 
+    public function indexClient()
+    {
+        $borrowers = Borrower::latest()->paginate(10); // 10 per page
+        return view('pages.borrowers-client', compact('borrowers'));
+    }
+
+    public function showClient(Borrower $borrower)
+    {
+        return view('pages.showBorrower', compact('borrower'));
+    }
+
+
     public function create()
     {
         return view('pages.admin.borrowers.create');
     }
 
+
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'fname' => 'required|string|max:255',
-            'lname' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'contact_number' => 'required|string|max:20',
-            'email' => 'required|email|max:255',
-            'id_card' => 'required|string',
-            'id_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'income' => 'required|numeric|min:0',
-            'employment_status' => 'required|in:employed,unemployed',
-        ]);
+        try {
+            // Form validation (Laravel will handle error messages automatically)
+            $validated = $request->validate([
+                'fname' => 'required|string|max:255',
+                'lname' => 'required|string|max:255',
+                'address' => 'nullable|string',
+                'contact_number' => 'required|string|max:20',
+                'email' => 'required|email|unique:borrowers,email',
+                'employment_status' => 'required|string',
+                'income' => 'nullable|numeric',
+                'id_card' => 'required|string',
+                'id_image' => 'required|image|max:2048',
+            ]);
 
-        if ($request->hasFile('id_image')) {
-            $filename = time() . '.' . $request->id_image->extension();
-            $path = $request->id_image->storeAs('ids', $filename, 'public');
-            $validated['id_image'] = 'storage/ids/' . $filename;
+            // Handle file upload
+            if ($request->hasFile('id_image')) {
+                $filename = time() . '.' . $request->id_image->extension();
+                $path = $request->file('id_image')->storeAs('ids', $filename, 'public');
+                $validated['id_image'] = 'storage/' . $path; // For asset() use
+            }
 
-        }
 
+            // Create borrower
+            Borrower::create($validated);
 
-        Borrower::create($validated);
+            $route = auth()->user()->role === 'super_admin'
+                ? route('admin.borrowers.index')
+                : '/borrowers-client';
 
-        if (auth()->user()->role === 'super_admin') {
-            return redirect()->route('admin.borrowers.index')->with('success', 'Borrower added successfully.');
-        } else {
-            return redirect('/borrowers-client')->with('success', 'Borrower added successfully.');
+            return redirect($route)->with('success', 'Borrower added successfully.');
+
+        } catch (ValidationException $e) {
+            // Laravel handles this automatically — no need to catch it unless you want to customize
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('Borrower creation error: ' . $e->getMessage()); // log full error
+            $route = auth()->user()->role === 'super_admin'
+                ? route('admin.borrowers.index')
+                : '/borrowers-client';
+
+            return redirect($route)->with('error', 'Failed to add borrower. Please try again.');
         }
     }
+
+
 
 
     public function show($id)
@@ -66,12 +97,6 @@ class BorrowerController extends Controller
         $borrower = Borrower::findOrFail($id);
         return view('pages.admin.borrowers.show', compact('borrower'));
     }
-
-    //     // show edit form for borrower
-//     public function edit(Borrower $borrower)
-//     {
-//         return view('pages.admin.borrowers.edit', compact('borrower'));
-//     }
 
     // update a borrower
     public function update(Request $request, Borrower $borrower)
@@ -88,24 +113,11 @@ class BorrowerController extends Controller
             'id_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // if ($request->hasFile('id_image')) {
-        //     // Optionally delete old image
-        //     if ($borrower->id_image && \Storage::disk('public')->exists($borrower->id_image)) {
-        //         \Storage::disk('public')->delete($borrower->id_image);
-        //     }
-
-        //     // Store the new file and assign path
-        //     // $validated['id_image'] = $request->file('id_image')->store('ids', 'public');
-        //     $validated['id_image'] = $request->file('id_image')->store('ids', 'public');
-        // } else {
-        //     // If no new image, retain the old one
-        //     $validated['id_image'] = $borrower->id_image;
-        // }
 
         if ($request->hasFile('id_image')) {
             // Delete old image if it exists
-            if ($borrower->id_image && \Storage::disk('public')->exists(str_replace('storage/', '', $borrower->id_image))) {
-                \Storage::disk('public')->delete(str_replace('storage/', '', $borrower->id_image));
+            if ($borrower->id_image && Storage::disk('public')->exists(str_replace('storage/', '', $borrower->id_image))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $borrower->id_image));
             }
 
             $filename = time() . '.' . $request->id_image->extension();
@@ -126,8 +138,8 @@ class BorrowerController extends Controller
     public function destroy(Borrower $borrower)
     {
         // Optionally delete associated image
-        if ($borrower->id_image && \Storage::disk('public')->exists($borrower->id_image)) {
-            \Storage::disk('public')->delete($borrower->id_image);
+        if ($borrower->id_image && Storage::disk('public')->exists($borrower->id_image)) {
+            Storage::disk('public')->delete($borrower->id_image);
         }
 
         $borrower->delete();

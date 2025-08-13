@@ -9,19 +9,19 @@
 
     <x-modals.create-user />
 
-    <table class="w-full bg-white border rounded shadow">
+    <table class="w-full bg-white rounded shadow">
     <thead>
       <tr class="bg-gray-100 text-left">
-      <th class="py-2 px-4 border-b">#</th>
-      <th class="py-2 px-4 border-b">Username</th>
-      <th class="py-2 px-4 border-b">Email</th>
-      <th class="py-2 px-4 border-b">Role</th>
-      <th class="py-2 px-4 border-b">Actions</th> <!-- New column for Edit -->
+      <th class="py-2 px-4">#</th>
+      <th class="py-2 px-4">Username</th>
+      <th class="py-2 px-4">Email</th>
+      <th class="py-2 px-4">Role</th>
+      <th class="py-2 px-4">Actions</th> <!-- New column for Edit -->
       </tr>
     </thead>
     <tbody>
       @forelse ($users as $user)
-      <tr class="border-t hover:bg-gray-50">
+      <tr class="border-b border-gray-200 hover:bg-gray-50">
       <td class="px-4 py-2">{{ $loop->iteration }}</td>
       <td class="py-2 px-4">{{ $user->username }}</td>
       <td class="py-2 px-4">{{ $user->email }}</td>

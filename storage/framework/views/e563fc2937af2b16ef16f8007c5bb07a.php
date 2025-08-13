@@ -28,19 +28,19 @@
 <?php unset($__componentOriginal3a20a4b44ede0aa67600cb329d2394bc); ?>
 <?php endif; ?>
 
-    <table class="w-full bg-white border rounded shadow">
+    <table class="w-full bg-white rounded shadow">
     <thead>
       <tr class="bg-gray-100 text-left">
-      <th class="py-2 px-4 border-b">#</th>
-      <th class="py-2 px-4 border-b">Username</th>
-      <th class="py-2 px-4 border-b">Email</th>
-      <th class="py-2 px-4 border-b">Role</th>
-      <th class="py-2 px-4 border-b">Actions</th> <!-- New column for Edit -->
+      <th class="py-2 px-4">#</th>
+      <th class="py-2 px-4">Username</th>
+      <th class="py-2 px-4">Email</th>
+      <th class="py-2 px-4">Role</th>
+      <th class="py-2 px-4">Actions</th> <!-- New column for Edit -->
       </tr>
     </thead>
     <tbody>
       <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-      <tr class="border-t hover:bg-gray-50">
+      <tr class="border-b border-gray-200 hover:bg-gray-50">
       <td class="px-4 py-2"><?php echo e($loop->iteration); ?></td>
       <td class="py-2 px-4"><?php echo e($user->username); ?></td>
       <td class="py-2 px-4"><?php echo e($user->email); ?></td>

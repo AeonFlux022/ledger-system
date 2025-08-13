@@ -26,7 +26,7 @@
 <?php unset($__componentOriginal05412d2965d952b27d0c6e9c996d501a); ?>
 <?php endif; ?>
 
-    <table class="w-full bg-white shadow-md rounded border">
+    <table class="w-full bg-white shadow-md rounded">
     <thead class="bg-gray-100 text-left">
       <tr>
       <th class="px-4 py-2">#</th>
@@ -39,7 +39,7 @@
     </thead>
     <tbody>
       <?php $__empty_1 = true; $__currentLoopData = $borrowers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $borrower): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-      <tr class="border-t">
+      <tr class="border-b border-gray-200 hover:bg-gray-50">
       <td class="px-4 py-2"><?php echo e(($borrowers->currentPage() - 1) * $borrowers->perPage() + $loop->iteration); ?></td>
       <td class="px-4 py-2"><?php echo e($borrower->fname); ?> <?php echo e($borrower->lname); ?></td>
       <td class="px-4 py-2"><?php echo e($borrower->contact_number); ?></td>
