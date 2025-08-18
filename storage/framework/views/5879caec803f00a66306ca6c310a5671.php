@@ -34,20 +34,34 @@
       <th class="px-4 p-2">Terms</th>
       <th class="px-4 p-2">Due Date</th>
       <th class="px-4 p-2">Status</th>
+      <th class="px-4 p-2">Actions</th>
       </tr>
     </thead>
     <tbody>
-      <?php $__currentLoopData = $loans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $loan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+      <?php $__empty_1 = true; $__currentLoopData = $loans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $loan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
       <tr class="border-b border-gray-200 hover:bg-gray-50">
-      <td class="px-4 py-2"><?php echo e($loop->iteration); ?></td>
-      <td class="px-4 p-2r"><?php echo e($loan->borrower->fname); ?> <?php echo e($loan->borrower->lname); ?></td>
-      <td class="px-4 p-2">&#8369;<?php echo e(number_format($loan->loan_amount, 2)); ?></td>
-      <td class="px-4 p-2"><?php echo e($loan->interest_rate); ?>%</td>
-      <td class="px-4 p-2"><?php echo e($loan->terms); ?> months</td>
-      <td class="px-4 p-2"><?php echo e($loan->due_date); ?></td>
-      <td class="px-4 p-2 capitalize"><?php echo e($loan->status); ?></td>
+      <td class="px-4 py-2">
+      <?php echo e(($loans->currentPage() - 1) * $loans->perPage() + $loop->iteration); ?>
+
+      </td>
+      <td class="px-4 py-2"><?php echo e($loan->borrower->fname); ?> <?php echo e($loan->borrower->lname); ?></td>
+      <td class="px-4 py-2">&#8369;<?php echo e(number_format($loan->loan_amount, 2)); ?></td>
+      <td class="px-4 py-2"><?php echo e($loan->interest_rate); ?>%</td>
+      <td class="px-4 py-2"><?php echo e($loan->terms); ?> months</td>
+      <td class="px-4 py-2"><?php echo e($loan->due_date); ?></td>
+      <td class="px-4 py-2 capitalize"><?php echo e($loan->status); ?></td>
+      <td class="px-4 py-2">
+      <a href="<?php echo e(route('admin.loans.show', $loan->id)); ?>" class="inline-block bg-blue-600 text-white
+      text-sm px-3 py-1 rounded hover:bg-blue-700 transition">View</a>
+      </td>
       </tr>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+      <tr>
+      <td colspan="5" class="px-4 py-4 text-center text-gray-500">
+      No loans found.
+      </td>
+      </tr>
+    <?php endif; ?>
     </tbody>
     </table>
 

@@ -15,20 +15,33 @@
       <th class="px-4 p-2">Terms</th>
       <th class="px-4 p-2">Due Date</th>
       <th class="px-4 p-2">Status</th>
+      <th class="px-4 p-2">Actions</th>
       </tr>
     </thead>
     <tbody>
-      @foreach($loans as $loan)
+      @forelse($loans as $loan)
       <tr class="border-b border-gray-200 hover:bg-gray-50">
-      <td class="px-4 py-2">{{ $loop->iteration }}</td>
-      <td class="px-4 p-2r">{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</td>
-      <td class="px-4 p-2">&#8369;{{ number_format($loan->loan_amount, 2) }}</td>
-      <td class="px-4 p-2">{{ $loan->interest_rate }}%</td>
-      <td class="px-4 p-2">{{ $loan->terms }} months</td>
-      <td class="px-4 p-2">{{ $loan->due_date }}</td>
-      <td class="px-4 p-2 capitalize">{{ $loan->status }}</td>
+      <td class="px-4 py-2">
+      {{ ($loans->currentPage() - 1) * $loans->perPage() + $loop->iteration }}
+      </td>
+      <td class="px-4 py-2">{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</td>
+      <td class="px-4 py-2">&#8369;{{ number_format($loan->loan_amount, 2) }}</td>
+      <td class="px-4 py-2">{{ $loan->interest_rate }}%</td>
+      <td class="px-4 py-2">{{ $loan->terms }} months</td>
+      <td class="px-4 py-2">{{ $loan->due_date }}</td>
+      <td class="px-4 py-2 capitalize">{{ $loan->status }}</td>
+      <td class="px-4 py-2">
+      <a href="{{ route('admin.loans.show', $loan->id) }}" class="inline-block bg-blue-600 text-white
+      text-sm px-3 py-1 rounded hover:bg-blue-700 transition">View</a>
+      </td>
       </tr>
-    @endforeach
+    @empty
+      <tr>
+      <td colspan="5" class="px-4 py-4 text-center text-gray-500">
+      No loans found.
+      </td>
+      </tr>
+    @endforelse
     </tbody>
     </table>
 

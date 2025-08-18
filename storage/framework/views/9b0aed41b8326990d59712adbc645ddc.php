@@ -10,7 +10,7 @@
     <!-- Borrower Details -->
     <div class="md:w-2/3 p-6">
       <div class="mb-4">
-      <span>ID #<?php echo e($borrower->id); ?> </span>
+      <span class="text-gray-700 italic">Borrower ID: <?php echo e($borrower->id); ?> </span>
       </div>
       <h1 class="text-4xl font-bold mb-2"><?php echo e($borrower->fname); ?> <?php echo e($borrower->lname); ?></h1>
       <p class="italic mb-6">Account created at <?php echo e($borrower->created_at->format('F d, Y')); ?></p>

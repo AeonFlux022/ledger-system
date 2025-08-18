@@ -1,21 +1,3 @@
-<!-- Success Message -->
-<?php if(session('success')): ?>
-  <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" x-transition
-    class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 flex justify-between items-center">
-    <span><?php echo e(session('success')); ?></span>
-    <button @click="show = false" class="text-green-800 font-bold">&times;</button>
-  </div>
-<?php endif; ?>
-
-<!-- Error Message -->
-<?php if(session('error')): ?>
-  <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" x-transition
-    class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
-    <strong class="block font-bold mb-1">Oops! Something went wrong.</strong>
-    <span><?php echo e(session('error')); ?></span>
-  </div>
-<?php endif; ?>
-
 <!-- Trigger Button -->
 <div x-data="{ open: false }">
   <button @click="open = true" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">

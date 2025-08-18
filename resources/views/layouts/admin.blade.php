@@ -48,10 +48,10 @@
     <h2 class="text-2xl font-bold text-blue-600 mb-6">ABG Finance</h2>
 
     <nav class="space-y-2">
-      <a href="/dashboard" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Home</a>
-      <a href="/users" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Users</a>
-      <a href="/borrowers" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Borrowers</a>
-      <a href="/loans" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Loans</a>
+      <a href="/admin/dashboard" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Home</a>
+      <a href="/admin/users" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Users</a>
+      <a href="/admin/borrowers" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Borrowers</a>
+      <a href="/admin/loans" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Loans</a>
       <a href="/transactions" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Transactions</a>
 
       <!-- Logout -->

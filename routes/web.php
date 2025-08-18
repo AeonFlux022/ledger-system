@@ -31,7 +31,7 @@ Route::post('/logout', function () {
 
 
 // view admin panel
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
 
 // client borrowers page
@@ -42,16 +42,16 @@ Route::get('/borrowers-client', function () {
 
 // user routes
 // list all users from the database
-Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
 
 // create a new user
-Route::post('/users', [UserController::class, 'store'])->name('admin.users.store');
+Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
 
 // update user
-Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
 
 // delete user
-Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
 
 
@@ -64,29 +64,33 @@ Route::get('/showBorrower/{borrower}', [BorrowerController::class, 'showClient']
 
 
 // list all borrowers from the database
-Route::get('/borrowers', [BorrowerController::class, 'index'])->name('admin.borrowers.index');
+Route::get('/admin/borrowers', [BorrowerController::class, 'index'])->name('admin.borrowers.index');
 
 // show a single borrower
-Route::get('/borrowers/{borrower}', [BorrowerController::class, 'show'])->name('admin.borrowers.show');
+Route::get('/admin/borrowers/{borrower}', [BorrowerController::class, 'show'])->name('admin.borrowers.show');
 
 // show create form for a borrower
-Route::get('borrowers/create', [BorrowerController::class, 'create'])->name('admin.borrowers.create');
+Route::get('/admin/borrowers/create', [BorrowerController::class, 'create'])->name('admin.borrowers.create');
 
 // store a new borrower
-Route::post('/borrowers', [BorrowerController::class, 'store'])->name('admin.borrowers.store');
+Route::post('/admin/borrowers', [BorrowerController::class, 'store'])->name('admin.borrowers.store');
 
 // update a borrower
-Route::put('/borrowers/{borrower}', [BorrowerController::class, 'update'])->name('admin.borrowers.update');
+Route::put('/admin/borrowers/{borrower}', [BorrowerController::class, 'update'])->name('admin.borrowers.update');
 
 // delete a borrower
-Route::delete('/borrowers/{borrower}', [BorrowerController::class, 'destroy'])->name('admin.borrowers.destroy');
+Route::delete('/admin/borrowers/{borrower}', [BorrowerController::class, 'destroy'])->name('admin.borrowers.destroy');
 
 
 
 // admin side loans
 // loan routes
-Route::get('/loans', [LoanController::class, 'index'])->name('admin.loans.index');
-Route::post('/loans', [LoanController::class, 'store'])->name('admin.loans.store');
+Route::get('/admin/loans', [LoanController::class, 'index'])->name('admin.loans.index');
+Route::post('/admin/loans', [LoanController::class, 'store'])->name('admin.loans.store');
+
+
+Route::get('/admin/loans/{loan}', [LoanController::class, 'show'])->name('admin.loans.show');
+
 
 
 

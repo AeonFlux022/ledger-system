@@ -14,7 +14,7 @@
     <!-- Borrower Details -->
     <div class="md:w-2/3 p-6">
       <div class="mb-4">
-      <span>ID #{{ $borrower->id }} </span>
+      <span class="text-gray-700 italic">Borrower ID: {{ $borrower->id }} </span>
       </div>
       <h1 class="text-4xl font-bold mb-2">{{ $borrower->fname }} {{ $borrower->lname }}</h1>
       <p class="italic mb-6">Account created at {{ $borrower->created_at->format('F d, Y') }}</p>

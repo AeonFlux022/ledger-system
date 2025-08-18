@@ -1,6 +1,6 @@
 
 
-<?php $__env->startSection('title', 'Borrower Details'); ?>
+<?php $__env->startSection('title', 'ABG Finance - Borrower Details'); ?>
 
 <?php $__env->startSection('content'); ?>
   <div class="max-w-4xl mx-auto px-6 py-10">
@@ -44,10 +44,6 @@
       <div>
       <label class="text-sm text-gray-500">Employment Status</label>
       <p class="mt-1 font-medium"><?php echo e(ucfirst($borrower->employment_status)); ?></p>
-      </div>
-      <div>
-      <label class="text-sm text-gray-500">Status</label>
-      <p class="mt-1 font-medium"><?php echo e(ucfirst($borrower->status)); ?></p>
       </div>
     </div>
 

@@ -12,7 +12,8 @@
     <div @click.outside="open = false" class="bg-white w-full max-w-2xl p-6 rounded shadow">
       <h2 class="text-lg font-bold mb-4">Create New Loan</h2>
 
-      <form method="POST" action="{{ route('admin.loans.store') }}">
+      <form method="POST" action="{{ route('admin.loans.store') }}" x-data="loanCalculator()"
+        @submit="formatBeforeSubmit">
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -20,8 +21,6 @@
           <!-- Borrower -->
           <div class="md:col-span-2">
             <label class="block mb-1">Borrower</label>
-            @props(['borrowers'])
-
             <select name="borrower_id" class="w-full border px-3 py-2 rounded" required>
               <option value="">Select Borrower</option>
               @foreach($borrowers as $borrower)
@@ -35,25 +34,32 @@
           <!-- Loan Amount -->
           <div>
             <label class="block mb-1">Loan Amount</label>
-            <input type="number" name="loan_amount" step="0.01" class="w-full border px-3 py-2 rounded" required />
+            <input type="number" name="loan_amount" step="0.01" x-model.number="loan_amount"
+              class="w-full border px-3 py-2 rounded" required />
           </div>
 
-          <!-- Interest Rate -->
+          <!-- Interest Rate (fixed) -->
           <div>
-            <label class="block mb-1">Interest Rate (%)</label>
-            <input type="number" name="interest_rate" step="0.01" class="w-full border px-3 py-2 rounded" required />
+            <label class="block mb-1">Interest Rate <span class="gray-700 text-xs">(per month)</span></label>
+            <input type="text" value="6%" class="w-full border px-3 py-2 rounded bg-gray-100" readonly>
           </div>
 
           <!-- Terms -->
           <div>
-            <label class="block mb-1">Terms (Months)</label>
-            <input type="number" name="terms" class="w-full border px-3 py-2 rounded" required />
+            <label class="block mb-1">Terms <span class="gray-700 text-xs">(in months)</span></label>
+            <select name="terms" x-model.number="terms" class="w-full border px-3 py-2 rounded" required>
+              <option value="">Select Term</option>
+              <option value="3">3 months</option>
+              <option value="6">6 months</option>
+              <option value="9">9 months</option>
+              <option value="12">12 months</option>
+            </select>
           </div>
 
           <!-- Processing Fee -->
           <div>
             <label class="block mb-1">Processing Fee</label>
-            <input type="number" name="processing_fee" step="0.01" class="w-full border px-3 py-2 rounded" required />
+            <input type="text" value="₱250" class="w-full border px-3 py-2 rounded bg-gray-100" readonly>
           </div>
 
           <!-- Due Date -->
@@ -61,16 +67,52 @@
             <label class="block mb-1">Due Date</label>
             <input type="date" name="due_date" class="w-full border px-3 py-2 rounded" required />
           </div>
+        </div>
 
+        <!-- PREVIEW SECTION -->
+        <div class="mt-6 p-4 bg-gray-50 border rounded">
+          <h3 class="font-bold mb-2">Loan Preview</h3>
+          <p><strong>Total Payable:</strong> <span x-text="formatCurrency(total_payable)"></span></p>
+          <p><strong>Monthly Amortization:</strong> <span x-text="formatCurrency(monthly_amortization)"></span></p>
         </div>
 
         <div class="flex justify-end space-x-2 mt-6">
           <button type="button" @click="open = false" class="px-4 py-2 border rounded">Cancel</button>
           <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Save
+            Create Loan
           </button>
         </div>
       </form>
     </div>
   </div>
 </div>
+
+<script>
+  function loanCalculator() {
+    return {
+      loan_amount: 0,
+      terms: 0,
+      interest_rate: 6,
+      processing_fee: 250,
+
+      get total_payable() {
+        if (!this.loan_amount || !this.terms) return 0;
+        let interest = this.loan_amount * (this.interest_rate / 100) * this.terms;
+        return this.loan_amount + interest + this.processing_fee;
+      },
+
+      get monthly_amortization() {
+        if (!this.loan_amount || !this.terms) return 0;
+        return this.total_payable / this.terms;
+      },
+
+      formatCurrency(value) {
+        return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value);
+      },
+
+      formatBeforeSubmit() {
+        // Ensure values are passed to backend properly
+      }
+    }
+  }
+</script>
