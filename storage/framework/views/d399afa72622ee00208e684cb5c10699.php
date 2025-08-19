@@ -17,7 +17,7 @@
 
       
       <?php if(auth()->guard()->check()): ?>
-      <li><a href="/borrowers-client" class="text-gray-700 hover:text-blue-600">Borrowers</a></li>
+      <li><a href="/borrowers" class="text-gray-700 hover:text-blue-600">Borrowers</a></li>
       <li><a href="/loans-list" class="text-gray-700 hover:text-blue-600">Loans</a></li>
       <li><a href="/transactions-list" class="text-gray-700 hover:text-blue-600">Transactions</a></li>
       <li class="text-gray-700">Hello, <span class="font-semibold"><?php echo e(auth()->user()->username); ?></span></li>

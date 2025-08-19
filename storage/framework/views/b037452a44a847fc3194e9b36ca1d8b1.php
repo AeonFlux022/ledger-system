@@ -22,6 +22,23 @@
       <p class="text-3xl font-bold mt-2"><?php echo e($borrowerCount); ?></p>
     </div>
 
+    <!-- Total Loans -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-gray-500 text-sm">Loans</h2>
+      <p class="text-3xl font-bold mt-2"><?php echo e($loanCount); ?></p>
+    </div>
+
+    <!-- Total Loan Amount -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-gray-500 text-sm">Total Loan Amount</h2>
+      <p class="text-3xl font-bold mt-2">
+      ₱<?php echo e(number_format($totalLoanAmount, 2)); ?>
+
+      </p>
+    </div>
+
+
+
     <!-- Approved Loans -->
     <div class="bg-white p-4 rounded shadow">
       <h2 class="text-gray-500 text-sm">Approved Loans</h2>
@@ -38,7 +55,5 @@
     </div>
   </div>
 <?php $__env->stopSection(); ?>
-
-
 
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/pages/admin/dashboard.blade.php ENDPATH**/ ?>

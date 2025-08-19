@@ -1,7 +1,7 @@
 <?php $attributes ??= new \Illuminate\View\ComponentAttributeBag;
 
 $__newAttributes = [];
-$__propNames = \Illuminate\View\ComponentAttributeBag::extractPropNames((['borrowers']));
+$__propNames = \Illuminate\View\ComponentAttributeBag::extractPropNames((['borrowers' => null, 'borrower' => null]));
 
 foreach ($attributes->all() as $__key => $__value) {
     if (in_array($__key, $__propNames)) {
@@ -16,7 +16,7 @@ $attributes = new \Illuminate\View\ComponentAttributeBag($__newAttributes);
 unset($__propNames);
 unset($__newAttributes);
 
-foreach (array_filter((['borrowers']), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
+foreach (array_filter((['borrowers' => null, 'borrower' => null]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 }
 
@@ -44,20 +44,22 @@ unset($__defined_vars); ?>
         @submit="formatBeforeSubmit">
         <?php echo csrf_field(); ?>
 
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <!-- Borrower -->
           <div class="md:col-span-2">
-            <label class="block mb-1">Borrower</label>
-            <select name="borrower_id" class="w-full border px-3 py-2 rounded" required>
-              <option value="">Select Borrower</option>
-              <?php $__currentLoopData = $borrowers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $borrower): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-          <option value="<?php echo e($borrower->id); ?>">
-          <?php echo e($borrower->fname); ?> <?php echo e($borrower->lname); ?>
-
-          </option>
+            <?php if($borrower): ?>
+        <input type="hidden" name="borrower_id" value="<?php echo e($borrower->id); ?>">
+      <?php else: ?>
+          <label class="block mb-1" for="borrower_id">Select Borrower</label>
+          <select name="borrower_id" id="borrower_id" class="w-full border px-3 py-2 rounded" required>
+            <?php $__currentLoopData = $borrowers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          <option value="<?php echo e($b->id); ?>"><?php echo e($b->fname); ?> <?php echo e($b->lname); ?></option>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </select>
+          </select>
+      <?php endif; ?>
+            
           </div>
 
           <!-- Loan Amount -->

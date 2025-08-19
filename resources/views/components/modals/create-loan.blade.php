@@ -1,4 +1,4 @@
-@props(['borrowers'])
+@props(['borrowers' => null, 'borrower' => null])
 
 <div x-data="{ open: false }">
   <!-- Button to open modal -->
@@ -16,19 +16,29 @@
         @submit="formatBeforeSubmit">
         @csrf
 
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <!-- Borrower -->
           <div class="md:col-span-2">
-            <label class="block mb-1">Borrower</label>
-            <select name="borrower_id" class="w-full border px-3 py-2 rounded" required>
+            @if($borrower)
+        <input type="hidden" name="borrower_id" value="{{ $borrower->id }}">
+      @else
+          <label class="block mb-1" for="borrower_id">Select Borrower</label>
+          <select name="borrower_id" id="borrower_id" class="w-full border px-3 py-2 rounded" required>
+            @foreach ($borrowers as $b)
+          <option value="{{ $b->id }}">{{ $b->fname }} {{ $b->lname }}</option>
+        @endforeach
+          </select>
+      @endif
+            {{-- <select name="borrower_id" class="w-full border px-3 py-2 rounded" required>
               <option value="">Select Borrower</option>
               @foreach($borrowers as $borrower)
-          <option value="{{ $borrower->id }}">
-          {{ $borrower->fname }} {{ $borrower->lname }}
-          </option>
-        @endforeach
-            </select>
+              <option value="{{ $borrower->id }}">
+                {{ $borrower->fname }} {{ $borrower->lname }}
+              </option>
+              @endforeach
+            </select> --}}
           </div>
 
           <!-- Loan Amount -->

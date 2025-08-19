@@ -33,9 +33,9 @@ class UserController extends Controller
             $user = Auth::user();
 
             if ($user->role === 'super_admin') {
-                return redirect('/dashboard')->with('success', 'Welcome Super Admin!');
+                return redirect('/admin/dashboard')->with('success', 'Welcome ' . $user->username . '!');
             } elseif ($user->role === 'admin') {
-                return redirect('/')->with('success', 'Welcome Admin!');
+                return redirect('/')->with('success', 'Welcome ' . $user->username . '!');
             } else {
                 Auth::logout();
                 return redirect('/login')->withErrors(['username' => 'Unauthorized role.']);
@@ -44,6 +44,7 @@ class UserController extends Controller
 
         return redirect()->back()->withErrors(['username' => 'Invalid credentials.']);
     }
+
 
 
     // logout function

@@ -29,16 +29,21 @@ Route::post('/logout', function () {
 })->name('logout');
 
 
+// client borrowers pages
+// display borrowers in client side
+Route::get('/borrowers', [BorrowerController::class, 'indexClient'])->name('borrowers.client');
+
+// show a single borrower in client side
+Route::get('/showBorrower/{borrower}', [BorrowerController::class, 'showClient'])->name('showBorrower');
+
+// client loans page
+Route::get('/showBorrower/loans/{borrower}', [LoanController::class, 'clientLoans'])
+    ->name('loans.client');
+
+
 
 // view admin panel
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-
-
-// client borrowers page
-Route::get('/borrowers-client', function () {
-    return view('pages.borrowers-client');
-});
-
 
 // user routes
 // list all users from the database
@@ -56,12 +61,6 @@ Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('
 
 
 // borrower routes
-// display borrowers in client side
-Route::get('/borrowers-client', [BorrowerController::class, 'indexClient'])->name('borrowers.client');
-
-// show a single borrower in client side
-Route::get('/showBorrower/{borrower}', [BorrowerController::class, 'showClient'])->name('showBorrower');
-
 
 // list all borrowers from the database
 Route::get('/admin/borrowers', [BorrowerController::class, 'index'])->name('admin.borrowers.index');
@@ -86,9 +85,11 @@ Route::delete('/admin/borrowers/{borrower}', [BorrowerController::class, 'destro
 // admin side loans
 // loan routes
 Route::get('/admin/loans', [LoanController::class, 'index'])->name('admin.loans.index');
+
+// store a new loan
 Route::post('/admin/loans', [LoanController::class, 'store'])->name('admin.loans.store');
 
-
+// get one loan 
 Route::get('/admin/loans/{loan}', [LoanController::class, 'show'])->name('admin.loans.show');
 
 

@@ -44,7 +44,7 @@
 <body class="flex min-h-screen bg-gray-100">
 
   <!-- Sidebar -->
-  <aside class="w-64 bg-white shadow-md p-6 space-y-4 hidden md:block">
+  <aside class="fixed top-0 left-0 h-full w-64 bg-white shadow-md p-6 space-y-4 hidden md:block">
     <h2 class="text-2xl font-bold text-blue-600 mb-6">ABG Finance</h2>
 
     <nav class="space-y-2">
@@ -63,7 +63,7 @@
   </aside>
 
   <!-- Main content -->
-  <main class="flex-1 p-6">
+  <main class="ml-64 flex-1 p-6">
     @yield('content')
   </main>
 

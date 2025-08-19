@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Borrower extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'fname',
         'lname',
@@ -17,4 +20,28 @@ class Borrower extends Model
         'income',
         'employment_status',
     ];
+
+    /**
+     * Relationship: Borrower has many Loans
+     */
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    /**
+     * Accessor: Get full name easily
+     */
+    public function getFullNameAttribute()
+    {
+        return "{$this->fname} {$this->lname}";
+    }
+
+    /**
+     * Format income with ₱ and commas
+     */
+    public function getFormattedIncomeAttribute()
+    {
+        return '₱' . number_format($this->income, 2);
+    }
 }

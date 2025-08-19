@@ -72,4 +72,15 @@ class LoanController extends Controller
         return view('pages.admin.loans.show', compact('loan', 'paginatedSchedule'));
     }
 
+    public function clientLoans($borrowerId)
+    {
+        $borrower = Borrower::findOrFail($borrowerId);
+
+        // Get all loans for this borrower
+        $loans = $borrower->loans()->orderBy('created_at', 'desc')->paginate(10);
+
+        return view('pages.showLoan', compact('borrower', 'loans'));
+    }
+
+
 }

@@ -22,6 +22,22 @@
       <p class="text-3xl font-bold mt-2">{{ $borrowerCount }}</p>
     </div>
 
+    <!-- Total Loans -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-gray-500 text-sm">Loans</h2>
+      <p class="text-3xl font-bold mt-2">{{ $loanCount }}</p>
+    </div>
+
+    <!-- Total Loan Amount -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-gray-500 text-sm">Total Loan Amount</h2>
+      <p class="text-3xl font-bold mt-2">
+      ₱{{ number_format($totalLoanAmount, 2) }}
+      </p>
+    </div>
+
+
+
     <!-- Approved Loans -->
     <div class="bg-white p-4 rounded shadow">
       <h2 class="text-gray-500 text-sm">Approved Loans</h2>
@@ -38,5 +54,3 @@
     </div>
   </div>
 @endsection
-
-
