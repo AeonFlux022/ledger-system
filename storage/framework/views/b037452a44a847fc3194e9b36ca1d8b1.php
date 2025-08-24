@@ -42,8 +42,8 @@
     <!-- Approved Loans -->
     <div class="bg-white p-4 rounded shadow">
       <h2 class="text-gray-500 text-sm">Approved Loans</h2>
-      <p class="text-3xl font-bold mt-2 text-gray-400"><?php echo e($approvedLoans); ?></p>
-      <p class="text-xs text-gray-400">Coming soon</p>
+      <p class="text-3xl font-bold mt-2 "><?php echo e($approvedLoans); ?></p>
+      
     </div>
 
     <!-- Total Income -->

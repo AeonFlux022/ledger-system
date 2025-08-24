@@ -72,7 +72,7 @@ class BorrowerController extends Controller
 
             $route = auth()->user()->role === 'super_admin'
                 ? route('admin.borrowers.index')
-                : '/borrowers-client';
+                : '/borrowers';
 
             return redirect($route)->with('success', 'Borrower added successfully.');
 

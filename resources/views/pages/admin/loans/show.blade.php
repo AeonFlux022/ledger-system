@@ -72,13 +72,14 @@
 
     <!-- Actions -->
     <div class="flex justify-end space-x-2 mt-6">
-      <form method="POST" action="">
+      <form method="POST" action="{{ route('admin.loans.approve', $loan->id) }}">
       @csrf
       <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
         Approve
       </button>
       </form>
-      <form method="POST" action="">
+
+      <form method="POST" action="{{ route('admin.loans.decline', $loan->id) }}">
       @csrf
       <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
         Decline

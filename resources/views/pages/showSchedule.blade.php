@@ -1,0 +1,59 @@
+@extends('layouts.app')
+
+@section('title', 'ABG Finance - Loan Schedule')
+
+@section('content')
+  <div class="overflow-hidden mt-6 mx-4 rounded-lg border-gray-200 ">
+    <div class="flex flex-row md:flex-col space-y-4 ">
+    <div class="w-full p-6 rounded bg-amber-300">
+      <div class="flex justify-between items-center">
+      <div class="space-y-2">
+        <p class="text-gray-700 text-sm">{{ $borrower->id }} </p>
+        <h1 class="text-4xl font-bold">{{ $borrower->fname }} {{ $borrower->lname }}</h1>
+        <h2>Amortization Schedule - ₱{{ number_format($loan->loan_amount, 2) }} </h2>
+
+      </div>
+      {{-- <div>
+        <x-modals.create-loan :borrower="$borrower" />
+      </div> --}}
+      </div>
+
+    </div>
+    <div class="w-full p-6 bg-white rounded">
+      <table class="w-full">
+      <thead class="bg-gray-300 text-left">
+        <tr>
+        <th class="px-4 py-2">#</th>
+        <th class="px-4 py-2">Due Date</th>
+        <th class="px-4 py-2">Terms</th>
+        <th class="px-4 py-2">Due Date</th>
+        <th class="px-4 py-2">Total Payment</th>
+        <th class="px-4 py-2">Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach ($paginatedSchedule as $row)
+      <tr class="text-left border-b border-gray-200 hover:bg-gray-50">
+      <td class="px-4 py-2">{{ $loop->iteration }}</td>
+      <td class="px-4 py-2">{{ $row['due_date'] }}</td>
+      <td class="px-4 py-2">{{ $row['month'] }}</td>
+      <td class="px-4 py-2">₱{{ number_format($row['amount'], 2) }}</td>
+      </tr>
+      @endforeach
+      </tbody>
+      </table>
+
+      <div class="mt-4">
+      {{ $paginatedSchedule->links() }}
+      </div>
+
+      <div class="mt-6">
+      <a href="{{ route('loans.client', $borrower->id) }}" class="text-blue-600 hover:underline text-sm">
+        ← Back to Loans
+      </a>
+
+      </div>
+    </div>
+    </div>
+
+  @endsection

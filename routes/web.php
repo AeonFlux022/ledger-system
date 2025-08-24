@@ -34,12 +34,15 @@ Route::post('/logout', function () {
 Route::get('/borrowers', [BorrowerController::class, 'indexClient'])->name('borrowers.client');
 
 // show a single borrower in client side
-Route::get('/showBorrower/{borrower}', [BorrowerController::class, 'showClient'])->name('showBorrower');
+Route::get('/borrowers/{borrower}', [BorrowerController::class, 'showClient'])->name('showBorrower');
 
 // client loans page
-Route::get('/showBorrower/loans/{borrower}', [LoanController::class, 'clientLoans'])
+Route::get('/borrowers/{borrower}/loans', [LoanController::class, 'clientLoans'])
     ->name('loans.client');
 
+// show loan amortization schedule
+Route::get('/borrowers/{borrower}/loans/{loan}', [LoanController::class, 'showSchedule'])
+    ->name('loans.schedule');
 
 
 // view admin panel
@@ -92,6 +95,12 @@ Route::post('/admin/loans', [LoanController::class, 'store'])->name('admin.loans
 // get one loan 
 Route::get('/admin/loans/{loan}', [LoanController::class, 'show'])->name('admin.loans.show');
 
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('loans', LoanController::class);
 
+    // Custom routes for loan status
+    Route::post('/admin/loans/{loan}/approve', [LoanController::class, 'approve'])->name('loans.approve');
+    Route::post('/admin/loans/{loan}/decline', [LoanController::class, 'decline'])->name('loans.decline');
+});
 
 

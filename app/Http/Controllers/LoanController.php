@@ -47,8 +47,11 @@ class LoanController extends Controller
 
         Loan::create($validated);
 
-        return redirect()->route('admin.loans.index')
-            ->with('success', 'Loan created successfully.');
+        $route = auth()->user()->role === 'super_admin'
+            ? route('admin.borrowers.index')
+            : '/showBorrower/loans/' . $validated['borrower_id'];
+
+        return redirect($route)->with('success', 'Loan applied successfully.');
     }
 
 
@@ -80,6 +83,56 @@ class LoanController extends Controller
         $loans = $borrower->loans()->orderBy('created_at', 'desc')->paginate(10);
 
         return view('pages.showLoan', compact('borrower', 'loans'));
+    }
+
+
+    public function approve(Loan $loan)
+    {
+        $loan->update(['status' => 'approved']);
+
+        return redirect()->route('admin.loans.index', $loan->id)
+            ->with('success', 'Loan approved successfully.');
+    }
+
+    public function decline(Loan $loan)
+    {
+        $loan->update(['status' => 'rejected']);
+
+        return redirect()->route('admin.loans.index', $loan->id)
+            ->with('success', 'Loan declined successfully.');
+    }
+
+    // show schedule in client side
+    public function showSchedule($borrowerId, Loan $loan)
+    {
+        // Ensure borrower exists
+        $borrower = Borrower::findOrFail($borrowerId);
+
+        // Security: make sure the loan belongs to the borrower
+        if ($loan->borrower_id !== $borrower->id) {
+            abort(403, 'Unauthorized access to loan schedule.');
+        }
+
+        // Only allow if loan is approved
+        if ($loan->status !== 'approved') {
+            return redirect()->back()->with('error', 'This loan is not yet approved.');
+        }
+
+        // Load amortization schedule (from your Loan model method)
+        $schedule = $loan->amortizationSchedule();
+
+        // Manual pagination
+        $perPage = 6; // you can set 10 if you prefer
+        $page = request()->get('page', 1);
+        $paginatedSchedule = new \Illuminate\Pagination\LengthAwarePaginator(
+            $schedule->forPage($page, $perPage),
+            $schedule->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        return view('pages.showSchedule', compact('borrower', 'loan', 'paginatedSchedule'));
     }
 
 
