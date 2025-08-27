@@ -29,24 +29,24 @@
 <?php endif; ?>
 
     <table class="w-full bg-white rounded shadow">
-    <thead>
-      <tr class="bg-gray-100 text-left">
-      <th class="py-2 px-4">#</th>
-      <th class="py-2 px-4">Username</th>
-      <th class="py-2 px-4">Email</th>
-      <th class="py-2 px-4">Role</th>
-      <th class="py-2 px-4">Actions</th> <!-- New column for Edit -->
-      </tr>
-    </thead>
-    <tbody>
-      <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-      <tr class="border-b border-gray-200 hover:bg-gray-50">
-      <td class="px-4 py-2"><?php echo e($loop->iteration); ?></td>
-      <td class="py-2 px-4"><?php echo e($user->username); ?></td>
-      <td class="py-2 px-4"><?php echo e($user->email); ?></td>
-      <td class="py-2 px-4"><?php echo e(ucwords(str_replace('_', ' ', $user->role))); ?></td>
-      <td class="py-2 px-4">
-      <?php if (isset($component)) { $__componentOriginal2e59eabd9e214f2f072383a77675086f = $component; } ?>
+      <thead>
+        <tr class="bg-gray-100 text-left">
+          <th class="py-2 px-4">#</th>
+          <th class="py-2 px-4">Username</th>
+          <th class="py-2 px-4">Email</th>
+          <th class="py-2 px-4">Role</th>
+          <th class="py-2 px-4">Actions</th> <!-- New column for Edit -->
+        </tr>
+      </thead>
+      <tbody>
+        <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+          <tr class="border-b border-gray-200 hover:bg-gray-50">
+            <td class="px-4 py-2"><?php echo e($loop->iteration); ?></td>
+            <td class="py-2 px-4"><?php echo e($user->username); ?></td>
+            <td class="py-2 px-4"><?php echo e($user->email); ?></td>
+            <td class="py-2 px-4"><?php echo e(ucwords(str_replace('_', ' ', $user->role))); ?></td>
+            <td class="py-2 px-4">
+              <?php if (isset($component)) { $__componentOriginal2e59eabd9e214f2f072383a77675086f = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal2e59eabd9e214f2f072383a77675086f = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modals.edit-user','data' => ['user' => $user]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('modals.edit-user'); ?>
@@ -66,7 +66,7 @@
 <?php $component = $__componentOriginal2e59eabd9e214f2f072383a77675086f; ?>
 <?php unset($__componentOriginal2e59eabd9e214f2f072383a77675086f); ?>
 <?php endif; ?>
-      <?php if (isset($component)) { $__componentOriginal863731c81cba5a737041869952c7949c = $component; } ?>
+              <?php if (isset($component)) { $__componentOriginal863731c81cba5a737041869952c7949c = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal863731c81cba5a737041869952c7949c = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modals.delete-user','data' => ['user' => $user]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('modals.delete-user'); ?>
@@ -86,14 +86,14 @@
 <?php $component = $__componentOriginal863731c81cba5a737041869952c7949c; ?>
 <?php unset($__componentOriginal863731c81cba5a737041869952c7949c); ?>
 <?php endif; ?>
-      </td>
-      </tr>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-      <tr>
-      <td colspan="5" class="py-4 px-4 text-center text-gray-500">No users found.</td>
-      </tr>
-    <?php endif; ?>
-    </tbody>
+            </td>
+          </tr>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+          <tr>
+            <td colspan="5" class="py-4 px-4 text-center text-gray-500">No users found.</td>
+          </tr>
+        <?php endif; ?>
+      </tbody>
     </table>
 
   </div>

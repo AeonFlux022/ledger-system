@@ -60,4 +60,32 @@
 </html>
 
 <script src="//unpkg.com/alpinejs" defer></script>
+
+<script>
+  document.getElementById('search').addEventListener('keyup', function () {
+    let query = this.value;
+
+    fetch(`<?php echo e(route('borrowers.search')); ?>?search=${query}`)
+      .then(response => response.json())
+      .then(data => {
+        let list = document.getElementById('borrower-list');
+        list.innerHTML = '';
+
+        if (data.length === 0) {
+          list.innerHTML = '<p class="text-gray-500 col-span-4">No borrowers found.</p>';
+        } else {
+          data.forEach(b => {
+            list.innerHTML += `
+            <div class="bg-white shadow-md rounded-lg p-6">
+              <h2 class="text-xl font-bold">${b.fname} ${b.lname}</h2>
+              <p class="text-gray-600">Email: ${b.email ?? ''}</p>
+              <p class="text-gray-600">Contact: ${b.contact_number ?? ''}</p>
+              <a href="/showBorrower/${b.id}" class="block mt-4 px-4 py-2 bg-blue-600 text-white rounded text-center hover:bg-blue-700">View</a>
+            </div>
+          `;
+          });
+        }
+      });
+  });
+</script>
 <?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/layouts/app.blade.php ENDPATH**/ ?>

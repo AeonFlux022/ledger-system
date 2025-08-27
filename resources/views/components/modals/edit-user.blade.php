@@ -11,20 +11,21 @@
 
 
   <!-- Modal -->
-  <div x-show="open" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-transition>
+  <div x-show="open" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-transition
+    x-cloak>
     <div @click.outside="open = false" class="bg-white w-full max-w-md p-6 rounded shadow">
       <h2 class="text-lg font-bold mb-4">Edit User</h2>
 
       <!-- Validation -->
       @if ($errors->get('edit_' . $user->id))
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-      <ul class="mt-2 list-disc list-inside text-sm">
-        @foreach ($errors->get('edit_' . $user->id) as $message)
-      <li>{{ $message }}</li>
-      @endforeach
-      </ul>
-      </div>
-    @endif
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <ul class="mt-2 list-disc list-inside text-sm">
+            @foreach ($errors->get('edit_' . $user->id) as $message)
+              <li>{{ $message }}</li>
+            @endforeach
+          </ul>
+        </div>
+      @endif
 
       <!-- Edit Form -->
       <form method="POST" action="{{ route('admin.users.update', $user->id) }}">

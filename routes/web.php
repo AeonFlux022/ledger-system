@@ -33,6 +33,10 @@ Route::post('/logout', function () {
 // display borrowers in client side
 Route::get('/borrowers', [BorrowerController::class, 'indexClient'])->name('borrowers.client');
 
+// search for a borrower
+Route::get('/borrowers/search', [BorrowerController::class, 'search'])->name('borrowers.search');
+
+
 // show a single borrower in client side
 Route::get('/borrowers/{borrower}', [BorrowerController::class, 'showClient'])->name('showBorrower');
 

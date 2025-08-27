@@ -12,30 +12,30 @@
 
   <?php if(session('success')): ?>
     <div class="bg-green-500 text-white px-4 py-3 rounded shadow flex items-center space-x-2">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-    </svg>
-    <span><?php echo e(session('success')); ?></span>
-    <button @click="show = false" class="ml-2 text-white font-bold">&times;</button>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+      </svg>
+      <span><?php echo e(session('success')); ?></span>
+      <button @click="show = false" class="ml-2 text-white font-bold">&times;</button>
     </div>
   <?php endif; ?>
 
   <?php if($errors->any()): ?>
     <div class="bg-red-500 text-white px-4 py-3 rounded shadow flex items-start space-x-2">
-    <svg class="w-5 h-5 mt-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-    </svg>
-    <div class="text-sm">
-      <strong>Whoops!</strong>
-      <ul class="list-disc list-inside mt-1">
-      <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-      <li><?php echo e($error); ?></li>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-      </ul>
-    </div>
-    <button @click="show = false" class="ml-2 text-white font-bold self-start">&times;</button>
+      <svg class="w-5 h-5 mt-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+      <div class="text-sm">
+        <strong>Whoops!</strong>
+        <ul class="list-disc list-inside mt-1">
+          <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <li><?php echo e($error); ?></li>
+          <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </ul>
+      </div>
+      <button @click="show = false" class="ml-2 text-white font-bold self-start">&times;</button>
     </div>
   <?php endif; ?>
 

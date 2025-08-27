@@ -5,7 +5,7 @@
 <?php $__env->startSection('content'); ?>
   <div class="overflow-hidden mt-6 mx-4 rounded-lg border-gray-200 ">
     <div class="flex flex-row md:flex-col space-y-4 ">
-    <div class="w-full p-6 rounded bg-amber-300">
+    <div class="w-full p-6 rounded bg-blue-100">
       <div class="flex justify-between items-center">
       <div class="space-y-2">
         <p class="text-gray-700 text-sm"><?php echo e($borrower->id); ?> </p>

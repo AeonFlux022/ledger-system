@@ -31,6 +31,22 @@ class BorrowerController extends Controller
         return view('pages.borrowers-client', compact('borrowers'));
     }
 
+    public function search(Request $request)
+    {
+        $search = $request->get('search', '');
+
+        $borrowers = Borrower::query()
+            ->where('fname', 'like', "%{$search}%")
+            ->orWhere('lname', 'like', "%{$search}%")
+            ->orWhere('email', 'like', "%{$search}%")
+            ->orWhere('contact_number', 'like', "%{$search}%")
+            ->orderBy('fname')
+            ->take(20)
+            ->get();
+
+        return response()->json($borrowers);
+    }
+
     public function showClient(Borrower $borrower)
     {
         return view('pages.showBorrower', compact('borrower'));
