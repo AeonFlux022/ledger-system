@@ -29,6 +29,7 @@ class Borrower extends Model
         return $this->hasMany(Loan::class);
     }
 
+
     /**
      * Accessor: Get full name easily
      */

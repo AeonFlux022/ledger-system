@@ -49,7 +49,7 @@ class LoanController extends Controller
 
         $route = auth()->user()->role === 'super_admin'
             ? route('admin.borrowers.index')
-            : '/showBorrower/loans/' . $validated['borrower_id'];
+            : route('clientLoans', ['borrower' => $validated['borrower_id']]);
 
         return redirect($route)->with('success', 'Loan applied successfully.');
     }

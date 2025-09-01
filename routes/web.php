@@ -7,6 +7,7 @@ use App\Http\Controllers\LoanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TransactionController;
 
 // view home page
 Route::get('/', function () {
@@ -108,3 +109,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 
+
+// // transaction routes
+// // list all transactions from the database
+// Route::get('/admin/transactions', [TransactionController::class, 'index'])->name('admin.transactions.index');
+
+// // show create form for a transaction
+// Route::get('/admin/transactions/create', [TransactionController::class, 'create'])->name('admin.transactions.create');
+
+// transaction routes nested under loans
+// Route::prefix('admin')->group(function () {
+//     Route::get('/loans/{loan}/transactions', [TransactionController::class, 'index'])->name('admin.transactions.index');
+//     Route::post('/loans/{loan}/transactions', [TransactionController::class, 'store'])->name('admin.transactions.store');
+// });
+
+// // list all transactions from the database
+Route::get('/admin/transactions', [TransactionController::class, 'index'])->name('admin.transactions.index');
+
+// store a new transaction
+Route::post('/admin/transactions/{loan}', [TransactionController::class, 'store'])->name('admin.transactions.store');

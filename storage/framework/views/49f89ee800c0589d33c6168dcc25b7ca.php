@@ -1,7 +1,7 @@
 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('delete', $borrower)): ?>
   <div x-data="{ open: false }" x-cloak>
     <!-- Delete Button -->
-    <button @click="open = true" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm">
+    <button @click="open = true" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm">
       Delete
     </button>
 

@@ -30,7 +30,7 @@ unset($__defined_vars); ?>
 
 <div x-data="{ open: false }">
   <!-- Trigger Button -->
-  <button @click="open = true" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm">
+  <button @click="open = true" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm">
     Edit
   </button>
 

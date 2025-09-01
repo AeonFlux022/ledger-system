@@ -7,91 +7,117 @@
 
     <h1 class="text-3xl font-bold text-gray-800 mb-2">Loan Details</h1>
     <p class="text-sm text-gray-500 mb-6">
-    Submitted at <?php echo e($loan->created_at->format('F j, Y g:i A')); ?>
+      Submitted at <?php echo e($loan->created_at->format('F j, Y g:i A')); ?>
 
     </p>
 
     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 space-y-8">
-    <!-- Borrower Info -->
-    <div class="mb-6">
-      <h3 class="font-bold">Borrower</h3>
-      <p><?php echo e($loan->borrower->fname); ?> <?php echo e($loan->borrower->lname); ?></p>
-    </div>
-    <hr>
+      <!-- Borrower Info -->
+      <div class="mb-6">
+        <h3 class="font-bold">Borrower</h3>
+        <p><?php echo e($loan->borrower->fname); ?> <?php echo e($loan->borrower->lname); ?></p>
+      </div>
+      <hr>
 
-    <!-- Loan Info -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
-      <div>
-      <label class="text-sm text-gray-500">Loan Amount</label>
-      <p class="mt-1 font-medium">₱<?php echo e(number_format($loan->loan_amount, 2)); ?></p>
+      <!-- Loan Info -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+        <div>
+          <label class="text-sm text-gray-500">Loan Amount</label>
+          <p class="mt-1 font-medium">₱<?php echo e(number_format($loan->loan_amount, 2)); ?></p>
+        </div>
+        <div>
+          <label class="text-sm text-gray-500">Interest Rate</label>
+          <p class="mt-1 font-medium"><?php echo e($loan->interest_rate); ?>% per month</p>
+        </div>
+        <div>
+          <label class="text-sm text-gray-500">Terms</label>
+          <p class="mt-1 font-medium"><?php echo e($loan->terms); ?> months</p>
+        </div>
+        <div>
+          <label class="text-sm text-gray-500">Processing Fee</label>
+          <p class="mt-1 font-medium">₱<?php echo e(number_format($loan->processing_fee, 2)); ?></p>
+        </div>
+        <div>
+          <label class="text-sm text-gray-500">Total Payable</label>
+          <p class="mt-1 font-medium">₱<?php echo e(number_format($loan->total_payable, 2)); ?></p>
+        </div>
+        <div>
+          <label class="text-sm text-gray-500">Monthly Amortization</label>
+          <p class="mt-1 font-medium">₱<?php echo e(number_format($loan->monthly_amortization, 2)); ?></p>
+        </div>
       </div>
-      <div>
-      <label class="text-sm text-gray-500">Interest Rate</label>
-      <p class="mt-1 font-medium"><?php echo e($loan->interest_rate); ?>% per month</p>
-      </div>
-      <div>
-      <label class="text-sm text-gray-500">Terms</label>
-      <p class="mt-1 font-medium"><?php echo e($loan->terms); ?> months</p>
-      </div>
-      <div>
-      <label class="text-sm text-gray-500">Processing Fee</label>
-      <p class="mt-1 font-medium">₱<?php echo e(number_format($loan->processing_fee, 2)); ?></p>
-      </div>
-      <div>
-      <label class="text-sm text-gray-500">Total Payable</label>
-      <p class="mt-1 font-medium">₱<?php echo e(number_format($loan->total_payable, 2)); ?></p>
-      </div>
-      <div>
-      <label class="text-sm text-gray-500">Monthly Amortization</label>
-      <p class="mt-1 font-medium">₱<?php echo e(number_format($loan->monthly_amortization, 2)); ?></p>
-      </div>
-    </div>
 
-    <!-- Amortization Table -->
-    <h3 class="font-semibold mb-2">Amortization Schedule</h3>
-    <table class="w-full">
-      <thead class="bg-gray-100">
-      <tr>
-        <th class="px-3 py-2">Month</th>
-        <th class="px-3 py-2">Due Date</th>
-        <th class="px-3 py-2">Amount</th>
-      </tr>
-      </thead>
-      <tbody>
-      <?php $__currentLoopData = $paginatedSchedule; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-      <tr class="border-b border-gray-200 hover:bg-gray-50">
-      <td class="px-3 py-2 text-center"><?php echo e($payment['month']); ?></td>
-      <td class="px-3 py-2 text-center"><?php echo e($payment['due_date']); ?></td>
-      <td class="px-3 py-2 text-right">₱<?php echo e(number_format($payment['amount'], 2)); ?></td>
-      </tr>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-      </tbody>
-    </table>
-    <div class="mt-4">
-      <?php echo e($paginatedSchedule->links()); ?>
+      <!-- Amortization Table -->
+      <h3 class="font-semibold mb-2">Amortization Schedule</h3>
+      <table class="w-full">
+        <thead class="bg-gray-100 text-left">
+          <tr>
+            <th class="px-4 py-2">Month</th>
+            <th class="px-4 py-2">Due Date</th>
+            <th class="px-4 py-2">Amount</th>
+            <th class="px-4 py-2">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php $__currentLoopData = $paginatedSchedule; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <tr class="border-b border-gray-200 hover:bg-gray-50 text-left">
+              <td class="px-4 py-2"><?php echo e($payment['month']); ?></td>
+              <td class="px-4 py-2"><?php echo e($payment['due_date']); ?></td>
+              <td class="px-4 py-2">₱<?php echo e(number_format($payment['amount'], 2)); ?></td>
+              <td class="px-4 py-2">
+                <?php if (isset($component)) { $__componentOriginalfa27b7fa4188c322fcda5afb448e4124 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalfa27b7fa4188c322fcda5afb448e4124 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modals.create-transaction','data' => ['loan' => $loan,'payment' => $payment]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modals.create-transaction'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['loan' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($loan),'payment' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($payment)]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalfa27b7fa4188c322fcda5afb448e4124)): ?>
+<?php $attributes = $__attributesOriginalfa27b7fa4188c322fcda5afb448e4124; ?>
+<?php unset($__attributesOriginalfa27b7fa4188c322fcda5afb448e4124); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalfa27b7fa4188c322fcda5afb448e4124)): ?>
+<?php $component = $__componentOriginalfa27b7fa4188c322fcda5afb448e4124; ?>
+<?php unset($__componentOriginalfa27b7fa4188c322fcda5afb448e4124); ?>
+<?php endif; ?>
+              </td>
+            </tr>
+          <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </tbody>
+      </table>
+      <div class="mt-4">
+        <?php echo e($paginatedSchedule->links()); ?>
 
-    </div>
+      </div>
 
-    <!-- Actions -->
-    <div class="flex justify-end space-x-2 mt-6">
-      <form method="POST" action="<?php echo e(route('admin.loans.approve', $loan->id)); ?>">
-      <?php echo csrf_field(); ?>
-      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-        Approve
-      </button>
-      </form>
+      <!-- Actions -->
+      <div class="flex justify-end space-x-2 mt-6">
+        <?php if($loan->status === 'pending'): ?>
+          <form method="POST" action="<?php echo e(route('admin.loans.approve', $loan->id)); ?>">
+            <?php echo csrf_field(); ?>
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+              Approve
+            </button>
+          </form>
 
-      <form method="POST" action="<?php echo e(route('admin.loans.decline', $loan->id)); ?>">
-      <?php echo csrf_field(); ?>
-      <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-        Decline
-      </button>
-      </form>
-    </div>
+          <form method="POST" action="<?php echo e(route('admin.loans.decline', $loan->id)); ?>">
+            <?php echo csrf_field(); ?>
+            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+              Decline
+            </button>
+          </form>
+        <?php endif; ?>
+      </div>
+
     </div>
 
     <div class="mt-6">
-    <a href="<?php echo e(route('admin.loans.index')); ?>" class="text-blue-600 hover:underline text-sm">← Back to list</a>
+      <a href="<?php echo e(route('admin.loans.index')); ?>" class="text-blue-600 hover:underline text-sm">← Back to list</a>
     </div>
   </div>
 <?php $__env->stopSection(); ?>

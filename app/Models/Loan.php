@@ -29,6 +29,13 @@ class Loan extends Model
         return $this->belongsTo(Borrower::class);
     }
 
+
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     /**
      * Total payable (loan + interest + processing fee)
      */
