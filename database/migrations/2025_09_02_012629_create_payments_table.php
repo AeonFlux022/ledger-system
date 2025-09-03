@@ -10,13 +10,15 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('loan_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount', 12, 2);
+            $table->foreignId('loan_id')->constrained()->cascadeOnDelete();
             $table->string('reference_id')->unique();
+            $table->integer('month'); // amortization month (1, 2, 3...)
+            $table->decimal('amount', 15, 2);
             $table->timestamps();
         });
+
     }
 
     /**
@@ -24,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('payments');
     }
 };

@@ -15,8 +15,12 @@
         <h2 class="text-xl font-bold mb-4">
           Add Payment for Loan #{{ $loan->id }}
         </h2>
-        <form method="POST" action="{{ route('admin.transactions.store', $loan->id) }} class=" space-y-4>
+
+        <form method="POST" action="{{ route('admin.loans.payments.store', $loan->id) }}" class="space-y-4">
           @csrf
+
+          <!-- Hidden month -->
+          <input type="hidden" name="month" value="{{ $payment['month'] }}">
 
           <div>
             <label class="block mb-1 font-medium">Amount</label>
@@ -29,7 +33,7 @@
               Cancel
             </button>
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Save Transaction
+              Save Payment
             </button>
           </div>
         </form>

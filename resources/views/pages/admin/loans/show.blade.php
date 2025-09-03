@@ -11,14 +11,51 @@
     </p>
 
     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 space-y-8">
-      <!-- Borrower Info -->
+      <!-- Borrower Details -->
       <div class="mb-6">
-        <h3 class="font-bold">Borrower</h3>
-        <p>{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</p>
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Borrower Details</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+          <div>
+            <label class="text-sm text-gray-500">Full Name</label>
+            <p class="mt-1 font-medium">{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</p>
+          </div>
+
+          <div>
+            <label class="text-sm text-gray-500">Email</label>
+            <p class="mt-1 font-medium">{{ $loan->borrower->email }}</p>
+          </div>
+
+          <div>
+            <label class="text-sm text-gray-500">Contact Number</label>
+            <p class="mt-1 font-medium">{{ $loan->borrower->contact_number }}</p>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-sm text-gray-500">Address</label>
+            <p class="mt-1 font-medium">{{ $loan->borrower->address }}</p>
+          </div>
+
+          <div>
+            <label class="text-sm text-gray-500">Income <span class="text-xs">(Average per month)</span></label>
+            <p class="mt-1 font-medium">₱{{ number_format($loan->borrower->income, 2) }}</p>
+          </div>
+
+          <div>
+            <label class="text-sm text-gray-500">Employment Status</label>
+            <p class="mt-1 font-medium">{{ ucwords($loan->borrower->employment_status) }}</p>
+          </div>
+
+          <div>
+            <label class="text-sm text-gray-500">ID Provided</label>
+            <p class="mt-1 font-medium">{{ ucwords(str_replace('_', ' ', $loan->borrower->id_card)) }}</p>
+          </div>
+        </div>
       </div>
       <hr>
 
       <!-- Loan Info -->
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Loan Details</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
         <div>
           <label class="text-sm text-gray-500">Loan Amount</label>
@@ -45,31 +82,58 @@
           <p class="mt-1 font-medium">₱{{ number_format($loan->monthly_amortization, 2) }}</p>
         </div>
       </div>
+      <hr>
 
       <!-- Amortization Table -->
-      <h3 class="font-semibold mb-2">Amortization Schedule</h3>
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Amortization Schedule</h3>
       <table class="w-full">
         <thead class="bg-gray-100 text-left">
           <tr>
             <th class="px-4 py-2">Month</th>
             <th class="px-4 py-2">Due Date</th>
             <th class="px-4 py-2">Amount</th>
-            <th class="px-4 py-2">Action</th>
+
+            @if($loan->status === 'approved')
+              <th class="px-4 py-2">Action</th>
+              <th class="px-4 py-2">Date Paid</th>
+            @endif
           </tr>
         </thead>
+
         <tbody>
           @foreach($paginatedSchedule as $payment)
+            @php
+              $paid = $loan->payments->firstWhere('month', $payment['month']);
+            @endphp
+
             <tr class="border-b border-gray-200 hover:bg-gray-50 text-left">
               <td class="px-4 py-2">{{ $payment['month'] }}</td>
               <td class="px-4 py-2">{{ $payment['due_date'] }}</td>
               <td class="px-4 py-2">₱{{ number_format($payment['amount'], 2) }}</td>
-              <td class="px-4 py-2">
-                <x-modals.create-transaction :loan="$loan" :payment="$payment" />
-              </td>
+
+              @if($loan->status === 'approved')
+                <td class="px-4 py-2">
+                  @if($paid)
+                    <button class="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed" disabled>
+                      Paid
+                    </button>
+                  @else
+                    <x-modals.create-payment :loan="$loan" :payment="$payment" />
+                  @endif
+                </td>
+                <td class="px-4 py-2">
+                  @if($paid)
+                    {{ $paid->created_at->format('F j, Y') }}
+                  @else
+                    <span class="text-gray-400 italic">—</span>
+                  @endif
+                </td>
+              @endif
             </tr>
           @endforeach
         </tbody>
       </table>
+
       <div class="mt-4">
         {{ $paginatedSchedule->links() }}
       </div>

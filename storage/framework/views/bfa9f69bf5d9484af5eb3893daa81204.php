@@ -44,8 +44,12 @@ unset($__defined_vars); ?>
           Add Payment for Loan #<?php echo e($loan->id); ?>
 
         </h2>
-        <form method="POST" action="<?php echo e(route('admin.transactions.store', $loan->id)); ?> class=" space-y-4>
+
+        <form method="POST" action="<?php echo e(route('admin.loans.payments.store', $loan->id)); ?>" class="space-y-4">
           <?php echo csrf_field(); ?>
+
+          <!-- Hidden month -->
+          <input type="hidden" name="month" value="<?php echo e($payment['month']); ?>">
 
           <div>
             <label class="block mb-1 font-medium">Amount</label>
@@ -58,7 +62,7 @@ unset($__defined_vars); ?>
               Cancel
             </button>
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Save Transaction
+              Save Payment
             </button>
           </div>
         </form>
@@ -66,4 +70,4 @@ unset($__defined_vars); ?>
     </div>
   </template>
 </div>
-<?php /**PATH C:\xampp\htdocs\ledger-system\resources\views/components/modals/create-transaction.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\xampp\htdocs\ledger-system\resources\views\components\modals\create-payment.blade.php ENDPATH**/ ?>

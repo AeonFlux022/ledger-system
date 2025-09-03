@@ -36,23 +36,41 @@ class LoanController extends Controller
         $validated = $request->validate([
             'borrower_id' => 'required|exists:borrowers,id',
             'loan_amount' => 'required|numeric|min:1000',
-            'terms' => 'required|in:3,6,9,12', // restrict terms
+            'terms' => 'required|in:3,6,9,12',
             'due_date' => 'required|date|after:today',
             'status' => 'in:pending,approved,rejected'
         ]);
 
-        // Apply fixed values
+        // Fixed values
         $validated['processing_fee'] = 250;
         $validated['interest_rate'] = 6;
 
+        // Calculate interest
+        $interest = $validated['loan_amount'] * ($validated['interest_rate'] / 100) * $validated['terms'];
+
+        // Compute total payable
+        $validated['total_payable'] = $validated['loan_amount'] + $interest + $validated['processing_fee'];
+
+        // Monthly amortization
+        $validated['monthly_amortization'] = $validated['total_payable'] / $validated['terms'];
+
+        // Overdue (initially zero when loan is created)
+        $validated['overdue'] = 0;
+
+        // Outstanding balance (initially the total payable)
+        $validated['outstanding_balance'] = $validated['total_payable'];
+
+        // Save loan
         Loan::create($validated);
 
         $route = auth()->user()->role === 'super_admin'
-            ? route('admin.borrowers.index')
-            : route('clientLoans', ['borrower' => $validated['borrower_id']]);
+            ? route('admin.loans.index')
+            : route('loans.client', ['borrower' => $validated['borrower_id']]);
 
         return redirect($route)->with('success', 'Loan applied successfully.');
     }
+
+
 
 
     public function show(Loan $loan)

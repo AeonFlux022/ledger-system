@@ -12,14 +12,51 @@
     </p>
 
     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 space-y-8">
-      <!-- Borrower Info -->
+      <!-- Borrower Details -->
       <div class="mb-6">
-        <h3 class="font-bold">Borrower</h3>
-        <p><?php echo e($loan->borrower->fname); ?> <?php echo e($loan->borrower->lname); ?></p>
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Borrower Details</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+          <div>
+            <label class="text-sm text-gray-500">Full Name</label>
+            <p class="mt-1 font-medium"><?php echo e($loan->borrower->fname); ?> <?php echo e($loan->borrower->lname); ?></p>
+          </div>
+
+          <div>
+            <label class="text-sm text-gray-500">Email</label>
+            <p class="mt-1 font-medium"><?php echo e($loan->borrower->email); ?></p>
+          </div>
+
+          <div>
+            <label class="text-sm text-gray-500">Contact Number</label>
+            <p class="mt-1 font-medium"><?php echo e($loan->borrower->contact_number); ?></p>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-sm text-gray-500">Address</label>
+            <p class="mt-1 font-medium"><?php echo e($loan->borrower->address); ?></p>
+          </div>
+
+          <div>
+            <label class="text-sm text-gray-500">Income <span class="text-xs">(Average per month)</span></label>
+            <p class="mt-1 font-medium">₱<?php echo e(number_format($loan->borrower->income, 2)); ?></p>
+          </div>
+
+          <div>
+            <label class="text-sm text-gray-500">Employment Status</label>
+            <p class="mt-1 font-medium"><?php echo e(ucwords($loan->borrower->employment_status)); ?></p>
+          </div>
+
+          <div>
+            <label class="text-sm text-gray-500">ID Provided</label>
+            <p class="mt-1 font-medium"><?php echo e(ucwords(str_replace('_', ' ', $loan->borrower->id_card))); ?></p>
+          </div>
+        </div>
       </div>
       <hr>
 
       <!-- Loan Info -->
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Loan Details</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
         <div>
           <label class="text-sm text-gray-500">Loan Amount</label>
@@ -46,29 +83,46 @@
           <p class="mt-1 font-medium">₱<?php echo e(number_format($loan->monthly_amortization, 2)); ?></p>
         </div>
       </div>
+      <hr>
 
       <!-- Amortization Table -->
-      <h3 class="font-semibold mb-2">Amortization Schedule</h3>
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Amortization Schedule</h3>
       <table class="w-full">
         <thead class="bg-gray-100 text-left">
           <tr>
             <th class="px-4 py-2">Month</th>
             <th class="px-4 py-2">Due Date</th>
             <th class="px-4 py-2">Amount</th>
-            <th class="px-4 py-2">Action</th>
+
+            <?php if($loan->status === 'approved'): ?>
+              <th class="px-4 py-2">Action</th>
+              <th class="px-4 py-2">Date Paid</th>
+            <?php endif; ?>
           </tr>
         </thead>
+
         <tbody>
           <?php $__currentLoopData = $paginatedSchedule; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php
+              $paid = $loan->payments->firstWhere('month', $payment['month']);
+            ?>
+
             <tr class="border-b border-gray-200 hover:bg-gray-50 text-left">
               <td class="px-4 py-2"><?php echo e($payment['month']); ?></td>
               <td class="px-4 py-2"><?php echo e($payment['due_date']); ?></td>
               <td class="px-4 py-2">₱<?php echo e(number_format($payment['amount'], 2)); ?></td>
-              <td class="px-4 py-2">
-                <?php if (isset($component)) { $__componentOriginalfa27b7fa4188c322fcda5afb448e4124 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginalfa27b7fa4188c322fcda5afb448e4124 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modals.create-transaction','data' => ['loan' => $loan,'payment' => $payment]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('modals.create-transaction'); ?>
+
+              <?php if($loan->status === 'approved'): ?>
+                <td class="px-4 py-2">
+                  <?php if($paid): ?>
+                    <button class="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed" disabled>
+                      Paid
+                    </button>
+                  <?php else: ?>
+                    <?php if (isset($component)) { $__componentOriginalf3c793c3a7c34238c896370001632b05 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf3c793c3a7c34238c896370001632b05 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modals.create-payment','data' => ['loan' => $loan,'payment' => $payment]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modals.create-payment'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
@@ -77,19 +131,30 @@
 <?php $component->withAttributes(['loan' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($loan),'payment' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($payment)]); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
-<?php if (isset($__attributesOriginalfa27b7fa4188c322fcda5afb448e4124)): ?>
-<?php $attributes = $__attributesOriginalfa27b7fa4188c322fcda5afb448e4124; ?>
-<?php unset($__attributesOriginalfa27b7fa4188c322fcda5afb448e4124); ?>
+<?php if (isset($__attributesOriginalf3c793c3a7c34238c896370001632b05)): ?>
+<?php $attributes = $__attributesOriginalf3c793c3a7c34238c896370001632b05; ?>
+<?php unset($__attributesOriginalf3c793c3a7c34238c896370001632b05); ?>
 <?php endif; ?>
-<?php if (isset($__componentOriginalfa27b7fa4188c322fcda5afb448e4124)): ?>
-<?php $component = $__componentOriginalfa27b7fa4188c322fcda5afb448e4124; ?>
-<?php unset($__componentOriginalfa27b7fa4188c322fcda5afb448e4124); ?>
+<?php if (isset($__componentOriginalf3c793c3a7c34238c896370001632b05)): ?>
+<?php $component = $__componentOriginalf3c793c3a7c34238c896370001632b05; ?>
+<?php unset($__componentOriginalf3c793c3a7c34238c896370001632b05); ?>
 <?php endif; ?>
-              </td>
+                  <?php endif; ?>
+                </td>
+                <td class="px-4 py-2">
+                  <?php if($paid): ?>
+                    <?php echo e($paid->created_at->format('F j, Y')); ?>
+
+                  <?php else: ?>
+                    <span class="text-gray-400 italic">—</span>
+                  <?php endif; ?>
+                </td>
+              <?php endif; ?>
             </tr>
           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </tbody>
       </table>
+
       <div class="mt-4">
         <?php echo e($paginatedSchedule->links()); ?>
 

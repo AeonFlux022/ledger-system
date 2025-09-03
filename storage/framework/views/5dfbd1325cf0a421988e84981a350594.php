@@ -1,7 +1,7 @@
 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('delete', $user)): ?>
   <div x-data="{ open: false }" class="inline">
     <!-- Trigger Button -->
-    <button @click="open = true" class="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition">
+    <button @click="open = true" class="px-4 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition">
       Delete
     </button>
 

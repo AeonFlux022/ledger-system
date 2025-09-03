@@ -33,6 +33,7 @@
           <th class="px-4 p-2">Interest Rate</th>
           <th class="px-4 p-2">Terms</th>
           <th class="px-4 p-2">Due Date</th>
+          <th class="px-4 py-2">Outstanding Balance</th>
           <th class="px-4 p-2">Actions</th>
           <th class="px-4 p-2">Status</th>
 
@@ -50,12 +51,14 @@
               <td class="px-4 py-2"><?php echo e($loan->interest_rate); ?>%</td>
               <td class="px-4 py-2"><?php echo e($loan->terms); ?> months</td>
               <td class="px-4 py-2"><?php echo e($loan->due_date); ?></td>
+              <td class="px-4 py-2">₱<?php echo e(number_format($loan->outstanding_balance, 2)); ?></td>
+
               <td class="px-4 py-2">
                 <a href="<?php echo e(route('admin.loans.show', $loan->id)); ?>" class="inline-block bg-blue-600 text-white
-            text-sm px-4 py-2 rounded hover:bg-blue-700 transition">View</a>
+                              text-sm px-4 py-2 rounded hover:bg-blue-700 transition">View</a>
               </td>
               <td class="px-4 py-2 capitalize rounded 
-            <?php echo e($loan->status === 'approved' ? 'bg-green-100 text-green-700' :
+                              <?php echo e($loan->status === 'approved' ? 'bg-green-100 text-green-700' :
           ($loan->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700')); ?>">
                 <?php echo e($loan->status); ?>
 

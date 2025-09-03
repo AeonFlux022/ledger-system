@@ -18,6 +18,10 @@ return new class extends Migration {
             $table->integer('terms'); // in months or weeks
             $table->decimal('processing_fee', 12, 2)->default(0);
             $table->date('due_date');
+            $table->decimal('total_payable', 12, 2)->nullable();
+            $table->decimal('outstanding_balance', 15, 2)->default(0);
+            $table->decimal('monthly_amortization', 12, 2)->nullable();
+            $table->decimal('overdue', 12, 2)->default(0);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         });
