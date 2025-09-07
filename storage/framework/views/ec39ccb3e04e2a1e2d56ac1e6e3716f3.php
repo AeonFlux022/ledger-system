@@ -24,7 +24,7 @@
         <th class="px-4 py-2">#</th>
         <th class="px-4 py-2">Due Date</th>
         <th class="px-4 py-2">Terms</th>
-        <th class="px-4 py-2">Due Date</th>
+        <th class="px-4 py-2">Monthly Amortization</th>
         <th class="px-4 py-2">Total Payment</th>
         <th class="px-4 py-2">Balance</th>
         </tr>
