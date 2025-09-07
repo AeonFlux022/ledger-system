@@ -110,6 +110,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 
+// edit loan
+Route::put('/admin/loans/{loan}', [LoanController::class, 'update'])->name('admin.loans.update');
+
+
 
 // payment routes
 // get all payment transactions

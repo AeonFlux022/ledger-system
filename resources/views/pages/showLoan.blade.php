@@ -56,7 +56,7 @@
                         @endif
                       </td>
                       <td class="px-4 py-2
-                          {{ $loan->status === 'approved' ? 'bg-green-100 text-green-700' :
+                                    {{ $loan->status === 'approved' ? 'bg-green-100 text-green-700' :
                 ($loan->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
                         {{ ucfirst($loan->status) }}
                       </td>

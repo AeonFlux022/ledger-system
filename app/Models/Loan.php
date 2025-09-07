@@ -68,4 +68,6 @@ class Loan extends Model
         return $schedule;
     }
 
+    
+
 }

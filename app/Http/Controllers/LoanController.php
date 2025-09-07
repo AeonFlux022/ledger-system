@@ -153,5 +153,45 @@ class LoanController extends Controller
         return view('pages.showSchedule', compact('borrower', 'loan', 'paginatedSchedule'));
     }
 
+    // edit loan in admin panel
+    public function update(Request $request, Loan $loan)
+    {
+
+        // Prevent editing approved loans
+        if ($loan->status === 'approved') {
+            return redirect()->back()->with('error', 'Approved loans cannot be edited.');
+        }
+
+        $validated = $request->validate([
+            'borrower_id' => 'required|exists:borrowers,id',
+            'loan_amount' => 'required|numeric|min:1000',
+            'terms' => 'required|in:3,6,9,12',
+            'due_date' => 'required|date|after:today',
+            'status' => 'in:pending,approved,rejected'
+        ]);
+
+        // Fixed values
+        $validated['processing_fee'] = 250;
+        $validated['interest_rate'] = 6;
+
+        // Recalculate interest
+        $interest = $validated['loan_amount'] * ($validated['interest_rate'] / 100) * $validated['terms'];
+
+        // Recompute total payable
+        $validated['total_payable'] = $validated['loan_amount'] + $interest + $validated['processing_fee'];
+
+        // Monthly amortization
+        $validated['monthly_amortization'] = $validated['total_payable'] / $validated['terms'];
+
+        // Outstanding balance should reset if loan terms are changed
+        $validated['outstanding_balance'] = $validated['total_payable'];
+
+        // Update the loan
+        $loan->update($validated);
+
+        return redirect()->route('admin.loans.index')->with('success', 'Loan updated successfully.');
+    }
+
+
 
 }
