@@ -43,12 +43,12 @@
                       <td class="px-4 py-2">₱{{ number_format($loan->loan_amount, 2) }}</td>
                       <td class="px-4 py-2">{{ $loan->terms }} months</td>
                       <td class="px-4 py-2">₱{{ number_format($loan->monthly_amortization, 2) }}</td>
-                      <td class="px-4 py-2">₱{{ number_format($loan->total_payable, 2) }}</td>
+                      <td class="px-4 py-2">₱{{ number_format($loan->outstanding_balance, 2) }}</td>
                       <td class="px-4 py-2">{{ $loan->created_at->format('M d, Y') }}</td>
                       <td class="px-4 py-2">
                         @if ($loan->status === 'approved')
                           <a href="{{ route('loans.schedule', [$borrower->id, $loan->id]) }}"
-                            class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            class="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                             View Schedule
                           </a>
                         @else
@@ -56,7 +56,7 @@
                         @endif
                       </td>
                       <td class="px-4 py-2
-                                    {{ $loan->status === 'approved' ? 'bg-green-100 text-green-700' :
+                                                                            {{ $loan->status === 'approved' ? 'bg-green-100 text-green-700' :
                 ($loan->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
                         {{ ucfirst($loan->status) }}
                       </td>

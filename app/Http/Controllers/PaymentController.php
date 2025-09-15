@@ -59,8 +59,21 @@ class PaymentController extends Controller
 
         $loan->save();
 
-        return redirect()
-            ->route('admin.loans.show', $loan->id)
-            ->with('success', "Payment recorded successfully! Ref: {$payment->reference_id}");
+        // ✅ Redirect based on role
+        $user = auth()->user();
+        if ($user && $user->role === 'super_admin') {
+            return redirect()
+                ->route('admin.loans.show', $loan->id)
+                ->with('success', "Payment recorded successfully! Ref: {$payment->reference_id}");
+        }
+
+        if ($user && $user->role === 'admin') {
+            return redirect()
+                ->route('loans.schedule', $loan->borrower->id)
+                ->with('success', "Payment recorded successfully! Ref: {$payment->reference_id}");
+        }
+
+        // fallback
+        return back()->with('success', "Payment recorded successfully! Ref: {$payment->reference_id}");
     }
 }
