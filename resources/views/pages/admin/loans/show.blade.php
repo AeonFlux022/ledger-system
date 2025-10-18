@@ -81,6 +81,13 @@
           <label class="text-sm text-gray-500">Monthly Amortization</label>
           <p class="mt-1 font-medium">₱{{ number_format($loan->monthly_amortization, 2) }}</p>
         </div>
+        <div class="mt-4">
+          <h4 class="text-sm text-gray-500">Overdue Penalties</h4>
+          <p class="mt-1 font-medium text-red-600">
+            ₱{{ number_format($loan->overdue, 2) }}
+          </p>
+        </div>
+
       </div>
       <hr>
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use App\Services\SmsGatewayService;
 
 
 class LoanController extends Controller
@@ -61,13 +62,25 @@ class LoanController extends Controller
         $validated['outstanding_balance'] = $validated['total_payable'];
 
         // Save loan
-        Loan::create($validated);
+        $loan = Loan::create($validated);
+
+        // ✅ Send SMS to borrower upon loan application
+        $borrower = $loan->borrower;
+
+        if ($borrower && $borrower->contact_number) {
+            $sms = new SmsGatewayService();
+            $sms->sendSms(
+                $borrower->contact_number,
+                "Hi {$borrower->fname}, your loan application of ₱" . number_format($loan->loan_amount, 2) .
+                " for {$loan->terms} months has been successfully submitted and is now pending review. Thank you for choosing ABG Finance."
+            );
+        }
 
         $route = auth()->user()->role === 'super_admin'
             ? route('admin.loans.index')
             : route('loans.client', ['borrower' => $validated['borrower_id']]);
 
-        return redirect($route)->with('success', 'Loan applied successfully.');
+        return redirect($route)->with('success', 'Loan applied successfully. Borrower has been notified via SMS.');
     }
 
 
@@ -76,6 +89,11 @@ class LoanController extends Controller
     public function show(Loan $loan)
     {
         $loan->load('borrower');
+
+
+        // calculate overdue penalty dynamically
+        $loan->overdue = $loan->calculateOverdues();
+        $loan->save();
 
         $schedule = $loan->amortizationSchedule();
 
@@ -108,17 +126,44 @@ class LoanController extends Controller
     {
         $loan->update(['status' => 'approved']);
 
-        return redirect()->route('admin.loans.index', $loan->id)
-            ->with('success', 'Loan approved successfully.');
+        // ✅ Send SMS Notification
+        $borrower = $loan->borrower;
+
+        if ($borrower && $borrower->contact_number) {
+            $sms = new SmsGatewayService();
+            $sms->sendSms(
+                $borrower->contact_number,
+                "Hi {$borrower->fname}, your loan application for ₱" . number_format($loan->loan_amount, 2) .
+                " has been approved. Congratulations!"
+            );
+        }
+
+        return redirect()
+            ->route('admin.loans.index', $loan->id)
+            ->with('success', 'Loan approved successfully. Borrower has been notified via SMS.');
     }
 
     public function decline(Loan $loan)
     {
         $loan->update(['status' => 'rejected']);
 
-        return redirect()->route('admin.loans.index', $loan->id)
-            ->with('success', 'Loan declined successfully.');
+        // ✅ Send SMS Notification
+        $borrower = $loan->borrower;
+
+        if ($borrower && $borrower->contact_number) {
+            $sms = new SmsGatewayService();
+            $sms->sendSms(
+                $borrower->contact_number,
+                "Hi {$borrower->fname}, we regret to inform you that your loan application for ₱" .
+                number_format($loan->loan_amount, 2) . " has been declined. Thank you for considering ABG Finance."
+            );
+        }
+
+        return redirect()
+            ->route('admin.loans.index', $loan->id)
+            ->with('success', 'Loan declined successfully. Borrower has been notified via SMS.');
     }
+
 
     // show schedule in client side
     public function showSchedule($borrowerId, Loan $loan)
@@ -135,6 +180,10 @@ class LoanController extends Controller
         if ($loan->status !== 'approved') {
             return redirect()->back()->with('error', 'This loan is not yet approved.');
         }
+
+        // calculate overdue penalty dynamically
+        $loan->overdue = $loan->calculateOverdues();
+        $loan->save();
 
         // Load amortization schedule (from your Loan model method)
         $schedule = $loan->amortizationSchedule();
@@ -167,7 +216,7 @@ class LoanController extends Controller
             'loan_amount' => 'required|numeric|min:1000',
             'terms' => 'required|in:3,6,9,12',
             'due_date' => 'required|date|after:today',
-            'status' => 'in:pending,approved,rejected'
+            'status' => 'in:pending,approved,rejected' // add ta di sang active kag completed
         ]);
 
         // Fixed values

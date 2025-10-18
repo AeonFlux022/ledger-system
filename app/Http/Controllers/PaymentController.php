@@ -4,23 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Loan;
 use App\Models\Payment;
-use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Services\SmsGatewayService;
 
 class PaymentController extends Controller
 {
     public function index()
     {
-        // Get all payments with their loan + borrower details
         $payments = Payment::with(['loan.borrower'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return view('pages.admin.payments.index', compact('payments'));
     }
-
 
     public function store(Request $request, $loanId)
     {
@@ -45,19 +42,23 @@ class PaymentController extends Controller
             'loan_id' => $loan->id,
             'month' => $validated['month'],
             'amount' => $validated['amount'],
-            'reference_id' => strtoupper(Str::random(10)), // Unique ref ID
+            'reference_id' => strtoupper(Str::random(10)),
         ]);
 
-        // Update Loan Outstanding Balance
+        // Update loan balance
         $loan->outstanding_balance -= $validated['amount'];
-
-        // Optional: mark loan as completed when fully paid
         if ($loan->outstanding_balance <= 0) {
             $loan->outstanding_balance = 0;
             $loan->status = 'completed';
         }
-
         $loan->save();
+
+        // ✅ Send SMS
+        $sms = new SmsGatewayService();
+        $sms->sendSms(
+            $loan->borrower->contact_number, // use your DB column for phone number
+            "Hi {$loan->borrower->fname}, we received your payment of ₱{$validated['amount']} for Loan #{$loan->id}. Ref: {$payment->reference_id}"
+        );
 
         // ✅ Redirect based on role
         $user = auth()->user();
@@ -69,11 +70,28 @@ class PaymentController extends Controller
 
         if ($user && $user->role === 'admin') {
             return redirect()
-                ->route('loans.schedule', $loan->borrower->id)
+                ->route('loans.schedule', [
+                    'borrower' => $loan->borrower->id,
+                    'loan' => $loan->id,
+                ])
                 ->with('success', "Payment recorded successfully! Ref: {$payment->reference_id}");
         }
 
-        // fallback
         return back()->with('success', "Payment recorded successfully! Ref: {$payment->reference_id}");
+    }
+
+    public function borrowerPayments($borrowerId, $loanId)
+    {
+        $loan = Loan::with('payments')
+            ->where('borrower_id', $borrowerId)
+            ->findOrFail($loanId);
+
+        $payments = $loan->payments()
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $borrower = $loan->borrower;
+
+        return view('pages.showPayments', compact('loan', 'borrower', 'payments'));
     }
 }

@@ -8,27 +8,27 @@
 
       {{-- If user is NOT logged in --}}
       @guest
-      {{-- <li><a href="{{ route('register') }}" class="text-gray-700 hover:text-blue-600">Register</a></li> --}}
-      <li><a href="/about" class="text-gray-700 hover:text-blue-600">About Us</a></li>
-      <li><a href="/service" class="text-gray-700 hover:text-blue-600">Services</a></li>
-      <li><a href="/contact" class="text-gray-700 hover:text-blue-600">Contact</a></li>
-      <li><a href="{{ route('login') }}" class="text-red-500 hover:underline">Login</a></li>
-    @endguest
+        {{-- <li><a href="{{ route('register') }}" class="text-gray-700 hover:text-blue-600">Register</a></li> --}}
+        <li><a href="/about" class="text-gray-700 hover:text-blue-600">About Us</a></li>
+        <li><a href="/service" class="text-gray-700 hover:text-blue-600">Services</a></li>
+        <li><a href="/contact" class="text-gray-700 hover:text-blue-600">Contact</a></li>
+        <li><a href="{{ route('login') }}" class="text-red-500 hover:underline">Login</a></li>
+      @endguest
 
       {{-- If user IS logged in --}}
       @auth
-      <li><a href="/borrowers" class="text-gray-700 hover:text-blue-600">Borrowers</a></li>
-      <li><a href="/loans-list" class="text-gray-700 hover:text-blue-600">Loans</a></li>
-      <li><a href="/transactions-list" class="text-gray-700 hover:text-blue-600">Transactions</a></li>
-      <li class="text-gray-700">Hello, <span class="font-semibold">{{ auth()->user()->username }}</span></li>
+        <li><a href="/borrowers" class="text-gray-700 hover:text-blue-600">Borrowers</a></li>
+        {{-- <li><a href="/loansList" class="text-gray-700 hover:text-blue-600">Loans</a></li>
+        <li><a href="/transactionsList" class="text-gray-700 hover:text-blue-600">Payments</a></li> --}}
+        <li class="text-gray-700">Hello, <span class="font-semibold">{{ auth()->user()->username }}</span></li>
 
-      <li>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="text-red-500 hover:underline">Logout</button>
-      </form>
-      </li>
-    @endauth
+        <li>
+          <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="text-red-500 hover:underline">Logout</button>
+          </form>
+        </li>
+      @endauth
     </ul>
   </div>
 </nav>

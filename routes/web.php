@@ -33,7 +33,7 @@ Route::post('/logout', function () {
 
 // client borrowers pages
 // display borrowers in client side
-Route::get('/borrowers', [BorrowerController::class, 'indexClient'])->name('borrowers.client');
+Route::get('/borrowers', [BorrowerController::class, 'indexClient'])->name('borrowersList');
 
 // search for a borrower
 Route::get('/borrowers/search', [BorrowerController::class, 'search'])->name('borrowers.search');
@@ -50,7 +50,12 @@ Route::get('/borrowers/{borrower}/loans', [LoanController::class, 'clientLoans']
 Route::get('/borrowers/{borrower}/loans/{loan}', [LoanController::class, 'showSchedule'])
     ->name('loans.schedule');
 
+// Borrower payments list for a specific loan
+Route::get('/borrowers/{borrower}/loans/{loan}/payments', [PaymentController::class, 'borrowerPayments'])
+    ->name('paymentsList');
 
+
+    
 // view admin panel
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 

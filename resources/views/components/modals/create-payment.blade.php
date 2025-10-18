@@ -1,5 +1,17 @@
 @props(['loan', 'payment'])
 
+@php
+  $dueDate = \Carbon\Carbon::parse($payment['due_date']);
+  $paid = $loan->payments->firstWhere('month', $payment['month']);
+  $penalty = 0;
+
+  if (!$paid && now()->greaterThan($dueDate)) {
+    $penalty = $payment['amount'] * 0.01; // 1% penalty
+  }
+
+  $totalPayable = $payment['amount'] + $penalty;
+@endphp
+
 <div x-data="{ open: false }" class="inline-block">
   <!-- Button to open modal -->
   <button @click="open = true" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
@@ -24,8 +36,13 @@
 
           <div>
             <label class="block mb-1 font-medium">Amount</label>
-            <input type="number" name="amount" value="{{ $payment['amount'] }}" step="0.01"
-              class="w-full border px-4 py-2 rounded mb-3" required>
+            <input type="number" name="amount" value="{{ $totalPayable }}" step="0.01"
+              class="w-full border px-4 py-2 rounded mb-3 cursor-not-allowed" readonly required>
+            @if($penalty > 0)
+              <p class="text-sm text-red-600 mt-1">
+                Includes ₱{{ number_format($penalty, 2) }} penalty for overdue.
+              </p>
+            @endif
           </div>
 
           <div class="flex justify-end space-x-2">

@@ -11,10 +11,12 @@
           <th class="px-4 p-2">#</th>
           <th class="px-4 p-2">Borrower</th>
           <th class="px-4 p-2">Loan Amount</th>
-          <th class="px-4 p-2">Interest Rate</th>
-          <th class="px-4 p-2">Terms</th>
+          {{-- <th class="px-4 p-2">Interest Rate</th> --}}
+          {{-- <th class="px-4 p-2">Terms</th> --}}
           <th class="px-4 p-2">Due Date</th>
           <th class="px-4 py-2">Outstanding Balance</th>
+          {{-- <th class="px-4 p-2">Loan Status</th> --}}
+          <th class="px-4 p-2">Last Payment</th>
           <th class="px-4 p-2">Actions</th>
           <th class="px-4 p-2">Status</th>
 
@@ -28,10 +30,15 @@
               </td>
               <td class="px-4 py-2">{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</td>
               <td class="px-4 py-2">&#8369;{{ number_format($loan->loan_amount, 2) }}</td>
-              <td class="px-4 py-2">{{ $loan->interest_rate }}%</td>
-              <td class="px-4 py-2">{{ $loan->terms }} months</td>
+              {{-- <td class="px-4 py-2">{{ $loan->interest_rate }}%</td> --}}
+              {{-- <td class="px-4 py-2">{{ $loan->terms }} months</td> --}}
               <td class="px-4 py-2">{{ $loan->due_date }}</td>
-              <td class="px-4 py-2">₱{{ number_format($loan->outstanding_balance, 2) }}</td>
+              <td class="px-4 py-2">₱{{ number_format($loan->balance_with_overdue, 2) }}</td>
+              {{-- <td
+                class="px-4 py-2 {{ $loan->loan_status === 'Overdue' ? 'text-red-600 font-bold' : 'text-green-600 font-bold' }}">
+                {{ $loan->loan_status }} --}}
+              </td>
+              <td class="px-4 py-2">{{ $loan->last_payment_date }}</td>
               <td class="px-4 py-2">
                 <div class="flex items-center space-x-2">
                   <a href="{{ route('admin.loans.show', $loan->id) }}"
@@ -46,6 +53,7 @@
                   @endif
                 </div>
               </td>
+
               <td class="px-4 py-2 capitalize rounded {{ $loan->status === 'approved' ? 'bg-green-100 text-green-700' :
           ($loan->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
                 {{ $loan->status }}

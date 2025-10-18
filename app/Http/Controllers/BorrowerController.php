@@ -28,7 +28,7 @@ class BorrowerController extends Controller
     public function indexClient()
     {
         $borrowers = Borrower::latest()->paginate(10); // 10 per page
-        return view('pages.borrowers-client', compact('borrowers'));
+        return view('pages.borrowersList', compact('borrowers'));
     }
 
     public function search(Request $request)
