@@ -7,7 +7,16 @@
   <div class="px-6 py-6">
     <h2 class="text-2xl font-bold mb-4">All Users</h2>
 
-    <x-modals.create-user />
+    <div class="flex items-center justify-between mb-4">
+      {{-- Left: Create User Button --}}
+      <x-modals.create-user />
+
+      {{-- Right: Export PDF Button --}}
+      <a href="{{ route('export.users') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Export Users as PDF
+      </a>
+    </div>
+
 
     <table class="w-full bg-white rounded shadow">
       <thead>

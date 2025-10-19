@@ -9,6 +9,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ExportPdfController;
 
 // view home page
 Route::get('/', function () {
@@ -55,7 +56,7 @@ Route::get('/borrowers/{borrower}/loans/{loan}/payments', [PaymentController::cl
     ->name('paymentsList');
 
 
-    
+
 // view admin panel
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
@@ -129,3 +130,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/loans/{loan}/payments', [PaymentController::class, 'store'])
         ->name('loans.payments.store');
 });
+
+
+// Export PDF routes
+Route::get('/export/users', [ExportPdfController::class, 'exportUsers'])->name('export.users');
+Route::get('/export/borrowers', [ExportPdfController::class, 'exportBorrowers'])->name('export.borrowers');
+Route::get('/export/loans', [ExportPdfController::class, 'exportLoans'])->name('export.loans');
+Route::get('/export/payments', [ExportPdfController::class, 'exportPayments'])->name('export.payments');

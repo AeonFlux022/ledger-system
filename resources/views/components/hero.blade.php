@@ -1,7 +1,12 @@
-@props(['title' => 'Welcome to LoanApp', 'subtitle' => 'Simple and fast loans.'])
+@props(['title' => 'Welcome to ABG Finance', 'subtitle' => 'Get started now.'])
 
-<section class="bg-blue-600 text-white min-h-screen flex flex-col items-center justify-center px-6">
-  <div class="text-center mb-12">
+<section class="relative min-h-screen flex flex-col items-center justify-center text-white px-6 bg-cover bg-center"
+  style="background-image: url('{{ asset('images/hero-bg-2.jpg') }}');">
+
+  <!-- Overlay (adds blur and dark tint) -->
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+  <div class="relative z-10 text-center mb-12">
     <h1 class="text-4xl font-bold mb-4">{{ $title }}</h1>
     <p class="text-lg mb-6">{{ $subtitle }}</p>
     {{-- <a href="/register"
@@ -11,7 +16,7 @@
   </div>
 
   <!-- Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl w-full">
+  {{-- <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl w-full">
     <!-- Loans -->
     <a href="/loans-list"
       class="bg-white text-blue-600 p-6 rounded-2xl shadow-lg text-center transform transition hover:-translate-y-2 hover:shadow-2xl">
@@ -32,5 +37,5 @@
       <h3 class="text-xl font-semibold mb-2">Transactions</h3>
       <p class="text-sm text-gray-600">Keep track of financial transactions.</p>
     </a>
-  </div>
+  </div> --}}
 </section>
