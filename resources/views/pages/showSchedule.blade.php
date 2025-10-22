@@ -54,12 +54,15 @@
               </td>
             </tr>
             <tr class="border-b border-gray-200">
-              <td class="px-4 py-2 font-medium">Loan Status</td>
+              <td class="px-4 py-3 font-medium">Loan Status</td>
               <td class="px-4 py-2">
-                <span
-                  class="{{ $loan->loan_status === 'Overdue' ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold' }}">
-                  {{ $loan->loan_status }}
-                </span>
+                @if($loan->loan_status === 'current')
+                  <span class="bg-teal-200 text-teal-800 px-4 py-2 rounded">Current</span>
+                @elseif($loan->loan_status === 'overdue')
+                  <span class="bg-orange-200 text-orange-800 px-4 py-2 rounded">Overdue</span>
+                @elseif($loan->loan_status === 'completed')
+                  <span class="bg-blue-200 text-blue-800 px-4 py-2 rounded">Completed</span>
+                @endif
               </td>
             </tr>
             <tr>

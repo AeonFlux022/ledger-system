@@ -26,6 +26,10 @@
     th {
       background-color: #f0f0f0;
     }
+
+    .page-break {
+      page-break-before: always;
+    }
   </style>
 </head>
 
@@ -37,6 +41,7 @@
         <th>ID</th>
         <th>Name</th>
         <th>Contact</th>
+        <th>Email</th>
         <th>Address</th>
         <th>Created At</th>
       </tr>
@@ -47,6 +52,7 @@
           <td>{{ $b->id }}</td>
           <td>{{ $b->fname }} {{ $b->lname }}</td>
           <td>{{ $b->contact_number }}</td>
+          <td>{{ $b->email }}</td>
           <td>{{ $b->address }}</td>
           <td>{{ $b->created_at->format('M d, Y') }}</td>
         </tr>

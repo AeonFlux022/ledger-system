@@ -26,6 +26,10 @@
     th {
       background-color: #f0f0f0;
     }
+
+    .page-break {
+      page-break-before: always;
+    }
   </style>
 </head>
 
@@ -49,8 +53,8 @@
           <td>{{ $p->id }}</td>
           <td>{{ $p->loan->borrower->fname }} {{ $p->loan->borrower->lname }}</td>
           <td>{{ $p->loan_id }}</td>
-          <td>{{ $p->month }}</td>
-          <td>₱{{ number_format($p->amount, 2) }}</td>
+          <td>{{ $p->month }} mo.</td>
+          <td>{{ number_format($p->amount, 2) }}</td>
           <td>{{ $p->reference_id }}</td>
           <td>{{ $p->created_at->format('M d, Y') }}</td>
         </tr>

@@ -100,7 +100,7 @@
             <th class="px-4 py-2">Due Date</th>
             <th class="px-4 py-2">Amount</th>
 
-            @if($loan->status === 'approved')
+            @if(in_array($loan->status, ['approved', 'current', 'overdue']))
               <th class="px-4 py-2">Action</th>
               <th class="px-4 py-2">Date Paid</th>
             @endif
@@ -118,7 +118,7 @@
               <td class="px-4 py-2">{{ $payment['due_date'] }}</td>
               <td class="px-4 py-2">₱{{ number_format($payment['amount'], 2) }}</td>
 
-              @if($loan->status === 'approved')
+              @if(in_array($loan->status, ['approved', 'current', 'overdue']))
                 <td class="px-4 py-2">
                   @if($paid)
                     <button class="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed" disabled>

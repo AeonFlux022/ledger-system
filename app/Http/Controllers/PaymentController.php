@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Loan;
+use App\Models\Borrower;
 use App\Models\Payment;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -10,11 +11,22 @@ use App\Services\SmsGatewayService;
 
 class PaymentController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
-        $payments = Payment::with(['loan.borrower'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $query = Payment::with(['loan.borrower'])->orderBy('created_at', 'desc');
+
+        // 🔍 Filter by borrower name or contact number if search is provided
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('loan.borrower', function ($q) use ($search) {
+                $q->where('fname', 'like', "%{$search}%")
+                    ->orWhere('lname', 'like', "%{$search}%")
+                    ->orWhere('contact_number', 'like', "%{$search}%");
+            });
+        }
+
+        $payments = $query->paginate(10);
 
         return view('pages.admin.payments.index', compact('payments'));
     }
@@ -59,6 +71,10 @@ class PaymentController extends Controller
             $loan->borrower->contact_number, // use your DB column for phone number
             "Hi {$loan->borrower->fname}, we received your payment of ₱{$validated['amount']} for Loan #{$loan->id}. Ref: {$payment->reference_id}"
         );
+
+        // update loan status after payment
+        $loan = Loan::find($payment->loan_id);
+        $loan->updateLoanStatus();
 
         // ✅ Redirect based on role
         $user = auth()->user();

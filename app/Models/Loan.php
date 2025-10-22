@@ -23,35 +23,8 @@ class Loan extends Model
         'total_payable',
         'outstanding_balance',
         'status',
+        'loan_status',
     ];
-
-    // 🔹 Auto-update loan status when loading or saving
-    protected static function booted()
-    {
-        static::retrieved(function ($loan) {
-            $loan->autoUpdateStatus();
-        });
-
-        static::saving(function ($loan) {
-            $loan->autoUpdateStatus();
-        });
-    }
-
-    /**
-     * 🔹 Automatically update the loan status
-     */
-    public function autoUpdateStatus()
-    {
-        $now = Carbon::now();
-
-        if ($this->outstanding_balance <= 0) {
-            $this->status = 'completed';
-        } elseif ($now->greaterThan(Carbon::parse($this->due_date)) && $this->outstanding_balance > 0) {
-            $this->status = 'overdue';
-        } elseif (!in_array($this->status, ['approved', 'pending', 'rejected', 'completed', 'overdue'])) {
-            $this->status = 'pending';
-        }
-    }
 
     /**
      * 🔹 Relationship: Loan belongs to a Borrower
@@ -126,22 +99,6 @@ class Loan extends Model
     }
 
     /**
-     * 🔹 Accessor for human-readable loan status
-     */
-    public function getLoanStatusAttribute()
-    {
-        if ($this->status === 'completed') {
-            return 'Completed';
-        }
-
-        if (now()->greaterThan($this->due_date) && $this->outstanding_balance > 0) {
-            return 'Overdue';
-        }
-
-        return 'Current';
-    }
-
-    /**
      * 🔹 Accessor for last payment date
      */
     public function getLastPaymentDateAttribute()
@@ -158,4 +115,52 @@ class Loan extends Model
     {
         return round($this->outstanding_balance + $this->calculateOverdues(), 2);
     }
+
+    /**
+     * 🔹 Automatically update loan_status based on payments and due dates
+     */
+
+    // check for loan status
+    public function updateLoanStatus(): void
+    {
+        $today = now();
+        $schedule = $this->amortizationSchedule();
+
+        $paidCount = $this->payments()->count();
+
+        // If fully paid
+        if ($paidCount >= $this->terms) {
+            $this->loan_status = 'completed';
+        } else {
+            // Find the latest unpaid due date
+            $nextUnpaid = $schedule->firstWhere('status', 'unpaid');
+
+            if ($nextUnpaid) {
+                $dueDate = Carbon::parse($nextUnpaid['due_date']);
+
+                // Overdue if today is past due and unpaid
+                if ($today->greaterThan($dueDate)) {
+                    $this->loan_status = 'overdue';
+                }
+                // Otherwise, still current
+                else {
+                    $this->loan_status = 'current';
+                }
+            } else {
+                // If somehow all paid but terms don't match (edge case)
+                $this->loan_status = 'completed';
+            }
+        }
+
+        $this->save();
+    }
+
+    protected static function booted()
+    {
+        static::retrieved(function ($loan) {
+            $loan->updateLoanStatus();
+        });
+    }
+
+
 }

@@ -26,6 +26,10 @@
     th {
       background-color: #f0f0f0;
     }
+
+    .page-break {
+      page-break-before: always;
+    }
   </style>
 </head>
 
@@ -48,10 +52,10 @@
         <tr>
           <td>{{ $loan->id }}</td>
           <td>{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</td>
-          <td>₱{{ number_format($loan->loan_amount, 2) }}</td>
+          <td>{{ number_format($loan->loan_amount, 2) }}</td>
           <td>{{ $loan->terms }} mo.</td>
           <td>{{ ucfirst($loan->status) }}</td>
-          <td>₱{{ number_format($loan->outstanding_balance, 2) }}</td>
+          <td>{{ number_format($loan->outstanding_balance, 2) }}</td>
           <td>{{ \Carbon\Carbon::parse($loan->due_date)->format('M d, Y') }}</td>
         </tr>
       @endforeach

@@ -39,7 +39,8 @@ class LoanController extends Controller
             'loan_amount' => 'required|numeric|min:1000',
             'terms' => 'required|in:3,6,9,12',
             'due_date' => 'required|date|after:today',
-            'status' => 'in:pending,approved,rejected'
+            'status' => 'in:pending,approved,rejected',
+            'loan_status' => 'in:current,overdue,completed'
         ]);
 
         // Fixed values
@@ -108,6 +109,8 @@ class LoanController extends Controller
             ['path' => request()->url(), 'query' => request()->query()]
         );
 
+        // update loan status
+        $loan->updateLoanStatus();
         return view('pages.admin.loans.show', compact('loan', 'paginatedSchedule'));
     }
 
@@ -126,7 +129,7 @@ class LoanController extends Controller
     {
         $loan->update(['status' => 'approved']);
 
-        // ✅ Send SMS Notification
+        // Send SMS Notification
         $borrower = $loan->borrower;
 
         if ($borrower && $borrower->contact_number) {
@@ -134,7 +137,7 @@ class LoanController extends Controller
             $sms->sendSms(
                 $borrower->contact_number,
                 "Hi {$borrower->fname}, your loan application for ₱" . number_format($loan->loan_amount, 2) .
-                " has been approved. Congratulations!"
+                " has been approved!"
             );
         }
 
@@ -191,7 +194,7 @@ class LoanController extends Controller
         // Manual pagination
         $perPage = 6; // you can set 10 if you prefer
         $page = request()->get('page', 1);
-        $paginatedSchedule = new \Illuminate\Pagination\LengthAwarePaginator(
+        $paginatedSchedule = new LengthAwarePaginator(
             $schedule->forPage($page, $perPage),
             $schedule->count(),
             $perPage,
@@ -216,7 +219,8 @@ class LoanController extends Controller
             'loan_amount' => 'required|numeric|min:1000',
             'terms' => 'required|in:3,6,9,12',
             'due_date' => 'required|date|after:today',
-            'status' => 'in:pending,approved,rejected' // add ta di sang active kag completed
+            'status' => 'in:pending,approved,rejected',
+            'loan_status' => 'in:current,overdue,completed'
         ]);
 
         // Fixed values

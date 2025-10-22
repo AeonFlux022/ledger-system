@@ -30,7 +30,6 @@
                 <th class="px-4 py-2">Terms</th>
                 <th class="px-4 py-2">Monthly Payment</th>
                 <th class="px-4 py-2">Outstanding Balance</th>
-                <th class="px-4 py-2">Loan Status</th>
                 <th class="px-4 py-2">Actions</th>
                 <th class="px-4 py-2">Status</th>
               </tr>
@@ -45,14 +44,8 @@
                   <td class="px-4 py-2">₱{{ number_format($loan->monthly_amortization, 2) }}</td>
                   <td class="px-4 py-2"> ₱{{ number_format($loan->outstanding_balance + $loan->calculateOverdues(), 2) }}</td>
                   <td class="px-4 py-2">
-                    <span
-                      class="{{ $loan->loan_status === 'Overdue' ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold' }}">
-                      {{ $loan->loan_status }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-2">
-                    @if ($loan->status === 'approved')
-                      <a href="{{ route('loans.schedule', [$borrower->id, $loan->id]) }}"
+                    @if($loan->status == 'approved')
+                      <a href="{{ route('loans.schedule', ['borrower' => $borrower->id, 'loan' => $loan->id]) }}"
                         class="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                         View Schedule
                       </a>
@@ -64,9 +57,8 @@
                       <span class="text-gray-500 italic">Not available</span>
                     @endif
                   </td>
-                  <td
-                    class="px-4 py-2 {{ $loan->status === 'approved' ? 'bg-green-100 text-green-700' : ($loan->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
-                    {{ ucfirst($loan->status) }}
+                  <td class="px-4 py-2 capitalize rounded">
+                    {{ $loan->status }}
                   </td>
                 </tr>
               @endforeach

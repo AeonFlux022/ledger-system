@@ -39,6 +39,9 @@ Route::get('/borrowers', [BorrowerController::class, 'indexClient'])->name('borr
 // search for a borrower
 Route::get('/borrowers/search', [BorrowerController::class, 'search'])->name('borrowers.search');
 
+// show loan amortization schedule
+Route::get('/borrowers/{borrower}/loans/{loan}', [LoanController::class, 'showSchedule'])
+    ->name('loans.schedule');
 
 // show a single borrower in client side
 Route::get('/borrowers/{borrower}', [BorrowerController::class, 'showClient'])->name('showBorrower');
@@ -46,10 +49,6 @@ Route::get('/borrowers/{borrower}', [BorrowerController::class, 'showClient'])->
 // client loans page
 Route::get('/borrowers/{borrower}/loans', [LoanController::class, 'clientLoans'])
     ->name('loans.client');
-
-// show loan amortization schedule
-Route::get('/borrowers/{borrower}/loans/{loan}', [LoanController::class, 'showSchedule'])
-    ->name('loans.schedule');
 
 // Borrower payments list for a specific loan
 Route::get('/borrowers/{borrower}/loans/{loan}/payments', [PaymentController::class, 'borrowerPayments'])
@@ -124,13 +123,30 @@ Route::put('/admin/loans/{loan}', [LoanController::class, 'update'])->name('admi
 // payment routes
 // get all payment transactions
 
+// Route::prefix('admin')->name('admin.')->group(function () {
+//     Route::get('/payments', [PaymentController::class, 'index'])->name('loans.payments.index');
+//     Route::post('/loans/{loan}/payments', [PaymentController::class, 'store'])
+//         ->name('loans.payments.store');
+// });
+
+// // filter for payments
+// Route::get('/admin/payments', [PaymentController::class, 'index'])->name('admin.payments.index');
+
+// // search borrower in payments
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/payments', [PaymentController::class, 'index'])->name('loans.payments.index');
-    Route::post('/loans/{loan}/payments', [PaymentController::class, 'store'])
-        ->name('loans.payments.store');
-});
 
+    // 🧾 Payments Routes
+    Route::get('/payments', [PaymentController::class, 'index'])
+        ->name('loans.payments.index'); // show payments (with optional filter)
+
+    Route::post('/loans/{loan}/payments', [PaymentController::class, 'store'])
+        ->name('loans.payments.store'); // create a payment for a loan
+
+    // 🔍 Borrower search (for filter dropdown or live search)
+    Route::get('/borrowers/search', [BorrowerController::class, 'search'])
+        ->name('borrowers.search');
+});
 
 // Export PDF routes
 Route::get('/export/users', [ExportPdfController::class, 'exportUsers'])->name('export.users');

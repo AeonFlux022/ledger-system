@@ -26,6 +26,10 @@
     th {
       background-color: #f0f0f0;
     }
+
+    .page-break {
+      page-break-before: always;
+    }
   </style>
 </head>
 
@@ -35,7 +39,7 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>Name</th>
+        <th>Username</th>
         <th>Email</th>
         <th>Role</th>
         <th>Created At</th>

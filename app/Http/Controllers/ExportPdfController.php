@@ -44,10 +44,29 @@ class ExportPdfController extends Controller
     /**
      * Export all payments
      */
-    public function exportPayments()
+    public function exportPayments(Request $request)
     {
-        $payments = Payment::with('loan.borrower')->get();
-        $pdf = Pdf::loadView('pdf.payments', compact('payments'))->setPaper('a4', 'landscape');
-        return $pdf->download('payments-list-' . now()->format('Y-m-d') . '.pdf');
+        $search = $request->get('search');
+
+        $payments = Payment::with(['loan.borrower'])
+            ->when($search, function ($query, $search) {
+                $query->whereHas('loan.borrower', function ($q) use ($search) {
+                    $q->where('fname', 'like', "%{$search}%")
+                        ->orWhere('lname', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Optional: Dynamic file name (based on filter or default)
+        $fileName = $search
+            ? 'payments-' . str_replace(' ', '_', strtolower($search)) . '-' . now()->format('Y-m-d') . '.pdf'
+            : 'payments-list-' . now()->format('Y-m-d') . '.pdf';
+
+        $pdf = Pdf::loadView('pdf.payments', compact('payments'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download($fileName);
     }
+
 }
