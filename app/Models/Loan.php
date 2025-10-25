@@ -157,6 +157,15 @@ class Loan extends Model
         return $lastPayment ? $lastPayment->created_at->format('M d, Y') : '—';
     }
 
+    public function getPayablePerTermAttribute(): float
+    {
+        if ($this->terms > 0 && $this->total_payable > 0) {
+            return round($this->total_payable / $this->terms, 2);
+        }
+
+        return 0;
+    }
+
 
     // check for loan status
     public function updateLoanStatus(): void

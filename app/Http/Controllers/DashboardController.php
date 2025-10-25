@@ -2,33 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Borrower;
 use App\Models\Loan;
+use App\Models\Payment;
 
 class DashboardController extends Controller
 {
   public function index()
   {
-    $userCount = User::whereIn('role', ['admin', 'super_admin'])->count();
+    $userCount = User::count();
     $borrowerCount = Borrower::count();
     $loanCount = Loan::count();
-
-    // Sum of all loan amounts
+    $approvedLoans = Loan::where('status', 'approved')->count();
     $totalLoanAmount = Loan::sum('loan_amount');
 
-    // Placeholder values (update later)
-    $approvedLoans = Loan::where('status', 'approved')->count();
-    $totalIncome = 0; // we can update this later with interest + processing fees
+    // ✅ Get total interest earned from all payments
+    $interestIncome = Loan::whereHas('payments')->get()->sum(function ($loan) {
+      $totalPaid = $loan->payments->sum('amount');
+      $principal = $loan->loan_amount;
+      return max($totalPaid - $principal, 0); // profit = paid - principal
+    });
+
+    // ✅ Get total penalties collected
+    $penaltyIncome = Payment::sum('penalty');
+
+    // ✅ Total earnings = interests + penalties
+    $totalEarnings = $interestIncome + $penaltyIncome;
+
+    // Optional: round off
+    $totalEarnings = round($totalEarnings, 2);
 
     return view('pages.admin.dashboard', compact(
       'userCount',
       'borrowerCount',
-      'approvedLoans',
       'loanCount',
-      'totalIncome',
-      'totalLoanAmount'
+      'approvedLoans',
+      'totalLoanAmount',
+      'totalEarnings'
     ));
   }
 }

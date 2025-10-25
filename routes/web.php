@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportPdfController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SmsLogController;
+use App\Http\Controllers\StatementController;
 
 // view home page
 Route::get('/', function () {
@@ -158,3 +159,17 @@ Route::get('/export/payments', [ExportPdfController::class, 'exportPayments'])->
 // sms logs route
 Route::get('/admin/sms-logs', [SmsLogController::class, 'index'])
     ->name('admin.smsLogs.index');
+
+
+// soa 
+// Route::prefix('admin')->middleware(['auth', 'role:admin,super_admin'])->group(function () {
+//     Route::get('/borrowers/{borrower}/statement', [StatementController::class, 'show'])->name('borrowers.statement');
+//     Route::get('/borrowers/{borrower}/statement/pdf', [StatementController::class, 'exportPdf'])->name('borrowers.statement.pdf');
+// });
+
+// soa 
+Route::get('/borrowers/{borrower}/statement', [StatementController::class, 'show'])
+    ->name('showStatement');
+
+Route::get('/borrowers/{borrower}/statement/pdf', [StatementController::class, 'exportPdf'])
+    ->name('statementPdf');

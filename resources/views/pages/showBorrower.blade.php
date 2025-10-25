@@ -57,6 +57,10 @@
               class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
               View Loans
             </a>
+            <a href="{{ route('showStatement', $borrower->id) }}"
+              class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700">
+              View Statement
+            </a>
             {{-- <a href="{{ route('paymentsList', ['borrower' => $borrower->id, 'loan' => $loan->id]) }}"
               class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
               View Payments

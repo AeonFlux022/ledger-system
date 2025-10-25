@@ -42,7 +42,7 @@
                 <a href="{{ route('admin.loans.show', $loan->id) }}"
                   class="inline-block bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700 transition">View</a>
 
-                @if($loan->status === 'approved')
+                @if(in_array($loan->status, ['approved', 'rejected']))
                   <button class="bg-gray-400 text-white text-sm px-4 py-2 rounded cursor-not-allowed" disabled>
                     Edit Loan
                   </button>
