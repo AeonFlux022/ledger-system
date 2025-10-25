@@ -65,7 +65,13 @@ class SendLoanReminders extends Command
 
             // Send SMS if message was set
             if ($message) {
-                $result = $sms->sendSms($borrower->contact_number, $message);
+                $result = $sms->sendSms(
+                    $borrower->contact_number,
+                    $message,
+                    $loan->id,
+                    $borrower->id,
+                    'reminder'
+                );
 
                 if ($result['success']) {
                     $this->info("Reminder sent successfully for Loan {$loan->id}");

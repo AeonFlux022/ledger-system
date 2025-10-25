@@ -81,16 +81,22 @@
           </div>
 
           <!-- PREVIEW SECTION -->
+          <!-- PREVIEW SECTION -->
           <div class="mt-6 p-4 bg-gray-50 border rounded">
             <h3 class="font-bold mb-2">Loan Preview</h3>
             <p><strong>Total Payable:</strong> <span x-text="formatCurrency(total_payable)"></span></p>
             <p><strong>Monthly Amortization:</strong> <span x-text="formatCurrency(monthly_amortization)"></span></p>
+            <p><strong>Overdue Penalty (3% of monthly amortization):</strong>
+              <span x-text="formatCurrency(overdue_penalty)"></span>
+              <span class="text-sm text-gray-500">(per missed month)</span>
+            </p>
           </div>
+
 
           <div class="flex justify-end space-x-2 mt-6">
             <button type="button" @click="open = false" class="px-4 py-2 border rounded">Cancel</button>
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Create Loan
+              Apply Loan
             </button>
           </div>
         </form>
@@ -106,6 +112,7 @@
       terms: 0,
       interest_rate: 6,
       processing_fee: 250,
+      penalty_rate: 3,
 
       get total_payable() {
         if (!this.loan_amount || !this.terms) return 0;
@@ -118,12 +125,17 @@
         return this.total_payable / this.terms;
       },
 
+      get overdue_penalty() {
+        if (!this.loan_amount || !this.terms) return 0;
+        return this.monthly_amortization * (this.penalty_rate / 100); // 3% penalty
+      },
+
       formatCurrency(value) {
         return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value);
       },
 
       formatBeforeSubmit() {
-        // Ensure values are passed to backend properly
+        // Optional: formatting logic before submit
       }
     }
   }

@@ -81,22 +81,36 @@ class Loan extends Model
     /**
      * 🔹 Calculate overdue penalties
      */
+    public function calculatePenaltyForMonth($month)
+    {
+        $schedule = collect($this->amortizationSchedule());
+        $row = $schedule->firstWhere('month', $month);
+
+        if (!$row)
+            return 0;
+
+        $dueDate = Carbon::parse($row['due_date']);
+        $alreadyPaid = $this->payments->firstWhere('month', $month);
+
+        // 3% penalty only if overdue and unpaid
+        if (now()->greaterThan($dueDate) && !$alreadyPaid) {
+            return round($row['amount'] * 0.03, 2);
+        }
+
+        return 0;
+    }
+
     public function calculateOverdues()
     {
-        $today = now();
         $penalty = 0;
 
         foreach ($this->amortizationSchedule() as $row) {
-            $dueDate = Carbon::parse($row['due_date']);
-            $alreadyPaid = $this->payments->firstWhere('month', $row['month']);
-
-            if ($today->greaterThan($dueDate) && !$alreadyPaid) {
-                $penalty += $row['amount'] * 0.03; // 1% penalty
-            }
+            $penalty += $this->calculatePenaltyForMonth($row['month']);
         }
 
         return round($penalty, 2);
     }
+
 
     /**
      * 🔹 Accessor for balance including overdue penalty
@@ -113,6 +127,26 @@ class Loan extends Model
             : $this->balance_with_overdue;
     }
 
+    // monthly penalty for a specific month
+    public function getMonthlyPenalty($month)
+    {
+        $schedule = collect($this->amortizationSchedule());
+        $row = $schedule->firstWhere('month', $month);
+
+        if (!$row)
+            return 0;
+
+        $dueDate = Carbon::parse($row['due_date']);
+        $alreadyPaid = $this->payments->firstWhere('month', $month);
+
+        if (now()->greaterThan($dueDate) && !$alreadyPaid) {
+            return round($row['amount'] * 0.03, 2);
+        }
+
+        return 0;
+    }
+
+
     /**
      * 🔹 Accessor for last payment date
      */
@@ -122,8 +156,6 @@ class Loan extends Model
 
         return $lastPayment ? $lastPayment->created_at->format('M d, Y') : '—';
     }
-
-
 
 
     // check for loan status

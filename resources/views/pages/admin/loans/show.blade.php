@@ -113,22 +113,20 @@
           @foreach($paginatedSchedule as $payment)
             @php
               $paid = $loan->payments->firstWhere('month', $payment['month']);
-              $dueDate = \Carbon\Carbon::parse($payment['due_date']);
-              $penalty = 0;
-              $totalPayable = $payment['amount'];
+              $penalty = $paid->penalty ?? $loan->getMonthlyPenalty($payment['month']);
+              $totalPayable = $payment['amount'] + $penalty;
 
               if ($paid) {
-                // If payment exists, use stored values (actual paid including penalty)
+                // Payment exists → use stored values
                 $penalty = $paid->penalty ?? 0;
                 $totalPayable = $paid->total_paid ?? $payment['amount'];
               } else {
-                // If not yet paid, calculate current overdue penalty (1%)
-                if (now()->greaterThan($dueDate)) {
-                  $penalty = round($payment['amount'] * 0.03, 2);
-                  $totalPayable = $payment['amount'] + $penalty;
-                }
+                // Payment not yet made → calculate from model helper
+                $penalty = $loan->getMonthlyPenalty($payment['month']);
+                $totalPayable = $payment['amount'] + $penalty;
               }
             @endphp
+
 
             <tr class="border-b border-gray-200 hover:bg-gray-50 text-left">
               <td class="px-4 py-2">{{ $payment['month'] }}</td>

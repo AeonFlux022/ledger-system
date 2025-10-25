@@ -48,8 +48,8 @@ class PaymentController extends Controller
             return back()->withErrors(['month' => 'Payment for this month has already been made.']);
         }
 
-        $dueDate = Carbon::parse($validated['due_date']);
-        $penalty = now()->greaterThan($dueDate) ? round($validated['amount'] * 0.03, 2) : 0;
+        // $dueDate = Carbon::parse($validated['due_date']);
+        $penalty = $loan->calculatePenaltyForMonth($validated['month']);
         $totalPaid = $validated['amount'] + $penalty;
 
         $payment = Payment::create([
@@ -77,20 +77,26 @@ class PaymentController extends Controller
             ($penalty > 0 ? "plus ₱{$penalty} penalty " : "") .
             "for Loan #{$loan->id}. Ref: {$payment->reference_id}";
 
-        $response = $sms->sendSms($loan->borrower->contact_number, $message);
+        $response = $sms->sendSms(
+            $loan->borrower->contact_number,
+            $message,
+            $loan->id,
+            $loan->borrower->id,
+            'payment'
+        );
 
-        // Log SMS to sms_logs table
-        SmsLog::create([
-            'loan_id' => $loan->id,
-            'borrower_id' => $loan->borrower->id,
-            'fname' => $loan->borrower->fname,
-            'lname' => $loan->borrower->lname,
-            'phone_number' => $loan->borrower->contact_number,
-            'message' => $message,
-            'success' => $response['success'] ?? true,
-            'response' => $response['response'] ?? 'Message logged successfully',
-            'type' => 'payment',
-        ]);
+        // // Log SMS to sms_logs table
+        // SmsLog::create([
+        //     'loan_id' => $loan->id,
+        //     'borrower_id' => $loan->borrower->id,
+        //     'fname' => $loan->borrower->fname,
+        //     'lname' => $loan->borrower->lname,
+        //     'phone_number' => $loan->borrower->contact_number,
+        //     'message' => $message,
+        //     'success' => $response['success'] ?? true,
+        //     'response' => $response['response'] ?? 'Message logged successfully',
+        //     'type' => 'payment',
+        // ]);
 
         // Redirect based on role
         $user = auth()->user();

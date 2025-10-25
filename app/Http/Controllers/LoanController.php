@@ -67,15 +67,20 @@ class LoanController extends Controller
 
         // ✅ Send SMS to borrower upon loan application
         $borrower = $loan->borrower;
-
         if ($borrower && $borrower->contact_number) {
             $sms = new SmsGatewayService();
             $sms->sendSms(
                 $borrower->contact_number,
                 "Hi {$borrower->fname}, your loan application of ₱" . number_format($loan->loan_amount, 2) .
-                " for {$loan->terms} months has been successfully submitted and is now pending review. Thank you for choosing ABG Finance."
+                " for {$loan->terms} months has been successfully submitted and is now pending review. " .
+                "Thank you for choosing ABG Finance.",
+                $loan->id,
+                $borrower->id,
+                'application'
             );
         }
+
+
 
         $route = auth()->user()->role === 'super_admin'
             ? route('admin.loans.index')
@@ -129,7 +134,6 @@ class LoanController extends Controller
     {
         $loan->update(['status' => 'approved']);
 
-        // Send SMS Notification
         $borrower = $loan->borrower;
 
         if ($borrower && $borrower->contact_number) {
@@ -137,7 +141,10 @@ class LoanController extends Controller
             $sms->sendSms(
                 $borrower->contact_number,
                 "Hi {$borrower->fname}, your loan application for ₱" . number_format($loan->loan_amount, 2) .
-                " has been approved!"
+                " has been approved!",
+                $loan->id,
+                $borrower->id,
+                'approval'
             );
         }
 
@@ -150,7 +157,6 @@ class LoanController extends Controller
     {
         $loan->update(['status' => 'rejected']);
 
-        // ✅ Send SMS Notification
         $borrower = $loan->borrower;
 
         if ($borrower && $borrower->contact_number) {
@@ -158,7 +164,11 @@ class LoanController extends Controller
             $sms->sendSms(
                 $borrower->contact_number,
                 "Hi {$borrower->fname}, we regret to inform you that your loan application for ₱" .
-                number_format($loan->loan_amount, 2) . " has been declined. Thank you for considering ABG Finance."
+                number_format($loan->loan_amount, 2) .
+                " has been declined. Thank you for considering ABG Finance.",
+                $loan->id,
+                $borrower->id,
+                'decline'
             );
         }
 
@@ -166,6 +176,7 @@ class LoanController extends Controller
             ->route('admin.loans.index', $loan->id)
             ->with('success', 'Loan declined successfully. Borrower has been notified via SMS.');
     }
+
 
 
     // show schedule in client side
