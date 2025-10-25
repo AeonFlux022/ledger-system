@@ -35,7 +35,7 @@
             <td class="px-4 py-2">{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</td>
             <td class="px-4 py-2">&#8369;{{ number_format($loan->loan_amount, 2) }}</td>
             <td class="px-4 py-2">{{ $loan->due_date }}</td>
-            <td class="px-4 py-2">₱{{ number_format($loan->balance_with_overdue, 2) }}</td>
+            <td class="px-4 py-2">₱{{ number_format($loan->display_balance, 2) }}</td>
             <td class="px-4 py-2">{{ $loan->last_payment_date }}</td>
             <td class="px-4 py-2">
               <div class="flex items-center space-x-2">

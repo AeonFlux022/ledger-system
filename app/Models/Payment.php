@@ -14,6 +14,8 @@ class Payment extends Model
         'month',
         'reference_id',
         'amount',
+        'penalty',
+        'due_date',
     ];
     public function loan()
     {

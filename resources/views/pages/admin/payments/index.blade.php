@@ -39,7 +39,9 @@
             <th class="px-4 py-2">Reference ID</th>
             <th class="px-4 py-2">Month</th>
             <th class="px-4 py-2">Amount</th>
-            <th class="px-4 py-2">Date</th>
+            <th class="px-4 py-2">Penalty</th>
+            <th class="px-4 py-2">Due Date</th>
+            <th class="px-4 py-2">Date Paid</th>
           </tr>
         </thead>
         <tbody>
@@ -53,6 +55,8 @@
               <td class="px-4 py-2 font-mono">{{ $payment->reference_id }}</td>
               <td class="px-4 py-2">{{ $payment->month }}</td>
               <td class="px-4 py-2">₱{{ number_format($payment->amount, 2) }}</td>
+              <td class="px-4 py-2">₱{{ number_format($payment->penalty, 2) }}</td>
+              <td class="px-4 py-2">{{ $payment->due_date }}</td>
               <td class="px-4 py-2">{{ $payment->created_at->format('M d, Y') }}</td>
             </tr>
           @endforeach

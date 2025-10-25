@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use App\Models\SmsLog;
 
 class SmsGatewayService
 {
@@ -23,7 +24,7 @@ class SmsGatewayService
     $this->password = env('SMS_DEVICE_PASSWORD');
   }
 
-  public function sendSms($phoneNumber, $message)
+  public function sendSms($phoneNumber, $message, $loanId = null, $borrowerId = null)
   {
     $url = "{$this->baseUrl}/message";
     $message = "{$this->brandName} {$message}";
@@ -39,13 +40,29 @@ class SmsGatewayService
       ->withHeaders(['Content-Type' => 'application/json'])
       ->post($url, $payload);
 
-    Log::info('SMS Gateway Response', [
+    $success = $response->successful();
+    $responseBody = $response->body();
+
+    // Log in Laravel log
+    Log::info('SMS Sent', [
+      'loan_id' => $loanId,
+      'borrower_id' => $borrowerId,
+      'phone_number' => $phoneNumber,
       'status' => $response->status(),
-      'body' => $response->body(),
-      'json' => $response->json(),
+      'body' => $responseBody,
     ]);
 
-    if ($response->successful()) {
+    // Log in database
+    SmsLog::create([
+      'loan_id' => $loanId,
+      'borrower_id' => $borrowerId,
+      'phone_number' => $phoneNumber,
+      'message' => $message,
+      'success' => $success,
+      'response' => $responseBody,
+    ]);
+
+    if ($success) {
       return [
         'success' => true,
         'data' => $response->json(),
@@ -54,7 +71,7 @@ class SmsGatewayService
 
     return [
       'success' => false,
-      'error' => $response->body(),
+      'error' => $responseBody,
     ];
   }
 }

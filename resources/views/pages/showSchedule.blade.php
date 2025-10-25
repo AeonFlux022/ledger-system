@@ -44,14 +44,14 @@
             </tr>
             <tr class="border-b border-gray-200">
               <td class="px-4 py-2 font-medium">Outstanding Balance</td>
-              <td class="px-4 py-2">
-                ₱{{ number_format($totalBalance, 2) }}
-                @if ($overdues > 0)
-                  <span class="text-xs text-red-600 font-medium">
-                    (includes ₱{{ number_format($overdues, 2) }} penalties)
-                  </span>
-                @endif
-              </td>
+                <td class="px-4 py-2">
+                  ₱{{ number_format($totalBalance, 2) }}
+                  @if ($overdues > 0)
+                    <span class="text-xs text-red-600 font-medium">
+                      (includes ₱{{ number_format($overdues, 2) }} penalties)
+                    </span>
+                  @endif
+                </td>
             </tr>
             <tr class="border-b border-gray-200">
               <td class="px-4 py-3 font-medium">Loan Status</td>

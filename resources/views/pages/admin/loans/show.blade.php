@@ -75,7 +75,8 @@
         </div>
         <div>
           <label class="text-sm text-gray-500">Total Payable</label>
-          <p class="mt-1 font-medium">₱{{ number_format($loan->total_payable, 2) }}</p>
+          <p class="mt-1 font-bold text-gray-800">
+            ₱{{ number_format($loan->balance_with_overdue, 2) }}
         </div>
         <div>
           <label class="text-sm text-gray-500">Monthly Amortization</label>
@@ -87,6 +88,7 @@
             ₱{{ number_format($loan->overdue, 2) }}
           </p>
         </div>
+
 
       </div>
       <hr>
@@ -100,7 +102,7 @@
             <th class="px-4 py-2">Due Date</th>
             <th class="px-4 py-2">Amount</th>
 
-            @if(in_array($loan->status, ['approved', 'current', 'overdue']))
+            @if($loan->status == 'approved')
               <th class="px-4 py-2">Action</th>
               <th class="px-4 py-2">Date Paid</th>
             @endif
@@ -111,14 +113,34 @@
           @foreach($paginatedSchedule as $payment)
             @php
               $paid = $loan->payments->firstWhere('month', $payment['month']);
+              $dueDate = \Carbon\Carbon::parse($payment['due_date']);
+              $penalty = 0;
+              $totalPayable = $payment['amount'];
+
+              if ($paid) {
+                // If payment exists, use stored values (actual paid including penalty)
+                $penalty = $paid->penalty ?? 0;
+                $totalPayable = $paid->total_paid ?? $payment['amount'];
+              } else {
+                // If not yet paid, calculate current overdue penalty (1%)
+                if (now()->greaterThan($dueDate)) {
+                  $penalty = round($payment['amount'] * 0.03, 2);
+                  $totalPayable = $payment['amount'] + $penalty;
+                }
+              }
             @endphp
 
             <tr class="border-b border-gray-200 hover:bg-gray-50 text-left">
               <td class="px-4 py-2">{{ $payment['month'] }}</td>
               <td class="px-4 py-2">{{ $payment['due_date'] }}</td>
-              <td class="px-4 py-2">₱{{ number_format($payment['amount'], 2) }}</td>
+              <td class="px-4 py-2">
+                ₱{{ number_format($totalPayable, 2) }}
+                @if($penalty > 0)
+                  <span class="text-xs text-red-600 block">(+₱{{ number_format($penalty, 2) }} penalty)</span>
+                @endif
+              </td>
 
-              @if(in_array($loan->status, ['approved', 'current', 'overdue']))
+              @if($loan->status == 'approved')
                 <td class="px-4 py-2">
                   @if($paid)
                     <button class="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed" disabled>

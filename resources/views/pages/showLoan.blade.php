@@ -42,7 +42,8 @@
                   <td class="px-4 py-2">₱{{ number_format($loan->loan_amount, 2) }}</td>
                   <td class="px-4 py-2">{{ $loan->terms }} months</td>
                   <td class="px-4 py-2">₱{{ number_format($loan->monthly_amortization, 2) }}</td>
-                  <td class="px-4 py-2"> ₱{{ number_format($loan->outstanding_balance + $loan->calculateOverdues(), 2) }}</td>
+                  <td class="px-4 py-2">₱{{ number_format($loan->display_balance, 2) }}</td>
+                  </td>
                   <td class="px-4 py-2">
                     @if($loan->status == 'approved')
                       <a href="{{ route('loans.schedule', ['borrower' => $borrower->id, 'loan' => $loan->id]) }}"

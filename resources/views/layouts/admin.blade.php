@@ -53,6 +53,7 @@
       <a href="/admin/borrowers" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Borrowers</a>
       <a href="/admin/loans" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Loans</a>
       <a href="/admin/payments" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Payments</a>
+      <a href="/admin/sms-logs" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Logs</a>
 
       <!-- Logout -->
       <form method="POST" action="{{ route('logout') }}">

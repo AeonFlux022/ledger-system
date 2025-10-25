@@ -91,11 +91,26 @@ class Loan extends Model
             $alreadyPaid = $this->payments->firstWhere('month', $row['month']);
 
             if ($today->greaterThan($dueDate) && !$alreadyPaid) {
-                $penalty += $row['amount'] * 0.01; // 1% penalty
+                $penalty += $row['amount'] * 0.03; // 1% penalty
             }
         }
 
         return round($penalty, 2);
+    }
+
+    /**
+     * 🔹 Accessor for balance including overdue penalty
+     */
+    public function getBalanceWithOverdueAttribute(): float
+    {
+        return round($this->outstanding_balance + $this->calculateOverdues(), 2);
+    }
+
+    public function getDisplayBalanceAttribute()
+    {
+        return $this->loan_status === 'completed'
+            ? 0
+            : $this->balance_with_overdue;
     }
 
     /**
@@ -108,17 +123,8 @@ class Loan extends Model
         return $lastPayment ? $lastPayment->created_at->format('M d, Y') : '—';
     }
 
-    /**
-     * 🔹 Accessor for balance including overdue penalty
-     */
-    public function getBalanceWithOverdueAttribute(): float
-    {
-        return round($this->outstanding_balance + $this->calculateOverdues(), 2);
-    }
 
-    /**
-     * 🔹 Automatically update loan_status based on payments and due dates
-     */
+
 
     // check for loan status
     public function updateLoanStatus(): void
@@ -154,7 +160,6 @@ class Loan extends Model
 
         $this->save();
     }
-
     protected static function booted()
     {
         static::retrieved(function ($loan) {

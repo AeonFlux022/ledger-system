@@ -8,8 +8,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ExportPdfController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SmsLogController;
 
 // view home page
 Route::get('/', function () {
@@ -153,3 +154,7 @@ Route::get('/export/users', [ExportPdfController::class, 'exportUsers'])->name('
 Route::get('/export/borrowers', [ExportPdfController::class, 'exportBorrowers'])->name('export.borrowers');
 Route::get('/export/loans', [ExportPdfController::class, 'exportLoans'])->name('export.loans');
 Route::get('/export/payments', [ExportPdfController::class, 'exportPayments'])->name('export.payments');
+
+// sms logs route
+Route::get('/admin/sms-logs', [SmsLogController::class, 'index'])
+    ->name('admin.smsLogs.index');
