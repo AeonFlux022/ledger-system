@@ -6,7 +6,7 @@
   $penalty = 0;
 
   if (!$paid && now()->greaterThan($dueDate)) {
-    $penalty = $payment['amount'] * 0.01; // 1% penalty
+    $penalty = $payment['amount'] * 0.03; // 1% penalty
   }
 
   $totalPayable = $payment['amount'] + $penalty;

@@ -8,6 +8,7 @@ use App\Models\Borrower;
 use App\Models\Loan;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ExportPdfController extends Controller
 {
@@ -69,4 +70,32 @@ class ExportPdfController extends Controller
         return $pdf->download($fileName);
     }
 
+    public function exportMonthly(Request $request)
+    {
+        $month = $request->input('month', now()->format('Y-m'));
+
+        $startDate = Carbon::parse($month)->startOfMonth();
+        $endDate = Carbon::parse($month)->endOfMonth();
+
+        // Get all payments made within the selected month
+        $payments = Payment::with(['loan.borrower'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Optional: calculate totals
+        $totalAmount = $payments->sum('amount');
+        $totalPenalty = $payments->sum('penalty');
+        $grandTotal = $totalAmount + $totalPenalty;
+
+        $pdf = Pdf::loadView('pdf.monthly-report', [
+            'payments' => $payments,
+            'month' => Carbon::parse($month)->format('F Y'),
+            'totalAmount' => $totalAmount,
+            'totalPenalty' => $totalPenalty,
+            'grandTotal' => $grandTotal,
+        ]);
+
+        return $pdf->setPaper('A4', 'portrait')->download("Monthly_Payments_Report_{$month}.pdf");
+    }
 }

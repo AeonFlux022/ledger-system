@@ -22,10 +22,23 @@
       </form>
 
       {{-- Right: Export PDF Button --}}
-      <a href="{{ route('export.payments', ['search' => request('search')]) }}"
-        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-        Export Payments as PDF
-      </a>
+      <div class="flex items-center space-x-2">
+        {{-- Export All Payments --}}
+        <a href="{{ route('export.payments', ['search' => request('search')]) }}"
+          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          Export Payments as PDF
+        </a>
+
+        {{-- Monthly Report --}}
+        <form method="GET" action="{{ route('export.monthly-report') }}" class="flex items-center space-x-2">
+          <input type="month" name="month" value="{{ request('month', now()->format('Y-m')) }}"
+            class="border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none">
+
+          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+            Generate Monthly Report
+          </button>
+        </form>
+      </div>
 
     </div>
 

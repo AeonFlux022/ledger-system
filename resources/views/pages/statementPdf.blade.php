@@ -9,7 +9,7 @@
       font-family: 'DejaVu Sans', sans-serif;
       color: #333;
       font-size: 12px;
-      margin: 40px;
+      margin: 10px;
     }
 
     h1,
@@ -21,7 +21,7 @@
 
     .header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 10px;
     }
 
     .header h1 {
