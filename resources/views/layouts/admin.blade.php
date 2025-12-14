@@ -7,7 +7,7 @@
   @vite('resources/css/app.css')
 </head>
 
-<div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+<div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
   class="fixed top-4 right-4 z-50 space-y-2">
 
   @if (session('success'))

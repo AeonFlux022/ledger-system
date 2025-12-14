@@ -68,6 +68,7 @@ class BorrowerController extends Controller
                 'lname' => 'required|string|max:255',
                 'address' => 'nullable|string',
                 'contact_number' => 'required|string|max:20',
+                'alt_number' => 'nullable|string|max:20',
                 'email' => 'required|email|unique:borrowers,email',
                 'employment_status' => 'required|string',
                 'income' => 'nullable|numeric',
@@ -122,6 +123,7 @@ class BorrowerController extends Controller
             'lname' => 'required|string|max:255',
             'address' => 'nullable|string|max:255',
             'contact_number' => 'required|string|max:20',
+            'alt_number' => 'nullable|string|max:20',
             'email' => 'required|email|max:255',
             'employment_status' => 'required|string',
             'income' => 'nullable|numeric',
@@ -151,18 +153,27 @@ class BorrowerController extends Controller
     }
 
 
+    // delete a borrower
     public function destroy(Borrower $borrower)
     {
-        // Optionally delete associated image
+        if ($borrower->loans()->exists()) {
+            return redirect()
+                ->back()
+                ->withErrors('Cannot delete borrower with existing loans.');
+        }
+
         if ($borrower->id_image && Storage::disk('public')->exists($borrower->id_image)) {
             Storage::disk('public')->delete($borrower->id_image);
         }
 
         $borrower->delete();
 
-        return redirect()->route('admin.borrowers.index')
+        return redirect()
+            ->route('admin.borrowers.index')
             ->with('success', 'Borrower deleted successfully.');
     }
+
+
 
 
 }

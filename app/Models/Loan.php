@@ -24,6 +24,7 @@ class Loan extends Model
         'outstanding_balance',
         'status',
         'loan_status',
+        'reason',
     ];
 
     /**

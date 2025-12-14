@@ -14,24 +14,26 @@ class DashboardController extends Controller
     $userCount = User::count();
     $borrowerCount = Borrower::count();
     $loanCount = Loan::count();
+
+    // Approved loans only
     $approvedLoans = Loan::where('status', 'approved')->count();
-    $totalLoanAmount = Loan::sum('loan_amount');
+    $totalLoanAmount = Loan::where('status', 'approved')->sum('loan_amount');
 
-    // ✅ Get total interest earned from all payments
-    $interestIncome = Loan::whereHas('payments')->get()->sum(function ($loan) {
-      $totalPaid = $loan->payments->sum('amount');
-      $principal = $loan->loan_amount;
-      return max($totalPaid - $principal, 0); // profit = paid - principal
-    });
+    // Interest earned
+    $interestIncome = Loan::where('status', 'approved')
+      ->whereHas('payments')
+      ->get()
+      ->sum(function ($loan) {
+        $totalPaid = $loan->payments->sum('amount');
+        $principal = $loan->loan_amount;
+        return max($totalPaid - $principal, 0);
+      });
 
-    // ✅ Get total penalties collected
+    // Penalties
     $penaltyIncome = Payment::sum('penalty');
 
-    // ✅ Total earnings = interests + penalties
-    $totalEarnings = $interestIncome + $penaltyIncome;
-
-    // Optional: round off
-    $totalEarnings = round($totalEarnings, 2);
+    // Total earnings
+    $totalEarnings = round($interestIncome + $penaltyIncome, 2);
 
     return view('pages.admin.dashboard', compact(
       'userCount',
@@ -42,4 +44,5 @@ class DashboardController extends Controller
       'totalEarnings'
     ));
   }
+
 }

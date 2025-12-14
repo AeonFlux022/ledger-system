@@ -38,7 +38,7 @@
   <table>
     <thead>
       <tr>
-        <th>ID</th>
+        <th>No.</th>
         <th>Borrower</th>
         <th>Loan ID</th>
         <th>Month</th>
@@ -50,7 +50,7 @@
     <tbody>
       @foreach($payments as $p)
         <tr>
-          <td>{{ $p->id }}</td>
+          <td>{{ $loop->iteration }}</td>
           <td>{{ $p->loan->borrower->fname }} {{ $p->loan->borrower->lname }}</td>
           <td>{{ $p->loan_id }}</td>
           <td>{{ $p->month }} mo.</td>

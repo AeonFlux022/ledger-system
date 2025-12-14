@@ -24,7 +24,7 @@
           <table class="w-full">
             <thead class="bg-gray-300 text-left">
               <tr>
-                <th class="px-4 py-2">#</th>
+                <th class="px-4 py-2">No.</th>
                 <th class="px-4 py-2">Loan ID</th>
                 <th class="px-4 py-2">Amount</th>
                 <th class="px-4 py-2">Terms</th>

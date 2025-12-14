@@ -17,7 +17,7 @@
     <table class="w-full bg-white shadow-md rounded">
       <thead class="bg-gray-100 text-left">
         <tr>
-          <th class="px-4 py-2">#</th>
+          <th class="px-4 py-2">No.</th>
           <th class="px-4 py-2">Name</th>
           <th class="px-4 py-2">Contact</th>
           <th class="px-4 py-2">Email</th>
@@ -41,10 +41,19 @@
                 </a>
 
                 <x-modals.edit-borrower :borrower="$borrower" :page="request()->query('page', 1)" />
-                <x-modals.delete-borrower :borrower="$borrower" />
-              </div>
 
+                {{-- Delete modal already includes the button --}}
+                @if ($borrower->canBeDeleted())
+                  <x-modals.delete-borrower :borrower="$borrower" />
+                @else
+                  <button class="bg-gray-400 text-white text-sm px-4 py-2 rounded cursor-not-allowed"
+                    title="Cannot delete borrower with existing loans" disabled>
+                    Delete
+                  </button>
+                @endif
+              </div>
             </td>
+
           </tr>
         @empty
           <tr>

@@ -120,7 +120,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // edit loan
 Route::put('/admin/loans/{loan}', [LoanController::class, 'update'])->name('admin.loans.update');
 
-
+Route::delete('/admin/loans/{loan}', [LoanController::class, 'destroy'])
+    ->name('admin.loans.destroy');
 
 // payment routes
 // get all payment transactions

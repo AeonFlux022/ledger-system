@@ -15,7 +15,7 @@
     @include('components.navbar')
 
     <main class="mx-auto">
-      <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+      <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
         class="fixed top-4 right-4 z-50 space-y-2">
 
         @if (session('success'))
@@ -48,11 +48,12 @@
         @endif
 
       </div>
+      @yield('hero')
       @yield('content')
     </main>
 
     <footer class="mb-3 mt-8 text-center text-sm text-gray-600">
-      &copy; {{ date('Y') }} E-Ledger for Moneylenders. All rights reserved.
+      &copy; {{ date('Y') }} ABG Finance. All rights reserved.
     </footer>
   </div>
 </body>

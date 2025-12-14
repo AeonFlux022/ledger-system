@@ -3,7 +3,6 @@
 <div x-data="{ open: false }">
   <!-- Button to open modal -->
   <button @click="open = true" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm">Edit
-    Loan
   </button>
 
   <!-- Modal -->

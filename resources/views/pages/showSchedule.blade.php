@@ -79,7 +79,7 @@
         <table class="w-full">
           <thead class="bg-gray-300 text-left">
             <tr>
-              <th class="px-4 py-2">#</th>
+              <th class="px-4 py-2">No.</th>
               <th class="px-4 py-2">Due Date</th>
               <th class="px-4 py-2">Term</th>
               <th class="px-4 py-2">Monthly Amortization</th>

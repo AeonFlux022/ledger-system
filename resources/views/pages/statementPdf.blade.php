@@ -115,7 +115,7 @@
   {{-- Loans --}}
   @foreach ($borrower->loans as $loan)
     <div class="loan-box">
-      <h3>Loan #{{ $loan->id }}</h3>
+      <h3>Loan ID: {{ $loan->id }}</h3>
       <table class="details-table">
         <tr>
           <td><strong>Loan Amount:</strong></td>
@@ -135,11 +135,11 @@
       <table>
         <thead>
           <tr>
-            <th>#</th>
-            <th>Term</th>
+            <th>No. of Payments</th>
             <th>Amount Paid</th>
-            <th>Penalty</th>
-            <th>Total Paid</th>
+            <th>Term</th>
+            {{-- <th>Penalty</th>
+            <th>Total Paid</th> --}}
             <th>Date</th>
             <th>Reference</th>
           </tr>
@@ -148,10 +148,10 @@
           @forelse ($loan->payments as $payment)
             <tr>
               <td class="text-center">{{ $loop->iteration }}</td>
-              <td class="text-center">{{ $payment->month }}</td>
               <td class="text-right">₱{{ number_format($payment->amount, 2) }}</td>
-              <td class="text-right">₱{{ number_format($payment->penalty, 2) }}</td>
-              <td class="text-right"><strong>₱{{ number_format($payment->totalPayable, 2) }}</strong></td>
+              <td class="text-center">{{ $payment->month }}</td>
+              {{-- <td class="text-right">₱{{ number_format($payment->penalty, 2) }}</td>
+              <td class="text-right"><strong>₱{{ number_format($payment->totalPayable, 2) }}</strong></td> --}}
               <td>{{ $payment->created_at->format('M d, Y') }}</td>
               <td class="text-center">{{ $payment->reference_id }}</td>
             </tr>

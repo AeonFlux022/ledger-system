@@ -56,7 +56,7 @@ class ExportPdfController extends Controller
                         ->orWhere('lname', 'like', "%{$search}%");
                 });
             })
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         // Optional: Dynamic file name (based on filter or default)

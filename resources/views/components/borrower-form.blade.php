@@ -35,6 +35,10 @@
               <label class="block mb-1">Contact Number</label>
               <input type="tel" name="contact_number" class="w-full border px-3 py-2 rounded" required />
             </div>
+            <div>
+              <label class="block mb-1">Alternate Contact Number</label>
+              <input type="tel" name="alt_number" class="w-full border rounded px-3 py-2" placeholder="Optional">
+            </div>
 
             <div>
               <label class="block mb-1">Email</label>

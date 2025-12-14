@@ -15,7 +15,7 @@
     <table class="w-full bg-white shadow-md rounded">
       <thead class="bg-gray-100 text-left">
         <tr>
-          <th class="px-4 p-2">#</th>
+          <th class="px-4 p-2">No.</th>
           <th class="px-4 p-2">Borrower</th>
           <th class="px-4 p-2">Loan Amount</th>
           <th class="px-4 p-2">Due Date</th>
@@ -39,18 +39,38 @@
             <td class="px-4 py-2">{{ $loan->last_payment_date }}</td>
             <td class="px-4 py-2">
               <div class="flex items-center space-x-2">
-                <a href="{{ route('admin.loans.show', $loan->id) }}"
-                  class="inline-block bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700 transition">View</a>
 
+                {{-- View --}}
+                <a href="{{ route('admin.loans.show', $loan->id) }}"
+                  class="bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700">
+                  View
+                </a>
+
+                {{-- Edit --}}
                 @if(in_array($loan->status, ['approved', 'rejected']))
                   <button class="bg-gray-400 text-white text-sm px-4 py-2 rounded cursor-not-allowed" disabled>
-                    Edit Loan
+                    Edit
                   </button>
                 @else
                   <x-modals.edit-loan :loan="$loan" :borrowers="$borrowers" />
                 @endif
+
+                {{-- Delete --}}
+                @if(in_array($loan->status, ['approved']) || $loan->loan_status === 'completed')
+                  <button disabled class="bg-gray-400 text-white text-sm px-4 py-2 rounded cursor-not-allowed">
+                    Delete
+                  </button>
+                @else
+                  <button onclick="openDeleteLoanModal('{{ route('admin.loans.destroy', $loan->id) }}')"
+                    class="bg-red-600 text-white text-sm px-4 py-2 rounded hover:bg-red-700">
+                    Delete
+                  </button>
+                @endif
+
+
               </div>
             </td>
+
             <td class="px-4 py-2 capitalize rounded">
               @if($loan->status === 'approved')
                 @if($loan->loan_status === 'current')
@@ -82,3 +102,5 @@
     </div>
   </div>
 @endsection
+
+<x-modals.delete-loan />

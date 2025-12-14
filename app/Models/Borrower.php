@@ -14,11 +14,13 @@ class Borrower extends Model
         'lname',
         'address',
         'contact_number',
+        'alt_number',
         'email',
         'id_card',
         'id_image',
         'income',
         'employment_status',
+
     ];
 
     /**
@@ -44,5 +46,10 @@ class Borrower extends Model
     public function getFormattedIncomeAttribute()
     {
         return '₱' . number_format($this->income, 2);
+    }
+
+    public function canBeDeleted(): bool
+    {
+        return $this->loans()->count() === 0;
     }
 }

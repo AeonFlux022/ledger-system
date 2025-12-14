@@ -116,7 +116,7 @@
   <table>
     <thead>
       <tr>
-        <th>#</th>
+        <th>No.</th>
         <th>Borrower</th>
         <th>Loan ID</th>
         <th>Reference ID</th>
@@ -130,7 +130,7 @@
     <tbody>
       @foreach($payments as $index => $payment)
         <tr>
-          <td>{{ $index + 1 }}</td>
+          <td>{{ $index }}</td>
           <td>{{ $payment->loan->borrower->fname }} {{ $payment->loan->borrower->lname }}</td>
           <td>{{ $payment->loan->id }}</td>
           <td>{{ $payment->reference_id }}</td>

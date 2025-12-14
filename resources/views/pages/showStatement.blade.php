@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', 'Statement of Account')
 
@@ -29,12 +29,12 @@
     @forelse($borrower->loans as $loan)
       <div class="bg-white shadow-md rounded-lg p-6 mb-10">
         <div class="flex items-center justify-between border-b pb-3 mb-4">
-          <h3 class="text-xl font-bold text-gray-800">Loan #{{ $loan->id }}</h3>
+          <h3 class="text-xl font-bold text-gray-800">Loan ID: {{ $loan->id }}</h3>
           <span class="text-sm px-3 py-1 rounded-full 
-                                @if($loan->loan_status === 'current') bg-teal-100 text-teal-800 
-                                @elseif($loan->loan_status === 'overdue') bg-orange-100 text-orange-800 
-                                @elseif($loan->loan_status === 'completed') bg-blue-100 text-blue-800 
-                                @else bg-gray-100 text-gray-600 @endif">
+                      @if($loan->loan_status === 'current') bg-teal-100 text-teal-800 
+                      @elseif($loan->loan_status === 'overdue') bg-orange-100 text-orange-800 
+                      @elseif($loan->loan_status === 'completed') bg-blue-100 text-blue-800 
+                      @else bg-gray-100 text-gray-600 @endif">
             {{ ucfirst($loan->loan_status ?? 'N/A') }}
           </span>
         </div>
@@ -53,11 +53,11 @@
           <table class="w-full border border-gray-200 text-sm rounded-lg overflow-hidden">
             <thead class="bg-gray-100 text-gray-700">
               <tr>
-                <th class="px-4 py-2 border">#</th>
-                <th class="px-4 py-2 border">Term</th>
+                <th class="px-4 py-2 border">No. of Payments</th>
                 <th class="px-4 py-2 border">Amount Paid</th>
-                <th class="px-4 py-2 border">Penalty</th>
-                <th class="px-4 py-2 border">Total Paid</th>
+                <th class="px-4 py-2 border">Term</th>
+                {{-- <th class="px-4 py-2 border">Penalty</th>
+                <th class="px-4 py-2 border">Total Paid</th> --}}
                 <th class="px-4 py-2 border">Date</th>
                 <th class="px-4 py-2 border">Reference</th>
               </tr>
@@ -66,14 +66,14 @@
               @forelse($loan->payments as $payment)
                 <tr class="hover:bg-gray-50">
                   <td class="px-4 py-2 border text-center">{{ $loop->iteration }}</td>
-                  <td class="px-4 py-2 border text-center">{{ $payment->month }}</td>
                   <td class="px-4 py-2 border text-right">₱{{ number_format($payment->amount, 2) }}</td>
-                  <td class="px-4 py-2 border text-right text-red-600">
+                  <td class="px-4 py-2 border text-center">{{ $payment->month }}</td>
+                  {{-- <td class="px-4 py-2 border text-right text-red-600">
                     ₱{{ number_format($payment->penalty, 2) }}
                   </td>
                   <td class="px-4 py-2 border text-right font-semibold">
-                    ₱{{ number_format($payment->totalPayable, 2) }}
-                  </td>
+                    ₱{{ number_format($payment->total_payable, 2) }}
+                  </td> --}}
                   <td class="px-4 py-2 border">{{ $payment->created_at->format('M d, Y') }}</td>
                   <td class="px-4 py-2 border text-center">{{ $payment->reference_id }}</td>
                 </tr>

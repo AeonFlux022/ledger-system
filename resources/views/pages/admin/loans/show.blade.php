@@ -17,6 +17,11 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
           <div>
+            <label class="text-sm text-gray-500">Borrower ID</label>
+            <p class="mt-1 font-medium">{{ $loan->borrower->id }}</p>
+          </div>
+          <div></div>
+          <div>
             <label class="text-sm text-gray-500">Full Name</label>
             <p class="mt-1 font-medium">{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</p>
           </div>
@@ -57,6 +62,11 @@
       <!-- Loan Info -->
       <h3 class="text-lg font-bold text-gray-800 mb-4">Loan Details</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+        <div>
+          <label class="text-sm text-gray-500">Loan ID</label>
+          <p class="mt-1 font-medium">{{ $loan->id }}</p>
+        </div>
+        <div></div>
         <div>
           <label class="text-sm text-gray-500">Loan Amount</label>
           <p class="mt-1 font-medium">₱{{ number_format($loan->loan_amount, 2) }}</p>
@@ -175,12 +185,14 @@
             </button>
           </form>
 
-          <form method="POST" action="{{ route('admin.loans.decline', $loan->id) }}">
+          <x-modals.decline-loan :loan="$loan" />
+
+          {{-- <form method="POST" action="{{ route('admin.loans.decline', $loan->id) }}">
             @csrf
             <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
               Decline
             </button>
-          </form>
+          </form> --}}
         @endif
       </div>
 

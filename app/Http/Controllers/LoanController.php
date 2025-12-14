@@ -153,19 +153,31 @@ class LoanController extends Controller
             ->with('success', 'Loan approved successfully. Borrower has been notified via SMS.');
     }
 
-    public function decline(Loan $loan)
+    public function decline(Request $request, Loan $loan)
     {
-        $loan->update(['status' => 'rejected']);
+        $request->validate([
+            'reason' => 'required|string|max:500',
+        ]);
+
+        $loan->update([
+            'status' => 'rejected',
+            'rejection_reason' => $request->reason,
+        ]);
 
         $borrower = $loan->borrower;
 
         if ($borrower && $borrower->contact_number) {
             $sms = new SmsGatewayService();
-            $sms->sendSms(
-                $borrower->contact_number,
+
+            $message =
                 "Hi {$borrower->fname}, we regret to inform you that your loan application for ₱" .
                 number_format($loan->loan_amount, 2) .
-                " has been declined. Thank you for considering ABG Finance.",
+                " has been declined.\n\nReason: {$request->reason}\n\n" .
+                "You may reapply once the concern is resolved. Thank you.";
+
+            $sms->sendSms(
+                $borrower->contact_number,
+                $message,
                 $loan->id,
                 $borrower->id,
                 'decline'
@@ -173,9 +185,10 @@ class LoanController extends Controller
         }
 
         return redirect()
-            ->route('admin.loans.index', $loan->id)
-            ->with('success', 'Loan declined successfully. Borrower has been notified via SMS.');
+            ->route('admin.loans.index')
+            ->with('success', 'Loan declined and borrower notified with the reason.');
     }
+
 
 
 
@@ -255,6 +268,38 @@ class LoanController extends Controller
 
         return redirect()->route('admin.loans.index')->with('success', 'Loan updated successfully.');
     }
+
+    // delete loan in admin panel
+    public function destroy(Loan $loan)
+    {
+        // ❌ Prevent deleting approved or completed loans
+        if ($loan->status === 'approved' || $loan->loan_status === 'completed') {
+            return redirect()
+                ->back()
+                ->with('error', 'Approved or completed loans cannot be deleted.');
+        }
+
+        // Optional: notify borrower
+        // $borrower = $loan->borrower;
+        // if ($borrower && $borrower->contact_number) {
+        //     $sms = new SmsGatewayService();
+        //     $sms->sendSms(
+        //         $borrower->contact_number,
+        //         "Hi {$borrower->fname}, your loan application has been removed from our system. If this was a mistake, please contact ABG Finance.",
+        //         $loan->id,
+        //         $borrower->id,
+        //         'deleted'
+        //     );
+        // }
+
+        // Delete loan
+        $loan->delete();
+
+        return redirect()
+            ->route('admin.loans.index')
+            ->with('success', 'Loan deleted successfully.');
+    }
+
 
 
 
