@@ -11,8 +11,8 @@
         <h2 class="text-lg font-bold mb-4">Delete Borrower</h2>
 
         <p class="mb-4 text-sm text-gray-700">
-          Are you sure you want to delete
-          <strong>{{ $borrower->fname }} {{ $borrower->lname }}</strong>?
+          This will permanently delete the borrower and <strong>all related loans and payments</strong>.
+          This action cannot be undone.
         </p>
 
         <form method="POST" action="{{ route('admin.borrowers.destroy', $borrower->id) }}">

@@ -1,54 +1,42 @@
-@props(['action'])
+<div x-data="{ open: false }" x-cloak>
+  <!-- Trigger Button -->
+  <button @click="open = true" class="bg-red-600 text-white text-sm px-4 py-2 rounded hover:bg-red-700">
+    Delete
+  </button>
 
-<!-- Delete Loan Modal -->
-<div id="deleteLoanModal"
-  class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <!-- Modal -->
+  <template x-teleport="body">
+    <div x-show="open" x-transition.opacity
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 
-  <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-    <h2 class="text-lg font-bold mb-2 text-gray-800">
-      Confirm Delete Loan
-    </h2>
+      <div x-transition.scale @click.outside="open = false" class="bg-white p-6 rounded shadow max-w-md w-full">
 
-    <p class="text-sm text-gray-600 mb-6">
-      Are you sure you want to delete this loan?
-      <br>
-      <span class="text-red-600 font-medium">
-        This action cannot be undone.
-      </span>
-    </p>
+        <h2 class="text-lg font-bold mb-2 text-gray-800">
+          Delete Loan
+        </h2>
 
-    <div class="flex justify-end space-x-3">
-      <button type="button"
-        onclick="closeDeleteLoanModal()"
-        class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800">
-        Cancel
-      </button>
+        <p class="mb-4 text-sm text-gray-700">
+          This will permanently delete the loan and
+          <strong>all associated payments</strong>.
+          This action cannot be undone.
+        </p>
 
-      <form id="deleteLoanForm" method="POST">
-        @csrf
-        @method('DELETE')
-        <button type="submit"
-          class="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white">
-          Yes, Delete
-        </button>
-      </form>
+        <form method="POST" action="{{ route('admin.loans.destroy', $loan->id) }}">
+          @csrf
+          @method('DELETE')
+
+          <div class="flex justify-end space-x-2">
+            <button type="button" @click="open = false" class="px-4 py-2 border rounded hover:bg-gray-100">
+              Cancel
+            </button>
+
+            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+              Delete
+            </button>
+          </div>
+        </form>
+
+      </div>
     </div>
-  </div>
+  </template>
 </div>
-
-<script>
-  function openDeleteLoanModal(action) {
-    const modal = document.getElementById('deleteLoanModal');
-    const form = document.getElementById('deleteLoanForm');
-
-    form.action = action;
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-  }
-
-  function closeDeleteLoanModal() {
-    const modal = document.getElementById('deleteLoanModal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
-</script>

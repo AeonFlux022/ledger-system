@@ -156,15 +156,13 @@ class BorrowerController extends Controller
     // delete a borrower
     public function destroy(Borrower $borrower)
     {
-        if ($borrower->loans()->exists()) {
-            return redirect()
-                ->back()
-                ->withErrors('Cannot delete borrower with existing loans.');
-        }
-
+        // Delete ID image if exists
         if ($borrower->id_image && Storage::disk('public')->exists($borrower->id_image)) {
             Storage::disk('public')->delete($borrower->id_image);
         }
+
+        // Optional: delete related loans & payments (see note below)
+        // $borrower->loans()->delete();
 
         $borrower->delete();
 
@@ -172,6 +170,7 @@ class BorrowerController extends Controller
             ->route('admin.borrowers.index')
             ->with('success', 'Borrower deleted successfully.');
     }
+
 
 
 

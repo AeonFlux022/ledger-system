@@ -272,12 +272,6 @@ class LoanController extends Controller
     // delete loan in admin panel
     public function destroy(Loan $loan)
     {
-        // ❌ Prevent deleting approved or completed loans
-        if ($loan->status === 'approved' || $loan->loan_status === 'completed') {
-            return redirect()
-                ->back()
-                ->with('error', 'Approved or completed loans cannot be deleted.');
-        }
 
         // Optional: notify borrower
         // $borrower = $loan->borrower;

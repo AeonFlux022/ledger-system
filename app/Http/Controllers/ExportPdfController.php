@@ -85,7 +85,7 @@ class ExportPdfController extends Controller
 
         // Optional: calculate totals
         $totalAmount = $payments->sum('amount');
-        $totalPenalty = $payments->sum('penalty');
+        $totalPenalty = $payments->sum('overdue');
         $grandTotal = $totalAmount + $totalPenalty;
 
         $pdf = Pdf::loadView('pdf.monthly-report', [

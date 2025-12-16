@@ -56,17 +56,7 @@
                 @endif
 
                 {{-- Delete --}}
-                @if(in_array($loan->status, ['approved']) || $loan->loan_status === 'completed')
-                  <button disabled class="bg-gray-400 text-white text-sm px-4 py-2 rounded cursor-not-allowed">
-                    Delete
-                  </button>
-                @else
-                  <button onclick="openDeleteLoanModal('{{ route('admin.loans.destroy', $loan->id) }}')"
-                    class="bg-red-600 text-white text-sm px-4 py-2 rounded hover:bg-red-700">
-                    Delete
-                  </button>
-                @endif
-
+                <x-modals.delete-loan :loan="$loan" />
 
               </div>
             </td>
@@ -102,5 +92,3 @@
     </div>
   </div>
 @endsection
-
-<x-modals.delete-loan />
