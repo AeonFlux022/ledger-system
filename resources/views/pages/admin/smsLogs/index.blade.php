@@ -10,7 +10,7 @@
       <table class="w-full text-left">
         <thead class="bg-gray-100 text-gray-700">
           <tr>
-            <th class="px-4 py-2">#</th>
+            <th class="px-4 py-2">No.</th>
             <th class="px-4 py-2">Date</th>
             <th class="px-4 py-2">Type</th>
             <th class="px-4 py-2">Loan ID</th>

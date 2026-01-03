@@ -21,7 +21,7 @@
     <table class="w-full bg-white rounded shadow">
       <thead>
         <tr class="bg-gray-100 text-left">
-          <th class="py-2 px-4">#</th>
+          <th class="py-2 px-4">No.</th>
           <th class="py-2 px-4">Username</th>
           <th class="py-2 px-4">Email</th>
           <th class="py-2 px-4">Role</th>

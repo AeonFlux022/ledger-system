@@ -12,6 +12,7 @@ use App\Http\Controllers\ExportPdfController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SmsLogController;
 use App\Http\Controllers\StatementController;
+use App\Http\Controllers\LoanReminderController;
 
 // view home page
 Route::get('/', function () {
@@ -176,3 +177,8 @@ Route::get('/borrowers/{borrower}/statement', [StatementController::class, 'show
 
 Route::get('/borrowers/{borrower}/statement/pdf', [StatementController::class, 'exportPdf'])
     ->name('statementPdf');
+
+Route::post(
+    '/admin/loans/send-reminders',
+    [LoanReminderController::class, 'send']
+)->name('admin.loans.send-reminders');

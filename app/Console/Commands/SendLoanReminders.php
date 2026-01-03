@@ -9,13 +9,15 @@ use App\Services\SmsGatewayService;
 
 class SendLoanReminders extends Command
 {
-    protected $signature = 'loans:send-reminders';
+    protected $signature = 'loans:send-reminders {--force : Send reminders regardless of due date}';
     protected $description = 'Send SMS reminders before and on the loan due date';
 
     public function handle()
     {
         $today = Carbon::today();
         $sms = new SmsGatewayService();
+        $forceSend = $this->option('force');
+        $sentCount = 0;
 
         // Get all approved loans with borrower & payments
         $loans = Loan::with(['borrower', 'payments'])
@@ -45,17 +47,44 @@ class SendLoanReminders extends Command
             }
 
             $message = null;
+            $type = null;
 
-            // Reminder 3 days before due date
-            if ($daysUntilDue === 3) {
+            // FORCE TEST MODE (ignore date range)
+            if ($forceSend) {
+                $message = "[System Reminder] Hi {$borrower->fname}, your loan {$loan->id} will be due on {$dueDate->format('F j, Y')}. Please disregard if already paid. Thank you!";
+                $type = 'test';
+                $this->info("FORCE TEST → Sending reminder for Loan {$loan->id}");
+
+                $result = $sms->sendSms(
+                    $borrower->contact_number,
+                    $message,
+                    $loan->id,
+                    $borrower->id,
+                    $type
+                );
+
+                $sentCount++;
+
+                if ($result['success']) {
+                    $this->info("Test reminder sent successfully for Loan {$loan->id}");
+                } else {
+                    $this->error("Failed to send test reminder for Loan {$loan->id}: " . $result['error']);
+                }
+
+                // IMPORTANT: Skip normal logic
+                continue;
+            }
+
+            // Reminder before and on due date (3 → 0)
+            if ($daysUntilDue >= 0 && $daysUntilDue <= 3) {
                 $message = "Hi {$borrower->fname}, your loan {$loan->id} will be due on {$dueDate->format('F j, Y')}. Please disregard if already paid. Thank you!";
                 $this->info("Sending 3-day reminder for Loan {$loan->id} to {$borrower->contact_number}");
             }
 
-            // Reminder on the due date
-            elseif ($daysUntilDue === 0 || ($daysUntilDue <= 0 && $daysUntilDue >= -1)) {
-                $message = "Hi {$borrower->fname}, your loan {$loan->id} is due today ({$dueDate->format('F j, Y')}). Please make your payment to avoid penalties. Thank you!";
-                $this->info("Sending due-date reminder for Loan {$loan->id} to {$borrower->contact_number}");
+            // Reminder for overdue loans ( -1 )
+            elseif ($daysUntilDue === -1) {
+                $message = "Hi {$borrower->fname}, your loan {$loan->id} was due yesterday ({$dueDate->format('F j, Y')}). Please make your payment to avoid further penalties. Thank you!";
+                $type = 'overdue';
             }
 
             // Log if no reminder is needed today
@@ -73,6 +102,8 @@ class SendLoanReminders extends Command
                     'reminder'
                 );
 
+                $sentCount++;
+
                 if ($result['success']) {
                     $this->info("Reminder sent successfully for Loan {$loan->id}");
                 } else {
@@ -81,6 +112,6 @@ class SendLoanReminders extends Command
             }
         }
 
-        $this->info('Loan reminders processed successfully.');
+        $this->info("Loan reminders processed. Total sent: {$sentCount}");
     }
 }
