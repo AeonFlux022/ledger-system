@@ -10,10 +10,13 @@ use App\Services\SmsGatewayService;
 class SendLoanReminders extends Command
 {
     protected $signature = 'loans:send-reminders {--force : Send reminders regardless of due date}';
-    protected $description = 'Send SMS reminders before and on the loan due date';
+    protected $description = 'Send SMS reminders before, on the due date, and for overdue loans';
+
 
     public function handle()
     {
+        \Log::info('Loan reminder scheduler executed at ' . now());
+
         $today = Carbon::today();
         $sms = new SmsGatewayService();
         $forceSend = $this->option('force');
@@ -51,7 +54,7 @@ class SendLoanReminders extends Command
 
             // FORCE TEST MODE (ignore date range)
             if ($forceSend) {
-                $message = "[System Reminder] Hi {$borrower->fname}, your loan {$loan->id} will be due on {$dueDate->format('F j, Y')}. Please disregard if already paid. Thank you!";
+                $message = "Hi {$borrower->fname}, your loan {$loan->id} with loan amount of {$loan->monthly_amortization} and interest of {$loan->overdue} is due on {$dueDate->format('F j, Y')}. Please disregard if already paid. Thank you!";
                 $type = 'test';
                 $this->info("FORCE TEST → Sending reminder for Loan {$loan->id}");
 
@@ -77,7 +80,7 @@ class SendLoanReminders extends Command
 
             // Reminder before and on due date (3 → 0)
             if ($daysUntilDue >= 0 && $daysUntilDue <= 3) {
-                $message = "Hi {$borrower->fname}, your loan {$loan->id} will be due on {$dueDate->format('F j, Y')}. Please disregard if already paid. Thank you!";
+                $message = "Hi {$borrower->fname}, your loan {$loan->id} with loan amount of {$loan->monthly_amortization} and interest of {$loan->overdue} will be due on {$dueDate->format('F j, Y')}. Please disregard if already paid. Thank you!";
                 $this->info("Sending 3-day reminder for Loan {$loan->id} to {$borrower->contact_number}");
             }
 

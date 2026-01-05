@@ -41,7 +41,7 @@ class LoanReminderController extends Controller
 
       // FORCE LOGIC
       if ($force) {
-        $message = "Hi {$borrower->fname}, this is a reminder regarding your loan {$loan->id}. Please disregard if already paid. Thank you!";
+        $message = "Hi {$borrower->fname}, your loan {$loan->id} with loan amount of {$loan->monthly_amortization} and interest of {$loan->overdue} is due on {$dueDate->format('F j, Y')}. Please disregard if already paid. Thank you!";
         $type = 'forced';
       }
 
@@ -49,7 +49,7 @@ class LoanReminderController extends Controller
       // NORMAL RANGE LOGIC
       else {
         if ($daysUntilDue >= 0 && $daysUntilDue <= 3) {
-          $message = "Hi {$borrower->fname}, your loan {$loan->id} is due on {$dueDate->format('F j, Y')}. Please disregard if already paid. Thank you!";
+          $message = "Hi {$borrower->fname}, your loan {$loan->id} with loan amount of {$loan->monthly_amortization} and interest of {$loan->overdue} is due on {$dueDate->format('F j, Y')}. Please disregard if already paid. Thank you!";
           $type = 'reminder';
         } elseif ($daysUntilDue === -1) {
           $message = "Hi {$borrower->fname}, your loan {$loan->id} was due yesterday ({$dueDate->format('F j, Y')}). Please make your payment to avoid further penalties. Thank you!";

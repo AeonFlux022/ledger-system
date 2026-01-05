@@ -7,18 +7,15 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-  /**
-   * Define the application's command schedule.
-   */
   protected function schedule(Schedule $schedule): void
   {
-    // Schedule your commands here
-    $schedule->command('loans:send-reminders')->dailyAt('09:00');
+    // Schedule your loan reminder command
+    $schedule->command('loans:send-reminders --force')->everyMinute()->withoutOverlapping();
+    $schedule->call(function () {
+      \Log::info('Scheduler is running at ' . now());
+    })->everyMinute();
   }
 
-  /**
-   * Register the commands for the application.
-   */
   protected function commands(): void
   {
     $this->load(__DIR__ . '/Commands');
