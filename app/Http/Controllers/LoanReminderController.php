@@ -51,8 +51,8 @@ class LoanReminderController extends Controller
         if ($daysUntilDue >= 0 && $daysUntilDue <= 3) {
           $message = "Hi {$borrower->fname}, your loan {$loan->id} with loan amount of {$loan->monthly_amortization} and interest of {$loan->overdue} is due on {$dueDate->format('F j, Y')}. Please disregard if already paid. Thank you!";
           $type = 'reminder';
-        } elseif ($daysUntilDue === -1) {
-          $message = "Hi {$borrower->fname}, your loan {$loan->id} was due yesterday ({$dueDate->format('F j, Y')}). Please make your payment to avoid further penalties. Thank you!";
+        } elseif ($daysUntilDue === -5) {
+          $message = "Hi {$borrower->fname}, your loan {$loan->id} was due on ({$dueDate->format('F j, Y')}). Please make your payment to avoid further penalties. Thank you!";
           $type = 'overdue';
         }
       }

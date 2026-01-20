@@ -84,9 +84,9 @@ class SendLoanReminders extends Command
                 $this->info("Sending 3-day reminder for Loan {$loan->id} to {$borrower->contact_number}");
             }
 
-            // Reminder for overdue loans ( -1 )
-            elseif ($daysUntilDue === -1) {
-                $message = "Hi {$borrower->fname}, your loan {$loan->id} was due yesterday ({$dueDate->format('F j, Y')}). Please make your payment to avoid further penalties. Thank you!";
+            // Reminder for overdue loans ( -5 )
+            elseif ($daysUntilDue === -5) {
+                $message = "Hi {$borrower->fname}, your loan {$loan->id} was due on ({$dueDate->format('F j, Y')}). Please make your payment to avoid further penalties. Thank you!";
                 $type = 'overdue';
             }
 

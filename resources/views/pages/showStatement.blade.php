@@ -42,6 +42,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700 mb-6">
           <p><strong>Loan Amount:</strong> ₱{{ number_format($loan->loan_amount, 2) }}</p>
           <p><strong>Terms:</strong> {{ number_format($loan->terms) }} months</p>
+          <p><strong>Outstanding Balance:</strong> ₱{{ number_format($loan->outstanding_balance ?? 0, 2) }}</p>
           <p><strong>Payable per Term:</strong> ₱{{ number_format($loan->payable_per_term ?? 0, 2) }}</p>
           <p><strong>Due Date:</strong> {{ \Carbon\Carbon::parse($loan->due_date)->format('M d, Y') }}</p>
         </div>
@@ -68,6 +69,7 @@
                   <td class="px-4 py-2 border text-center">{{ $loop->iteration }}</td>
                   <td class="px-4 py-2 border text-right">₱{{ number_format($payment->amount, 2) }}</td>
                   <td class="px-4 py-2 border text-center">{{ $payment->month }}</td>
+                  
                   {{-- <td class="px-4 py-2 border text-right text-red-600">
                     ₱{{ number_format($payment->penalty, 2) }}
                   </td>

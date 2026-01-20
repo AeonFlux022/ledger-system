@@ -84,6 +84,7 @@
       border-top: 1px solid #ccc;
       padding-top: 10px;
     }
+
   </style>
 </head>
 
@@ -114,55 +115,57 @@
 
   {{-- Loans --}}
   @foreach ($borrower->loans as $loan)
-    <div class="loan-box">
-      <h3>Loan ID: {{ $loan->id }}</h3>
-      <table class="details-table">
-        <tr>
-          <td><strong>Loan Amount:</strong></td>
-          <td>₱{{ number_format($loan->loan_amount, 2) }}</td>
-          <td><strong>Terms:</strong></td>
-          <td>{{ $loan->terms }} months</td>
-        </tr>
-        <tr>
-          <td><strong>Payable per Term:</strong></td>
-          <td>₱{{ number_format($loan->payable_per_term ?? 0, 2) }}</td>
-          <td><strong>Status:</strong></td>
-          <td>{{ ucfirst($loan->loan_status ?? 'N/A') }}</td>
-        </tr>
-      </table>
+  <div class="loan-box">
+    <h3>Loan ID: {{ $loan->id }}</h3>
+    <table class="details-table">
+      <tr>
+        <td><strong>Loan Amount:</strong></td>
+        <td>₱{{ number_format($loan->loan_amount, 2) }}</td>
+        <td><strong>Terms:</strong></td>
+        <td>{{ $loan->terms }} months</td>
+        <td><strong>Outstanding Balance:</strong></td>
+        <td>₱{{ number_format($loan->outstanding_balance ?? 0,2) }}</td>
+      </tr>
+      <tr>
+        <td><strong>Payable per Term:</strong></td>
+        <td>₱{{ number_format($loan->payable_per_term ?? 0, 2) }}</td>
+        <td><strong>Status:</strong></td>
+        <td>{{ ucfirst($loan->loan_status ?? 'N/A') }}</td>
+      </tr>
+    </table>
 
-      <h4 style="margin-top: 10px;">Payment History</h4>
-      <table>
-        <thead>
-          <tr>
-            <th>No. of Payments</th>
-            <th>Amount Paid</th>
-            <th>Term</th>
-            {{-- <th>Penalty</th>
+    <h4 style="margin-top: 10px;">Payment History</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>No. of Payments</th>
+          <th>Amount Paid</th>
+          <th>Term</th>
+          {{-- <th>Penalty</th>
             <th>Total Paid</th> --}}
-            <th>Date</th>
-            <th>Reference</th>
-          </tr>
-        </thead>
-        <tbody>
-          @forelse ($loan->payments as $payment)
-            <tr>
-              <td class="text-center">{{ $loop->iteration }}</td>
-              <td class="text-right">₱{{ number_format($payment->amount, 2) }}</td>
-              <td class="text-center">{{ $payment->month }}</td>
-              {{-- <td class="text-right">₱{{ number_format($payment->penalty, 2) }}</td>
-              <td class="text-right"><strong>₱{{ number_format($payment->totalPayable, 2) }}</strong></td> --}}
-              <td>{{ $payment->created_at->format('M d, Y') }}</td>
-              <td class="text-center">{{ $payment->reference_id }}</td>
-            </tr>
-          @empty
-            <tr>
-              <td colspan="7" class="text-center text-gray-500">No payments recorded.</td>
-            </tr>
-          @endforelse
-        </tbody>
-      </table>
-    </div>
+          <th>Date</th>
+          <th>Reference</th>
+        </tr>
+      </thead>
+      <tbody>
+        @forelse ($loan->payments as $payment)
+        <tr>
+          <td class="text-center">{{ $loop->iteration }}</td>
+          <td class="text-right">₱{{ number_format($payment->amount, 2) }}</td>
+          <td class="text-center">{{ $payment->month }}</td>
+          {{-- <td class="text-right">₱{{ number_format($payment->penalty, 2) }}</td>
+          <td class="text-right"><strong>₱{{ number_format($payment->totalPayable, 2) }}</strong></td> --}}
+          <td>{{ $payment->created_at->format('M d, Y') }}</td>
+          <td class="text-center">{{ $payment->reference_id }}</td>
+        </tr>
+        @empty
+        <tr>
+          <td colspan="7" class="text-center text-gray-500">No payments recorded.</td>
+        </tr>
+        @endforelse
+      </tbody>
+    </table>
+  </div>
   @endforeach
 
   <div class="footer">

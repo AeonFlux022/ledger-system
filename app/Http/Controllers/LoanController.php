@@ -141,7 +141,7 @@ class LoanController extends Controller
             $sms->sendSms(
                 $borrower->contact_number,
                 "Hi {$borrower->fname}, your loan application for ₱" . number_format($loan->loan_amount, 2) .
-                " has been approved!",
+                " has been approved! Please visit ABG Finance for funds disbursement. Thank you.",
                 $loan->id,
                 $borrower->id,
                 'approval'
