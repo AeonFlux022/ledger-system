@@ -33,10 +33,25 @@
               {{ ($loans->currentPage() - 1) * $loans->perPage() + $loop->iteration }}
             </td>
             <td class="px-4 py-2">{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</td>
-            <td class="px-4 py-2">&#8369;{{ number_format($loan->loan_amount, 2) }}</td>
+            <td class="px-4 py-2">&#x20B1;{{ number_format($loan->loan_amount, 2) }}</td>
             <td class="px-4 py-2">{{ $loan->due_date }}</td>
-            <td class="px-4 py-2">₱{{ number_format($loan->display_balance, 2) }}</td>
+            <td class="px-4 py-2">&#x20B1;{{ number_format($loan->remaining_balance, 2) }}</td>
             <td class="px-4 py-2">{{ $loan->last_payment_date }}</td>
+            <td class="px-4 py-2 capitalize rounded">
+              @if($loan->status === 'approved')
+                @if($loan->loan_status === 'current')
+                  <span class="bg-teal-200 text-teal-800 text-xs font-medium px-2.5 py-0.5 rounded">Current</span>
+                @elseif($loan->loan_status === 'overdue')
+                  <span class="bg-orange-200 text-orange-800 text-xs font-medium px-2.5 py-0.5 rounded">Overdue</span>
+                @elseif($loan->loan_status === 'completed')
+                  <span class="bg-blue-200 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Completed</span>
+                @endif
+              @elseif($loan->status === 'pending')
+                <span class="bg-yellow-200 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">Pending</span>
+              @elseif($loan->status === 'rejected')
+                <span class="bg-red-200 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">Rejected</span>
+              @endif
+            </td>
             <td class="px-4 py-2">
               <div class="flex items-center space-x-2">
 
@@ -59,22 +74,6 @@
                 <x-modals.delete-loan :loan="$loan" />
 
               </div>
-            </td>
-
-            <td class="px-4 py-2 capitalize rounded">
-              @if($loan->status === 'approved')
-                @if($loan->loan_status === 'current')
-                  <span class="bg-teal-200 text-teal-800 px-4 py-2 rounded">Current</span>
-                @elseif($loan->loan_status === 'overdue')
-                  <span class="bg-orange-200 text-orange-800 px-4 py-2 rounded">Overdue</span>
-                @elseif($loan->loan_status === 'completed')
-                  <span class="bg-blue-200 text-blue-800 px-4 py-2 rounded">Completed</span>
-                @endif
-              @elseif($loan->status === 'pending')
-                <span class="bg-yellow-200 text-yellow-800 px-4 py-2 rounded">Pending</span>
-              @elseif($loan->status === 'rejected')
-                <span class="bg-red-200 text-red-800 px-4 py-2 rounded">Rejected</span>
-              @endif
             </td>
           </tr>
         @empty

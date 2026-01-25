@@ -19,6 +19,8 @@
               <th class="px-4 py-2">Reference ID</th>
               <th class="px-4 py-2">Term</th>
               <th class="px-4 py-2">Amount</th>
+              <th class="px-4 py-2">Penalty</th>
+              <th class="px-4 py-2">Total Paid</th>
               <th class="px-4 py-2">Date Paid</th>
             </tr>
           </thead>
@@ -27,7 +29,9 @@
               <tr class="border-b text-left border-gray-200 hover:bg-gray-50">
                 <td class="px-4 py-2">{{ $payment->reference_id }}</td>
                 <td class="px-4 py-2">{{ $payment->month }}</td>
-                <td class="px-4 py-2">₱{{ number_format($payment->amount, 2) }}</td>
+                <td class="px-4 py-2">&#x20B1;{{ number_format($payment->amount, 2) }}</td>
+                <td class="px-4 py-2">&#x20B1;{{ number_format($payment->penalty, 2) }}</td>
+                <td class="px-4 py-2">&#x20B1;{{ number_format($payment->total_paid, 2) }}</td>
                 <td class="px-4 py-2">{{ $payment->created_at->format('F j, Y') }}</td>
               </tr>
             @endforeach

@@ -26,14 +26,32 @@
 
           <div id="borrower-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($borrowers as $borrower)
-              <div class="bg-white shadow-md rounded-lg p-6">
+              <div class="bg-white shadow-md rounded-lg p-6 relative">
+
+                <!-- STATUS BADGE -->
+                @if($borrower->payment_status === 'delinquent')
+                  <span
+                    class="absolute top-3 right-3 px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700 border border-red-200">
+                    Delinquent
+                  </span>
+                @else
+                  <span
+                    class="absolute top-3 right-3 px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 border border-green-200">
+                    Good
+                  </span>
+                @endif
+
                 <h2 class="text-xl font-bold">{{ $borrower->fname }} {{ $borrower->lname }}</h2>
                 <p class="text-gray-600">Email: {{ $borrower->email }}</p>
                 <p class="text-gray-600">Contact: {{ $borrower->contact_number }}</p>
+
                 <a href="{{ route('showBorrower', $borrower->id) }}"
-                  class="block mt-4 px-4 py-2 bg-blue-600 text-white rounded text-center hover:bg-blue-700">View</a>
+                  class="block mt-4 px-4 py-2 bg-blue-600 text-white rounded text-center hover:bg-blue-700">
+                  View
+                </a>
               </div>
             @endforeach
+
           </div>
 
 
@@ -59,38 +77,42 @@
 @endsection
 
 
-@push('scripts')
-<script>
-document.getElementById('search')?.addEventListener('keyup', function () {
-    let query = this.value;
+    @push('scripts')
+      <script>
+        document.getElementById('search')?.addEventListener('keyup', function () {
+          let query = this.value;
 
-    fetch(`{{ route('borrowers.search') }}?search=${query}`)
-        .then(res => res.json())
-        .then(data => {
-            let list = document.getElementById('borrower-list');
-            list.innerHTML = '';
+          fetch(`{{ route('borrowers.search') }}?search=${query}`)
+            .then(res => res.json())
+            .then(data => {
+              let list = document.getElementById('borrower-list');
+              list.innerHTML = '';
 
-            if (data.length === 0) {
+              if (data.length === 0) {
                 list.innerHTML = `<p class="text-gray-500 col-span-full">No borrowers found.</p>`;
                 return;
-            }
+              }
 
-            data.forEach(b => {
+              data.forEach(b => {
+                const badge = b.payment_status === 'delinquent'
+                  ? `<span class="absolute top-3 right-3 px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700 border border-red-200">Delinquent</span>`
+                  : `<span class="absolute top-3 right-3 px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 border border-green-200">Good</span>`;
+
                 list.innerHTML += `
-                  <div class="bg-white shadow-md rounded-lg p-6">
-                    <h2 class="text-xl font-bold">${b.fname} ${b.lname}</h2>
-                    <p class="text-gray-600">Email: ${b.email ?? ''}</p>
-                    <p class="text-gray-600">Contact: ${b.contact_number ?? ''}</p>
+        <div class="bg-white shadow-md rounded-lg p-6 relative">
+          ${badge}
+                          <h2 class="text-xl font-bold">${b.fname} ${b.lname}</h2>
+                          <p class="text-gray-600">Email: ${b.email ?? ''}</p>
+                          <p class="text-gray-600">Contact: ${b.contact_number ?? ''}</p>
 
-                    <a href="/borrowers/${b.id}"
-                       class="block mt-4 px-4 py-2 bg-blue-600 text-white rounded text-center hover:bg-blue-700">
-                       View
-                    </a>
-                  </div>
-                `;
+                          <a href="/borrowers/${b.id}"
+                             class="block mt-4 px-4 py-2 bg-blue-600 text-white rounded text-center hover:bg-blue-700">
+                             View
+                          </a>
+                        </div>
+                      `;
+              });
             });
         });
-});
-</script>
-@endpush
-
+      </script>
+    @endpush

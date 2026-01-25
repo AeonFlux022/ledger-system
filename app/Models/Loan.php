@@ -41,6 +41,63 @@ class Loan extends Model
     }
 
     /**
+     * 🔹 Total contract value (principal + interest + processing)
+     */
+    public function getTotalObligationAttribute(): float
+    {
+        return round(
+            ($this->loan_amount ?? 0)
+            + (($this->total_payable ?? 0) - ($this->loan_amount ?? 0)) // interest part
+            + ($this->processing_fee ?? 0),
+            2
+        );
+    }
+
+    /**
+     * 🔹 Total amount paid including penalties
+     */
+    public function getTotalPaidAttribute(): float
+    {
+        return round($this->payments()->sum('total_paid'), 2);
+    }
+
+    /**
+     * 🔹 Remaining balance (global source of truth)
+     */
+    public function getRemainingBalanceAttribute(): float
+    {
+        return max(
+            round($this->total_obligation - $this->total_paid, 2),
+            0
+        );
+    }
+
+    /**
+     * 🔹 Running balance per payment (ledger style)
+     */
+    public function runningBalanceAfter(Payment $payment): float
+    {
+        $paidBefore = $this->payments()
+            ->where('id', '<=', $payment->id)
+            ->sum('total_paid');
+
+        return max(
+            round($this->total_obligation - $paidBefore, 2),
+            0
+        );
+    }
+
+    public function runningTotalPaid(Payment $payment): float
+    {
+        return round(
+            $this->payments()
+                ->where('id', '<=', $payment->id)
+                ->sum('total_paid'),
+            2
+        );
+    }
+
+    /**
      * 🔹 Generate Amortization Schedule
      */
     public function amortizationSchedule(): Collection
@@ -106,51 +163,21 @@ class Loan extends Model
         $penalty = 0;
 
         foreach ($this->amortizationSchedule() as $row) {
-            $penalty += $this->calculatePenaltyForMonth($row['month']);
+            $month = $row['month'];
+
+            // if already paid, DO NOT re-penalize
+            $alreadyPaid = $this->payments->firstWhere('month', $month);
+            if ($alreadyPaid) {
+                continue;
+            }
+
+            $penalty += $this->calculatePenaltyForMonth($month);
         }
 
         return round($penalty, 2);
     }
 
 
-    /**
-     * 🔹 Accessor for balance including overdue penalty
-     */
-    public function getBalanceWithOverdueAttribute(): float
-    {
-        return round($this->outstanding_balance + $this->calculateOverdues(), 2);
-    }
-
-    public function getDisplayBalanceAttribute()
-    {
-        return $this->loan_status === 'completed'
-            ? 0
-            : $this->balance_with_overdue;
-    }
-
-    // monthly penalty for a specific month
-    public function getMonthlyPenalty($month)
-    {
-        $schedule = collect($this->amortizationSchedule());
-        $row = $schedule->firstWhere('month', $month);
-
-        if (!$row)
-            return 0;
-
-        $dueDate = Carbon::parse($row['due_date']);
-        $alreadyPaid = $this->payments->firstWhere('month', $month);
-
-        if (now()->greaterThan($dueDate) && !$alreadyPaid) {
-            return round($row['amount'] * 0.03, 2);
-        }
-
-        return 0;
-    }
-
-
-    /**
-     * 🔹 Accessor for last payment date
-     */
     public function getLastPaymentDateAttribute()
     {
         $lastPayment = $this->payments()->latest('created_at')->first();
@@ -167,47 +194,64 @@ class Loan extends Model
         return 0;
     }
 
+    public function getDisplayBalanceAttribute(): float
+    {
+        return $this->loan_status === 'completed'
+            ? 0
+            : $this->remaining_balance;
+    }
+
 
     // check for loan status
     public function updateLoanStatus(): void
     {
         $today = now();
+
+        // 1. If fully paid (true accounting balance)
+        if ($this->remaining_balance <= 0) {
+            $this->loan_status = 'completed';
+            $this->save();
+            return;
+        }
+
+        // 2. Check if there is any overdue unpaid term
         $schedule = $this->amortizationSchedule();
 
-        $paidCount = $this->payments()->count();
+        $nextUnpaid = collect($schedule)->firstWhere('status', 'unpaid');
 
-        // If fully paid
-        if ($paidCount >= $this->terms) {
-            $this->loan_status = 'completed';
-        } else {
-            // Find the latest unpaid due date
-            $nextUnpaid = $schedule->firstWhere('status', 'unpaid');
+        if ($nextUnpaid) {
+            $dueDate = Carbon::parse($nextUnpaid['due_date']);
 
-            if ($nextUnpaid) {
-                $dueDate = Carbon::parse($nextUnpaid['due_date']);
-
-                // Overdue if today is past due and unpaid
-                if ($today->greaterThan($dueDate)) {
-                    $this->loan_status = 'overdue';
-                }
-                // Otherwise, still current
-                else {
-                    $this->loan_status = 'current';
-                }
+            if ($today->greaterThan($dueDate)) {
+                $this->loan_status = 'overdue';
             } else {
-                // If somehow all paid but terms don't match (edge case)
-                $this->loan_status = 'completed';
+                $this->loan_status = 'current';
             }
+        } else {
+            // fallback
+            $this->loan_status = 'current';
         }
 
         $this->save();
     }
+
+
     protected static function booted()
     {
         static::retrieved(function ($loan) {
             $loan->updateLoanStatus();
         });
     }
+
+    public function getOutstandingBalanceAttribute($value)
+    {
+        if (!is_null($value))
+            return $value;
+
+        $paidBase = $this->payments()->sum('amount'); // base only
+        return max(0, $this->total_payable - $paidBase);
+    }
+
 
 
 }

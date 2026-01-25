@@ -83,7 +83,7 @@
               <th class="px-4 py-2">Due Date</th>
               <th class="px-4 py-2">Term</th>
               <th class="px-4 py-2">Monthly Amortization</th>
-              <th class="px-4 py-2">Fines</th>
+              <th class="px-4 py-2">Penalty</th>
               <th class="px-4 py-2">Total Payable</th>
               <th class="px-4 py-2">Actions</th>
               <th class="px-4 py-2">Date Paid</th>
@@ -95,25 +95,31 @@
               @php
                 $paid = $loan->payments->firstWhere('month', $row['month']);
                 $dueDate = \Carbon\Carbon::parse($row['due_date']);
-                $penalty = 0;
 
-                if (!$paid && now()->greaterThan($dueDate)) {
-                  $penalty = $row['amount'] * 0.03; // 3% penalty
+                if ($paid) {
+                  // use DB values
+                  $penalty = $paid->penalty;
+                  $totalPayable = $paid->total_paid;
+                } else {
+                  // compute preview penalty
+                  $penalty = now()->greaterThan($dueDate)
+                    ? round($row['amount'] * 0.03, 2)
+                    : 0;
+
+                  $totalPayable = $row['amount'] + $penalty;
                 }
-
-                // For this month only, add penalty if overdue
-                $totalPayable = $row['amount'] + ($penalty > 0 ? $penalty : 0);
               @endphp
+
               <tr class="text-left border-b border-gray-200 hover:bg-gray-50">
                 <td class="px-4 py-2">{{ $loop->iteration }}</td>
                 <td class="px-4 py-2">{{ $row['due_date'] }}</td>
                 <td class="px-4 py-2">{{ $row['month'] }}</td>
-                <td class="px-4 py-2">₱{{ number_format($row['amount'], 2) }}</td>
+                <td class="px-4 py-2">&#x20B1;{{ number_format($row['amount'], 2) }}</td>
                 <td class="px-4 py-2 {{ $penalty > 0 ? 'text-red-600 font-semibold' : '' }}">
-                  ₱{{ number_format($penalty, 2) }}
+                  &#x20B1;{{ number_format($penalty, 2) }}
                 </td>
                 <td class="px-4 py-2">
-                  ₱{{ number_format($totalPayable, 2) }}
+                  &#x20B1;{{ number_format($totalPayable, 2) }}
                 </td>
                 <td class="px-4 py-2">
                   @if($paid)

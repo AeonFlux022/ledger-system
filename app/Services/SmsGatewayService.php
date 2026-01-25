@@ -46,6 +46,7 @@ class SmsGatewayService
       "textMessage" => [
         "text" => $message,
       ],
+      "simNumber" => 2 // Change either 1 or 2 for sending via different SIMs
     ];
 
     // Send the message via API

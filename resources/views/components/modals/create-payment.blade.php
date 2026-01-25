@@ -37,22 +37,33 @@
           <!-- Hidden due date -->
           <input type="hidden" name="due_date" value="{{ $payment['due_date'] }}">
 
+          <input type="hidden" name="penalty" value="{{ $penalty }}">
+
+
           <div>
             <label class="block mb-1 font-medium">Due Date</label>
             <input type="text" value="{{ \Carbon\Carbon::parse($payment['due_date'])->format('F j, Y') }}"
-              class="w-full border px-4 py-2 rounded mb-3 bg-gray-100 cursor-not-allowed" readonly>
+              class="w-full border px-4 py-2 rounded  bg-gray-100 cursor-not-allowed" readonly>
           </div>
 
           <div>
-            <label class="block mb-1 font-medium">Amount to Pay</label>
-            <input type="number" name="amount" value="{{ $totalPayable }}" step="0.01"
-              class="w-full border px-4 py-2 rounded mb-3 cursor-not-allowed bg-gray-100" readonly required>
-            @if($penalty > 0)
-              <p class="text-sm text-red-600 mt-1">
-                Includes ₱{{ number_format($penalty, 2) }} penalty for overdue.
-              </p>
-            @endif
+            <label class="block mb-1 font-medium">Base Amount</label>
+            <input type="text" name="amount" value="{{ $payment['amount']  }}" step="0.01"
+              class="w-full border px-4 py-2 rounded  cursor-not-allowed bg-gray-100" readonly>
           </div>
+
+          <div>
+            <label class="block mb-1 font-medium">Penalty</label>
+            <input type="text" value="₱{{ number_format($penalty, 2) }}"
+              class="w-full border px-4 py-2 rounded cursor-not-allowed bg-gray-100" readonly>
+          </div>
+
+          <div>
+            <label class="block mb-1 font-medium">Total Payable</label>
+            <input type="text" value="₱{{ number_format($totalPayable, 2) }}"
+              class="w-full border px-4 py-2 rounded cursor-not-allowed mb-5 bg-gray-100" readonly>
+          </div>
+
 
           <div class="flex justify-end space-x-2">
             <button type="button" @click="open = false" class="px-4 py-2 border rounded">

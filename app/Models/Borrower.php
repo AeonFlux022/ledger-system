@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Borrower extends Model
 {
@@ -52,4 +53,20 @@ class Borrower extends Model
     {
         return $this->loans()->count() === 0;
     }
+
+    public function getPaymentStatusAttribute()
+    {
+        $hasOverdue = $this->loans()
+            ->where('status', 'approved')
+            ->where('loan_status', 'overdue')
+            ->exists();
+
+        if ($hasOverdue) {
+            return 'delinquent';
+        }
+
+        return 'good';
+    }
+
+
 }

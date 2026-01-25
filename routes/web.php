@@ -152,31 +152,37 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->name('borrowers.search');
 });
 
+
+
+
+
 // Export PDF routes
 Route::get('/export/users', [ExportPdfController::class, 'exportUsers'])->name('export.users');
 Route::get('/export/borrowers', [ExportPdfController::class, 'exportBorrowers'])->name('export.borrowers');
 Route::get('/export/loans', [ExportPdfController::class, 'exportLoans'])->name('export.loans');
-Route::get('/export/payments', [ExportPdfController::class, 'exportPayments'])->name('export.payments');
-Route::get('/export/payments/monthly', [ExportPdfController::class, 'exportMonthly'])
-    ->name('export.monthly-report');
+// Route::get('/export/payments', [ExportPdfController::class, 'exportPayments'])->name('export.payments');
+Route::get('/export-payments', [ExportPdfController::class, 'exportPaymentsReport'])
+    ->name('export.paymentsReport');
+
 
 // sms logs route
 Route::get('/admin/sms-logs', [SmsLogController::class, 'index'])
     ->name('admin.smsLogs.index');
 
+// Generate monthly report chart
+Route::get('/admin/dashboard/monthly-stats', [DashboardController::class, 'monthlyStats']);
 
-// soa 
-// Route::prefix('admin')->middleware(['auth', 'role:admin,super_admin'])->group(function () {
-//     Route::get('/borrowers/{borrower}/statement', [StatementController::class, 'show'])->name('borrowers.statement');
-//     Route::get('/borrowers/{borrower}/statement/pdf', [StatementController::class, 'exportPdf'])->name('borrowers.statement.pdf');
-// });
 
-// soa 
+// Generate SOA in client side
 Route::get('/borrowers/{borrower}/statement', [StatementController::class, 'show'])
     ->name('showStatement');
 
 Route::get('/borrowers/{borrower}/statement/pdf', [StatementController::class, 'exportPdf'])
     ->name('statementPdf');
+
+// Generate SOA in admin side
+Route::get('admin/borrowers/{borrower}/generate-soa', [BorrowerController::class, 'generateSOA'])
+     ->name('admin.borrowers.generateSOA');
 
 Route::post(
     '/admin/loans/send-reminders',

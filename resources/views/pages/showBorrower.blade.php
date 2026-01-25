@@ -10,7 +10,22 @@
           <div class="mb-2">
             <span class="text-gray-700 text-sm">{{ $borrower->id }} </span>
           </div>
-          <h1 class="text-4xl font-bold mb-2">{{ $borrower->fname }} {{ $borrower->lname }}</h1>
+          <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-4xl font-bold">{{ $borrower->fname }} {{ $borrower->lname }}</h1>
+
+            @if($borrower->payment_status === 'delinquent')
+              <span
+                class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700 border border-red-200 shadow-sm">
+                Delinquent
+              </span>
+            @else
+              <span
+                class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 border border-green-200 shadow-sm">
+                Good Payer
+              </span>
+            @endif
+          </div>
+
           <p class="italic mb-6">Account created at {{ $borrower->created_at->format('F d, Y') }}</p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -4,7 +4,26 @@
 
 @section('content')
   <div class="max-w-4xl mx-auto px-6 py-10">
-    <h1 class="text-3xl font-bold text-gray-800 mb-2">Borrower Details</h1>
+    <div class="flex items-center gap-3 mb-2">
+      <h1 class="text-3xl font-bold text-gray-800">Borrower Details</h1>
+
+      @if($borrower->payment_status === 'delinquent')
+        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700 border border-red-200 shadow-sm">
+          Delinquent
+        </span>
+      @else
+        <span
+          class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 border border-green-200 shadow-sm">
+          Good Payer
+        </span>
+      @endif
+
+      <a href="{{ route('admin.borrowers.generateSOA', $borrower->id) }}"
+        class="bg-green-600 text-white px-4 py-2 rounded ml-auto hover:bg-green-700 transition text-sm font-medium">
+        Download PDF
+      </a>
+    </div>
+
     <p class="text-sm text-gray-500 mb-6">
       Submitted at {{ $borrower->created_at->format('F j, Y g:i A') }}
     </p>
@@ -49,7 +68,7 @@
         <div>
           <label class="text-sm text-gray-500">Income</label>
           <small class="block text-xs text-gray-400">Average income per month</small>
-          <p class="mt-1 font-medium">₱{{ number_format($borrower->income, 2) }}</p>
+          <p class="mt-1 font-medium">&#x20B1;{{ number_format($borrower->income, 2) }}</p>
         </div>
         <div>
           <label class="text-sm text-gray-500">Employment Status</label>

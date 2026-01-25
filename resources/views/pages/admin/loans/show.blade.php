@@ -69,7 +69,7 @@
         <div></div>
         <div>
           <label class="text-sm text-gray-500">Loan Amount</label>
-          <p class="mt-1 font-medium">₱{{ number_format($loan->loan_amount, 2) }}</p>
+          <p class="mt-1 font-medium">&#x20B1;{{ number_format($loan->loan_amount, 2) }}</p>
         </div>
         <div>
           <label class="text-sm text-gray-500">Interest Rate</label>
@@ -81,21 +81,21 @@
         </div>
         <div>
           <label class="text-sm text-gray-500">Processing Fee</label>
-          <p class="mt-1 font-medium">₱{{ number_format($loan->processing_fee, 2) }}</p>
+          <p class="mt-1 font-medium">&#x20B1;{{ number_format($loan->processing_fee, 2) }}</p>
         </div>
         <div>
           <label class="text-sm text-gray-500">Total Payable</label>
           <p class="mt-1 font-bold text-gray-800">
-            ₱{{ number_format($loan->balance_with_overdue, 2) }}
+            &#x20B1;{{ number_format($loan->balance_with_overdue, 2) }}
         </div>
         <div>
           <label class="text-sm text-gray-500">Monthly Amortization</label>
-          <p class="mt-1 font-medium">₱{{ number_format($loan->monthly_amortization, 2) }}</p>
+          <p class="mt-1 font-medium">&#x20B1;{{ number_format($loan->monthly_amortization, 2) }}</p>
         </div>
         <div class="mt-4">
           <h4 class="text-sm text-gray-500">Overdue Penalties</h4>
           <p class="mt-1 font-medium text-red-600">
-            ₱{{ number_format($loan->overdue, 2) }}
+            &#x20B1;{{ number_format($loan->overdue, 2) }}
           </p>
         </div>
 
@@ -111,6 +111,8 @@
             <th class="px-4 py-2">Month</th>
             <th class="px-4 py-2">Due Date</th>
             <th class="px-4 py-2">Amount</th>
+            {{-- <th class="px-4 py-2">Penalty</th> --}}
+            <th class="px-4 py-2">Total Payable</th>
 
             @if($loan->status == 'approved')
               <th class="px-4 py-2">Action</th>
@@ -123,31 +125,28 @@
           @foreach($paginatedSchedule as $payment)
             @php
               $paid = $loan->payments->firstWhere('month', $payment['month']);
-              $penalty = $paid->penalty ?? $loan->getMonthlyPenalty($payment['month']);
-              $totalPayable = $payment['amount'] + $penalty;
 
               if ($paid) {
-                // Payment exists → use stored values
-                $penalty = $paid->penalty ?? 0;
-                $totalPayable = $paid->total_paid ?? $payment['amount'];
+                // use stored DB values
+                $penalty = $paid->penalty;
+                $totalPayable = $paid->total_paid;
               } else {
-                // Payment not yet made → calculate from model helper
-                $penalty = $loan->getMonthlyPenalty($payment['month']);
+                // compute live penalty
+                $penalty = $loan->calculatePenaltyForMonth($payment['month']);
                 $totalPayable = $payment['amount'] + $penalty;
               }
             @endphp
-
-
             <tr class="border-b border-gray-200 hover:bg-gray-50 text-left">
               <td class="px-4 py-2">{{ $payment['month'] }}</td>
               <td class="px-4 py-2">{{ $payment['due_date'] }}</td>
               <td class="px-4 py-2">
-                ₱{{ number_format($totalPayable, 2) }}
+                &#x20B1;{{ number_format($payment['amount'], 2) }}
                 @if($penalty > 0)
                   <span class="text-xs text-red-600 block">(+₱{{ number_format($penalty, 2) }} penalty)</span>
                 @endif
               </td>
-
+              {{-- <td class="px-4 py-2">₱{{ number_format($penalty, 2) }}</td> --}}
+              <td class="px-4 py-2">&#x20B1;{{ number_format($totalPayable, 2) }}</td>
               @if($loan->status == 'approved')
                 <td class="px-4 py-2">
                   @if($paid)

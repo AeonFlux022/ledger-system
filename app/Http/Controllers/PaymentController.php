@@ -38,6 +38,8 @@ class PaymentController extends Controller
             'month' => 'required|integer|min:1|max:' . $loan->terms,
             'amount' => 'required|numeric|min:0',
             'due_date' => 'required|date',
+            'penalty' => 'nullable|numeric|min:0',
+            'total_paid' => 'nullable|numeric|min:0',
         ]);
 
         $alreadyPaid = Payment::where('loan_id', $loan->id)
@@ -49,21 +51,22 @@ class PaymentController extends Controller
         }
 
         // $dueDate = Carbon::parse($validated['due_date']);
-        $penalty = $loan->calculatePenaltyForMonth($validated['month']);
-        $totalPaid = $validated['amount'] + $penalty;
+        $penalty = $loan->calculatePenaltyForMonth($validated['month']); // calculate penalty based on loan logic
+        $totalPaid = $validated['amount'] + $penalty; // base + penalty
 
         $payment = Payment::create([
             'loan_id' => $loan->id,
             'month' => $validated['month'],
-            'amount' => $validated['amount'],
-            'penalty' => $penalty,
-            'total_paid' => $totalPaid,
+            'amount' => $validated['amount'],   // base only
+            'penalty' => $penalty,               // penalty only
+            'total_paid' => $totalPaid,          // base + penalty
             'due_date' => $validated['due_date'],
             'reference_id' => strtoupper(Str::random(10)),
         ]);
 
+
         // Update loan balance
-        $loan->outstanding_balance -= $totalPaid;
+        $loan->outstanding_balance -= $validated['amount']; // subtract base only
         if ($loan->outstanding_balance <= 0) {
             $loan->outstanding_balance = 0;
             $loan->loan_status = 'completed';
@@ -74,7 +77,7 @@ class PaymentController extends Controller
         // Send SMS
         $sms = new SmsGatewayService();
         $message = "Hi {$loan->borrower->fname}, we received your payment of ₱{$validated['amount']} " .
-            ($penalty > 0 ? "plus ₱{$penalty} penalty " : "") .
+            ($penalty > 0 ? "with a ₱{$penalty} penalty " : "") .
             "for Loan #{$loan->id}. Ref: {$payment->reference_id}";
 
         $response = $sms->sendSms(

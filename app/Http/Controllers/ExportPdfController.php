@@ -43,59 +43,61 @@ class ExportPdfController extends Controller
     }
 
     /**
-     * Export all payments
+     * Export payments report (daily, weekly, monthly)
      */
-    public function exportPayments(Request $request)
+    public function exportPaymentsReport(Request $request)
     {
-        $search = $request->get('search');
+        $type = $request->input('type', 'monthly'); // default monthly
+        $date = $request->input('date', now()->format('Y-m-d')); // reference date
 
-        $payments = Payment::with(['loan.borrower'])
-            ->when($search, function ($query, $search) {
-                $query->whereHas('loan.borrower', function ($q) use ($search) {
-                    $q->where('fname', 'like', "%{$search}%")
-                        ->orWhere('lname', 'like', "%{$search}%");
-                });
-            })
+        $query = Payment::with(['loan.borrower']);
+
+        // Determine range based on type
+        switch ($type) {
+            case 'daily':
+                $startDate = Carbon::parse($date)->startOfDay();
+                $endDate = Carbon::parse($date)->endOfDay();
+                $label = Carbon::parse($date)->format('F j, Y');
+                break;
+
+            case 'weekly':
+                $startDate = Carbon::parse($date)->startOfWeek();
+                $endDate = Carbon::parse($date)->endOfWeek();
+                $label = Carbon::parse($date)->startOfWeek()->format('F j') . ' - ' . Carbon::parse($date)->endOfWeek()->format('F j, Y');
+                break;
+
+            case 'monthly':
+            default:
+                $startDate = Carbon::parse($date)->startOfMonth();
+                $endDate = Carbon::parse($date)->endOfMonth();
+                $label = Carbon::parse($date)->format('F Y');
+                break;
+        }
+
+        // Filter payments within range
+        $payments = $query->whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Optional: Dynamic file name (based on filter or default)
-        $fileName = $search
-            ? 'payments-' . str_replace(' ', '_', strtolower($search)) . '-' . now()->format('Y-m-d') . '.pdf'
-            : 'payments-list-' . now()->format('Y-m-d') . '.pdf';
-
-        $pdf = Pdf::loadView('pdf.payments', compact('payments'))
-            ->setPaper('a4', 'landscape');
-
-        return $pdf->download($fileName);
-    }
-
-    public function exportMonthly(Request $request)
-    {
-        $month = $request->input('month', now()->format('Y-m'));
-
-        $startDate = Carbon::parse($month)->startOfMonth();
-        $endDate = Carbon::parse($month)->endOfMonth();
-
-        // Get all payments made within the selected month
-        $payments = Payment::with(['loan.borrower'])
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        // Optional: calculate totals
+        // Totals
         $totalAmount = $payments->sum('amount');
-        $totalPenalty = $payments->sum('overdue');
+        $totalPenalty = $payments->sum('penalty'); // adjust if your column is 'overdue'
         $grandTotal = $totalAmount + $totalPenalty;
 
-        $pdf = Pdf::loadView('pdf.monthly-report', [
+        // Dynamic file name
+        $fileName = ucfirst($type) . "_Payments_Report_" . $startDate->format('Ymd') . "_to_" . $endDate->format('Ymd') . ".pdf";
+
+        $pdf = Pdf::loadView('pdf.payments-report', [
             'payments' => $payments,
-            'month' => Carbon::parse($month)->format('F Y'),
+            'periodLabel' => $label,
             'totalAmount' => $totalAmount,
             'totalPenalty' => $totalPenalty,
             'grandTotal' => $grandTotal,
+            'reportType' => $type
         ]);
 
-        return $pdf->setPaper('A4', 'portrait')->download("Monthly_Payments_Report_{$month}.pdf");
+        return $pdf->setPaper('A4', 'portrait')->download($fileName);
     }
+
 }
+

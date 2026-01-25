@@ -16,22 +16,11 @@ class Payment extends Model
         'amount',
         'penalty',
         'due_date',
+        'total_paid'
     ];
     public function loan()
     {
         return $this->belongsTo(Loan::class);
     }
 
-    // Always calculate outstanding balance dynamically
-    public function getOutstandingBalanceAttribute($value)
-    {
-        if (!is_null($value)) {
-            return $value; // Use stored value if maintained
-        }
-
-        $paid = $this->payments()->sum('amount');
-        return max(0, $this->total_payable - $paid);
-    }
-
 }
-

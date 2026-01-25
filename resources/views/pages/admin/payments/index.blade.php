@@ -23,21 +23,25 @@
 
       {{-- Right: Export PDF Button --}}
       <div class="flex items-center space-x-2">
-        {{-- Export All Payments --}}
-        <a href="{{ route('export.payments', ['search' => request('search')]) }}"
-          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-          Export Payments as PDF
-        </a>
 
-        {{-- Monthly Report --}}
-        <form method="GET" action="{{ route('export.monthly-report') }}" class="flex items-center space-x-2">
-          <input type="month" name="month" value="{{ request('month', now()->format('Y-m')) }}"
+        <form method="GET" action="{{ route('export.paymentsReport') }}" class="flex items-center space-x-2">
+          {{-- Type Dropdown --}}
+          <select name="type" id="reportType"
+            class="border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none">
+            <option value="daily" {{ request('type') == 'daily' ? 'selected' : '' }}>Daily</option>
+            <option value="weekly" {{ request('type') == 'weekly' ? 'selected' : '' }}>Weekly</option>
+            <option value="monthly" {{ request('type') == 'monthly' ? 'selected' : '' }}>Monthly</option>
+          </select>
+
+          {{-- Date Input (default to today) --}}
+          <input type="date" name="date" id="reportDate" value="{{ request('date', now()->format('Y-m-d')) }}"
             class="border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none">
 
           <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-            Generate Monthly Report
+            Generate Report
           </button>
         </form>
+
       </div>
 
     </div>
@@ -53,6 +57,7 @@
             <th class="px-4 py-2">Month</th>
             <th class="px-4 py-2">Amount</th>
             <th class="px-4 py-2">Penalty</th>
+            <th class="px-4 py-2">Total Payable</th>
             <th class="px-4 py-2">Due Date</th>
             <th class="px-4 py-2">Date Paid</th>
           </tr>
@@ -67,8 +72,9 @@
               <td class="px-4 py-2">{{ $payment->loan->id }}</td>
               <td class="px-4 py-2 font-mono">{{ $payment->reference_id }}</td>
               <td class="px-4 py-2">{{ $payment->month }}</td>
-              <td class="px-4 py-2">₱{{ number_format($payment->amount, 2) }}</td>
-              <td class="px-4 py-2">₱{{ number_format($payment->penalty, 2) }}</td>
+              <td class="px-4 py-2">&#x20B1;{{ number_format($payment->amount, 2) }}</td>
+              <td class="px-4 py-2">&#x20B1;{{ number_format($payment->penalty, 2) }}</td>
+              <td class="px-4 py-2">&#x20B1;{{ number_format($payment->total_paid, 2) }}</td>
               <td class="px-4 py-2">{{ $payment->due_date }}</td>
               <td class="px-4 py-2">{{ $payment->created_at->format('M d, Y') }}</td>
             </tr>
@@ -138,5 +144,22 @@
       }
     });
   </script>
+
+  <script>
+    const reportType = document.getElementById('reportType');
+    const reportDate = document.getElementById('reportDate');
+
+    function updateDateInput() {
+      if (reportType.value === 'monthly') {
+        reportDate.type = 'month';
+      } else {
+        reportDate.type = 'date';
+      }
+    }
+
+    reportType.addEventListener('change', updateDateInput);
+    window.addEventListener('load', updateDateInput);
+  </script>
+
 
 @endsection

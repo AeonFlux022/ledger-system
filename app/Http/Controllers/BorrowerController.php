@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Borrower;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BorrowerController extends Controller
 {
@@ -42,7 +43,8 @@ class BorrowerController extends Controller
             ->orWhere('contact_number', 'like', "%{$search}%")
             ->orderBy('fname')
             ->take(20)
-            ->get();
+            ->get()
+            ->append('payment_status');
 
         return response()->json($borrowers);
     }
@@ -172,7 +174,14 @@ class BorrowerController extends Controller
     }
 
 
+    public function generateSOA(Borrower $borrower)
+    {
+        $pdf = PDF::loadView('pdf.adminStatementPdf', compact('borrower'))
+            ->setPaper('a4', 'portrait'); // optional
 
+        $fileName = 'SOA_' . $borrower->fname . '_' . $borrower->lname . '.pdf';
 
+        return $pdf->download($fileName);
+    }
 
 }

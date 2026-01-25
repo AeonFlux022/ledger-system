@@ -39,10 +39,10 @@
                 <tr class="border-b text-left border-gray-200 hover:bg-gray-50">
                   <td class="px-4 py-2">{{ $loop->iteration }}</td>
                   <td class="px-4 py-2">{{ $loan->id }}</td>
-                  <td class="px-4 py-2">₱{{ number_format($loan->loan_amount, 2) }}</td>
+                  <td class="px-4 py-2">&#x20B1;{{ number_format($loan->loan_amount, 2) }}</td>
                   <td class="px-4 py-2">{{ $loan->terms }} months</td>
-                  <td class="px-4 py-2">₱{{ number_format($loan->monthly_amortization, 2) }}</td>
-                  <td class="px-4 py-2">₱{{ number_format($loan->display_balance, 2) }}</td>
+                  <td class="px-4 py-2">&#x20B1;{{ number_format($loan->monthly_amortization, 2) }}</td>
+                  <td class="px-4 py-2">&#x20B1;{{ number_format($loan->remaining_balance, 2) }}</td>
                   </td>
                   <td class="px-4 py-2">
                     @if($loan->status == 'approved')

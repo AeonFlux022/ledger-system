@@ -21,7 +21,7 @@
           <th class="px-4 py-2">Name</th>
           <th class="px-4 py-2">Contact</th>
           <th class="px-4 py-2">Email</th>
-          <th class="px-4 py-2">Employment</th>
+          <th class="px-4 py-2">Borrower Status</th>
           <th class="px-4 py-2">Actions</th>
         </tr>
       </thead>
@@ -32,7 +32,13 @@
             <td class="px-4 py-2">{{ $borrower->fname }} {{ $borrower->lname }}</td>
             <td class="px-4 py-2">{{ $borrower->contact_number }}</td>
             <td class="px-4 py-2">{{ $borrower->email }}</td>
-            <td class="px-4 py-2">{{ ucfirst($borrower->employment_status) }}</td>
+            <td class="px-4 py-2">
+              @if ($borrower->payment_status === 'delinquent')
+                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">Delinquent</span>
+              @else
+                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Good</span>
+              @endif
+            </td>
             <td class="px-4 py-2">
               <div class="flex items-center space-x-2">
                 <a href="{{ route('admin.borrowers.show', $borrower->id) }}"

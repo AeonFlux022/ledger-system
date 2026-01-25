@@ -45,7 +45,7 @@
 
   <!-- Sidebar -->
   <aside class="fixed top-0 left-0 h-full w-64 bg-white shadow-md p-6 space-y-4 hidden md:block">
-    <h2 class="text-2xl font-bold text-blue-600 mb-6">ABG Finance</h2>
+    <h2><a href="/admin/dashboard" class="text-2xl font-bold text-blue-600 mb-6">ABG Finance</a></h2>
 
     <nav class="space-y-2">
       <a href="/admin/dashboard" class="block px-4 py-2 rounded hover:bg-blue-100 text-gray-700">Home</a>
@@ -68,33 +68,40 @@
     @yield('content')
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="//unpkg.com/alpinejs" defer></script>
+  <script>
+    function updatePhilippineTime() {
+      const now = new Date();
+
+      // Convert to Philippine Time (UTC+8)
+      const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+      const phTime = new Date(utc + 3600000 * 8);
+
+      const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      };
+
+      document.getElementById('ph-time').textContent = phTime.toLocaleString('en-PH', options);
+    }
+
+    // Update every second
+    setInterval(updatePhilippineTime, 1000);
+    updatePhilippineTime(); // Initial call
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  @stack('scripts')
+
 </body>
 
 </html>
-
-<script src="//unpkg.com/alpinejs" defer></script>
-<script>
-  function updatePhilippineTime() {
-    const now = new Date();
-
-    // Convert to Philippine Time (UTC+8)
-    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-    const phTime = new Date(utc + 3600000 * 8);
-
-    const options = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    };
-
-    document.getElementById('ph-time').textContent = phTime.toLocaleString('en-PH', options);
-  }
-
-  // Update every second
-  setInterval(updatePhilippineTime, 1000);
-  updatePhilippineTime(); // Initial call
-</script>
