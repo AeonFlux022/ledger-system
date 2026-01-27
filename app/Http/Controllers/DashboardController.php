@@ -73,6 +73,54 @@ class DashboardController extends Controller
       ->orderByDesc('total_paid')
       ->first();
 
+
+    // ===== Monthly Comparison =====
+    $currentMonth = Carbon::now()->month;
+    $currentYear = Carbon::now()->year;
+
+    $previousMonth = Carbon::now()->subMonth()->month;
+    $previousYear = Carbon::now()->subMonth()->year;
+
+    // Total Collected (payments)
+    $currentCollected = Payment::whereMonth('created_at', $currentMonth)
+      ->whereYear('created_at', $currentYear)
+      ->sum('amount');
+
+    $previousCollected = Payment::whereMonth('created_at', $previousMonth)
+      ->whereYear('created_at', $previousYear)
+      ->sum('amount');
+
+    // Total Income = interest + penalties
+    $currentInterest = Loan::where('status', 'approved')
+      ->whereMonth('created_at', $currentMonth)
+      ->whereYear('created_at', $currentYear)
+      ->get()
+      ->sum(function ($loan) {
+        $paid = $loan->payments->sum('amount');
+        return max($paid - $loan->loan_amount, 0);
+      });
+
+    $previousInterest = Loan::where('status', 'approved')
+      ->whereMonth('created_at', $previousMonth)
+      ->whereYear('created_at', $previousYear)
+      ->get()
+      ->sum(function ($loan) {
+        $paid = $loan->payments->sum('amount');
+        return max($paid - $loan->loan_amount, 0);
+      });
+
+    $currentPenalty = Payment::whereMonth('created_at', $currentMonth)
+      ->whereYear('created_at', $currentYear)
+      ->sum('penalty');
+
+    $previousPenalty = Payment::whereMonth('created_at', $previousMonth)
+      ->whereYear('created_at', $previousYear)
+      ->sum('penalty');
+
+    $currentIncome = $currentInterest + $currentPenalty;
+    $previousIncome = $previousInterest + $previousPenalty;
+
+
     return view('pages.admin.dashboard', compact(
       'userCount',
       'borrowerCount',
@@ -84,7 +132,13 @@ class DashboardController extends Controller
       'totalCollected',
       'totalIncome',
       'topLoanBorrower',
-      'topPaymentBorrower'
+      'topPaymentBorrower',
+      'totalCollected',
+      'totalIncome',
+      'currentCollected',
+      'previousCollected',
+      'currentIncome',
+      'previousIncome'
     ));
   }
 }

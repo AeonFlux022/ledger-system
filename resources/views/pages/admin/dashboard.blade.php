@@ -97,28 +97,36 @@
         @push('scripts')
           <script>
             document.addEventListener('DOMContentLoaded', function () {
-              const canvas = document.getElementById('financeChart');
-              if (!canvas) return;
 
-              const ctx = canvas.getContext('2d');
+              const ctx = document.getElementById('financeChart').getContext('2d');
 
               new Chart(ctx, {
                 type: 'bar',
                 data: {
                   labels: ['Total Collected', 'Total Income'],
-                  datasets: [{
-                    label: 'Amount (PHP)',
-                    data: [
-                            {{ $totalCollected }},
-                      {{ $totalIncome }}
-                    ],
-                    borderWidth: 1
-                  }]
+                  datasets: [
+                    {
+                      label: 'Previous Month',
+                      data: [
+                {{ $previousCollected }},
+                        {{ $previousIncome }}
+                      ],
+                      borderWidth: 1
+                    },
+                    {
+                      label: 'Current Month',
+                      data: [
+                {{ $currentCollected }},
+                        {{ $currentIncome }}
+                      ],
+                      borderWidth: 1
+                    }
+                  ]
                 },
                 options: {
                   responsive: true,
                   plugins: {
-                    legend: { display: false }
+                    legend: { position: 'bottom' }
                   },
                   scales: {
                     y: {
@@ -132,9 +140,11 @@
                   }
                 }
               });
+
             });
           </script>
         @endpush
+
       </div>
 
 
@@ -245,7 +255,7 @@
           @csrf
           <button type="button" @click="open = true"
             class="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold
-                                                                                              hover:bg-blue-700 transition shadow">
+                                                                                                hover:bg-blue-700 transition shadow">
 
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18" />
@@ -297,7 +307,7 @@
 
               <button type="submit"
                 class="px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold
-                                                                                             hover:bg-blue-700 transition">
+                                                                                               hover:bg-blue-700 transition">
                 Send Now
               </button>
             </div>
