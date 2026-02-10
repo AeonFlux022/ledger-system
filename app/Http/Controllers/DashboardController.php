@@ -13,40 +13,33 @@ class DashboardController extends Controller
 {
   public function index()
   {
+    $now = Carbon::now();
+    $year = request('year', $now->year);
+
+    /* =======================
+       Core KPIs
+    ======================= */
+
     $userCount = User::count();
     $borrowerCount = Borrower::count();
     $loanCount = Loan::count();
 
-    // Approved / Rejected
     $approvedLoans = Loan::where('status', 'approved')->count();
     $rejectedLoans = Loan::where('status', 'rejected')->count();
 
-    // Total principal released
     $totalLoanAmount = Loan::where('status', 'approved')->sum('loan_amount');
 
-    // Interest earned (only from approved with payments)
-    $interestIncome = Loan::where('status', 'approved')
-      ->whereHas('payments')
-      ->get()
-      ->sum(function ($loan) {
-        $totalPaid = $loan->payments->sum('amount');
-        return max($totalPaid - $loan->loan_amount, 0);
-      });
-
-    // Penalty income
+    $totalCollected = Payment::sum('amount');
     $penaltyIncome = Payment::sum('penalty');
 
-    // Total earnings
+    // Interest income
+    $interestIncome = Loan::where('status', 'approved')
+      ->withSum('payments', 'amount')
+      ->get()
+      ->sum(fn($loan) => max($loan->payments_sum_amount - $loan->loan_amount, 0));
+
     $totalEarnings = round($interestIncome + $penaltyIncome, 2);
 
-    // Total collected (actual cash received)
-    $totalCollected = Payment::sum('total_paid');
-
-    // Total income (interest + processing fees)
-    $totalIncome = Loan::sum('processing_fee')
-      + Loan::sum(DB::raw('total_payable - loan_amount'));
-
-    // Top borrower by loan amount
     $topLoanBorrower = Borrower::select(
       'borrowers.id',
       'borrowers.fname',
@@ -59,7 +52,6 @@ class DashboardController extends Controller
       ->orderByDesc('total_loaned')
       ->first();
 
-    // Top borrower by payments
     $topPaymentBorrower = Borrower::select(
       'borrowers.id',
       'borrowers.fname',
@@ -74,51 +66,65 @@ class DashboardController extends Controller
       ->first();
 
 
-    // ===== Monthly Comparison =====
-    $currentMonth = Carbon::now()->month;
-    $currentYear = Carbon::now()->year;
 
-    $previousMonth = Carbon::now()->subMonth()->month;
-    $previousYear = Carbon::now()->subMonth()->year;
+    /* =======================
+       Monthly Comparison
+    ======================= */
 
-    // Total Collected (payments)
+    $currentMonth = $now->month;
+    $previousMonth = $now->copy()->subMonth()->month;
+
     $currentCollected = Payment::whereMonth('created_at', $currentMonth)
-      ->whereYear('created_at', $currentYear)
+      ->whereYear('created_at', $now->year)
       ->sum('amount');
 
     $previousCollected = Payment::whereMonth('created_at', $previousMonth)
-      ->whereYear('created_at', $previousYear)
+      ->whereYear('created_at', $now->copy()->subMonth()->year)
       ->sum('amount');
 
-    // Total Income = interest + penalties
-    $currentInterest = Loan::where('status', 'approved')
-      ->whereMonth('created_at', $currentMonth)
-      ->whereYear('created_at', $currentYear)
-      ->get()
-      ->sum(function ($loan) {
-        $paid = $loan->payments->sum('amount');
-        return max($paid - $loan->loan_amount, 0);
-      });
-
-    $previousInterest = Loan::where('status', 'approved')
-      ->whereMonth('created_at', $previousMonth)
-      ->whereYear('created_at', $previousYear)
-      ->get()
-      ->sum(function ($loan) {
-        $paid = $loan->payments->sum('amount');
-        return max($paid - $loan->loan_amount, 0);
-      });
-
-    $currentPenalty = Payment::whereMonth('created_at', $currentMonth)
-      ->whereYear('created_at', $currentYear)
+    $currentIncome = Payment::whereMonth('created_at', $currentMonth)
+      ->whereYear('created_at', $now->year)
       ->sum('penalty');
 
-    $previousPenalty = Payment::whereMonth('created_at', $previousMonth)
-      ->whereYear('created_at', $previousYear)
+    $previousIncome = Payment::whereMonth('created_at', $previousMonth)
+      ->whereYear('created_at', $now->copy()->subMonth()->year)
       ->sum('penalty');
 
-    $currentIncome = $currentInterest + $currentPenalty;
-    $previousIncome = $previousInterest + $previousPenalty;
+
+    /* =======================
+       Yearly Trend (Sparse)
+    ======================= */
+
+    // Collections
+    $collections = Payment::selectRaw('MONTH(created_at) as month, SUM(amount) as total')
+      ->whereYear('created_at', $year)
+      ->groupBy(DB::raw('MONTH(created_at)'))
+      ->pluck('total', 'month');
+
+    // Receivables (interest)
+    $receivables = Loan::where('status', 'approved')
+      ->whereYear('created_at', $year)
+      ->withSum('payments', 'amount')
+      ->get()
+      ->groupBy(fn($loan) => $loan->created_at->month)
+      ->map(
+        fn($loans) =>
+        $loans->sum(
+          fn($loan) =>
+          max($loan->payments_sum_amount - $loan->loan_amount, 0)
+        )
+      );
+
+    // Only months with data
+    $labels = [];
+    $monthlyCollections = [];
+    $monthlyReceivables = [];
+
+    foreach ($collections as $month => $value) {
+      $labels[] = Carbon::create()->month($month)->format('M');
+      $monthlyCollections[] = $value;
+      $monthlyReceivables[] = $receivables[$month] ?? 0;
+    }
 
 
     return view('pages.admin.dashboard', compact(
@@ -127,18 +133,19 @@ class DashboardController extends Controller
       'loanCount',
       'approvedLoans',
       'rejectedLoans',
-      'totalLoanAmount',
-      'totalEarnings',
-      'totalCollected',
-      'totalIncome',
       'topLoanBorrower',
       'topPaymentBorrower',
+      'totalLoanAmount',
       'totalCollected',
-      'totalIncome',
+      'totalEarnings',
       'currentCollected',
       'previousCollected',
       'currentIncome',
-      'previousIncome'
+      'previousIncome',
+      'labels',
+      'monthlyCollections',
+      'monthlyReceivables',
+      'year'
     ));
   }
 }

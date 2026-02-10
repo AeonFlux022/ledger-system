@@ -112,7 +112,9 @@
 
               <tr class="text-left border-b border-gray-200 hover:bg-gray-50">
                 <td class="px-4 py-2">{{ $loop->iteration }}</td>
-                <td class="px-4 py-2">{{ $row['due_date'] }}</td>
+                <td class="px-4 py-2">
+                  {{ \Carbon\Carbon::parse($row['due_date'])->format('M jS, Y') }}
+                </td>
                 <td class="px-4 py-2">{{ $row['month'] }}</td>
                 <td class="px-4 py-2">&#x20B1;{{ number_format($row['amount'], 2) }}</td>
                 <td class="px-4 py-2 {{ $penalty > 0 ? 'text-red-600 font-semibold' : '' }}">

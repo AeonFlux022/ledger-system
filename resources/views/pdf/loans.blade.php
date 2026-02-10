@@ -45,6 +45,7 @@
     .page-break {
       page-break-before: always;
     }
+
   </style>
 </head>
 
@@ -60,21 +61,28 @@
         <th>Amount</th>
         <th>Terms</th>
         <th>Status</th>
-        <th>Outstanding Balance</th>
+        <th>Total Amount Payable</th>
         <th>Due Date</th>
       </tr>
     </thead>
     <tbody>
       @foreach($loans as $loan)
-        <tr>
-          <td>{{ $loan->id }}</td>
-          <td>{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</td>
-          <td>&#x20B1;{{ number_format($loan->loan_amount, 2) }}</td>
-          <td>{{ $loan->terms }} mo.</td>
-          <td>{{ ucfirst($loan->status) }}</td>
-          <td>&#x20B1;{{ number_format($loan->remaining_balance, 2) }}</td>
-          <td>{{ \Carbon\Carbon::parse($loan->due_date)->format('M d, Y') }}</td>
-        </tr>
+      <tr>
+        <td>{{ $loan->id }}</td>
+        <td>{{ $loan->borrower->fname }} {{ $loan->borrower->lname }}</td>
+        <td>&#x20B1;{{ number_format($loan->loan_amount, 2) }}</td>
+        <td>{{ $loan->terms }} mo.</td>
+        <td>{{ ucfirst($loan->status) }}</td>
+        <td>
+          &#x20B1;
+          {{ $loan->status === 'rejected'
+        ? number_format(0, 2)
+        : number_format($loan->remaining_balance, 2) 
+                }}
+        </td>
+
+        <td>{{ \Carbon\Carbon::parse($loan->due_date)->format('M d, Y') }}</td>
+      </tr>
       @endforeach
     </tbody>
   </table>

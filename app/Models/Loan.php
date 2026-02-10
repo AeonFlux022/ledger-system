@@ -43,15 +43,41 @@ class Loan extends Model
     /**
      * 🔹 Total contract value (principal + interest + processing)
      */
-    public function getTotalObligationAttribute(): float
+    // public function getTotalObligationAttribute(): float
+    // {
+    //     return round(
+    //         ($this->loan_amount ?? 0)
+    //         + (($this->total_payable ?? 0) - ($this->loan_amount ?? 0)) // interest part
+    //         + ($this->processing_fee ?? 0),
+    //         2
+    //     );
+    // }
+
+    // total payable per term including penalties
+    public function payableForMonth(int $month): float
     {
-        return round(
-            ($this->loan_amount ?? 0)
-            + (($this->total_payable ?? 0) - ($this->loan_amount ?? 0)) // interest part
-            + ($this->processing_fee ?? 0),
-            2
-        );
+        // check if there's already a payment record for this term
+        $paid = $this->payments->firstWhere('month', $month);
+
+        if ($paid) {
+            // use stored DB values (frozen truth once paid)
+            return round($paid->total_paid, 2);
+        }
+
+        // not yet paid → compute live
+        $schedule = collect($this->amortizationSchedule());
+        $row = $schedule->firstWhere('month', $month);
+
+        if (!$row) {
+            return 0;
+        }
+
+        $base = $row['amount'];
+        $penalty = $this->calculatePenaltyForMonth($month);
+
+        return round($base + $penalty, 2);
     }
+
 
     /**
      * 🔹 Total amount paid including penalties
@@ -67,7 +93,7 @@ class Loan extends Model
     public function getRemainingBalanceAttribute(): float
     {
         return max(
-            round($this->total_obligation - $this->total_paid, 2),
+            round($this->total_payable - $this->total_paid, 2),
             0
         );
     }
@@ -82,7 +108,7 @@ class Loan extends Model
             ->sum('total_paid');
 
         return max(
-            round($this->total_obligation - $paidBefore, 2),
+            round($this->total_payable - $paidBefore, 2),
             0
         );
     }
@@ -199,6 +225,22 @@ class Loan extends Model
         return $this->loan_status === 'completed'
             ? 0
             : $this->remaining_balance;
+    }
+
+
+    /**
+     * 🔹 Starting balance before a specific payment
+     */
+    public function startingBalanceBefore(Payment $payment): float
+    {
+        $paidBefore = $this->payments()
+            ->where('id', '<', $payment->id)
+            ->sum('total_paid');
+
+        return max(
+            round($this->total_payable - $paidBefore, 2),
+            0
+        );
     }
 
 

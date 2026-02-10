@@ -17,8 +17,11 @@ class LoanController extends Controller
     {
         session(['borrowers_previous_url' => url()->previous()]);
 
-        // Latest loans first, 10 per page
-        $loans = Loan::orderBy('created_at', 'desc')->paginate(10);
+        // Highest loan first, 10 per page
+        $loans = Loan::orderBy('loan_amount', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
 
         // Borrowers for the loan creation modal
         $borrowers = Borrower::orderBy('fname')->get();

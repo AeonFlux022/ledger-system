@@ -86,7 +86,7 @@
         <div>
           <label class="text-sm text-gray-500">Total Payable</label>
           <p class="mt-1 font-bold text-gray-800">
-            &#x20B1;{{ number_format($loan->balance_with_overdue, 2) }}
+            &#x20B1;{{ number_format($loan->remaining_balance, 2) }}
         </div>
         <div>
           <label class="text-sm text-gray-500">Monthly Amortization</label>
@@ -138,7 +138,9 @@
             @endphp
             <tr class="border-b border-gray-200 hover:bg-gray-50 text-left">
               <td class="px-4 py-2">{{ $payment['month'] }}</td>
-              <td class="px-4 py-2">{{ $payment['due_date'] }}</td>
+              <td class="px-4 py-2">
+                {{ \Carbon\Carbon::parse($payment['due_date'])->format('M jS, Y') }}
+              </td>
               <td class="px-4 py-2">
                 &#x20B1;{{ number_format($payment['amount'], 2) }}
                 @if($penalty > 0)

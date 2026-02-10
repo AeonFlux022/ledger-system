@@ -31,10 +31,10 @@
         <div class="flex items-center justify-between border-b pb-3 mb-4">
           <h3 class="text-xl font-bold text-gray-800">Loan ID: {{ $loan->id }}</h3>
           <span class="text-sm px-3 py-1 rounded-full 
-                          @if($loan->loan_status === 'current') bg-teal-100 text-teal-800 
-                          @elseif($loan->loan_status === 'overdue') bg-orange-100 text-orange-800 
-                          @elseif($loan->loan_status === 'completed') bg-blue-100 text-blue-800 
-                          @else bg-gray-100 text-gray-600 @endif">
+                                    @if($loan->loan_status === 'current') bg-teal-100 text-teal-800 
+                                    @elseif($loan->loan_status === 'overdue') bg-orange-100 text-orange-800 
+                                    @elseif($loan->loan_status === 'completed') bg-blue-100 text-blue-800 
+                                    @else bg-gray-100 text-gray-600 @endif">
             {{ ucfirst($loan->loan_status ?? 'N/A') }}
           </span>
         </div>
@@ -60,36 +60,36 @@
             <thead class="bg-gray-100 text-gray-700">
               <tr>
                 <th class="px-4 py-2 border">No. of Payments</th>
-                <th class="px-4 py-2 border">Amount Paid</th>
-                <th class="px-4 py-2 border">Term</th>
-                <th class="px-4 py-2 border">Penalty</th>
-                <th class="px-4 py-2 border">Total Paid</th>
-                <th class="px-4 py-2 border">Cumulative Paid</th>
-                <th class="px-4 py-2 border">Balance</th>
                 <th class="px-4 py-2 border">Date</th>
-                <th class="px-4 py-2 border">Reference</th>
+                <th class="px-4 py-2 border">Starting Balance</th>
+                <th class="px-4 py-2 border">Monthly Amount Due</th>
+                <th class="px-4 py-2 border">Penalties</th>
+                <th class="px-4 py-2 border">Total Payable Amount</th>
+                <th class="px-4 py-2 border">Payment Received</th>
+                <th class="px-4 py-2 border">Remaining Balance</th>
+
               </tr>
             </thead>
             <tbody class="text-gray-700">
               @forelse($loan->payments as $payment)
                 <tr class="hover:bg-gray-50">
                   <td class="px-4 py-2 border text-center">{{ $loop->iteration }}</td>
-                  <td class="px-4 py-2 border text-right">{{ number_format($payment->amount, 2) }}</td>
-                  <td class="px-4 py-2 border text-center">{{ $payment->month }}</td>
+                  <td class="px-4 py-2 border">{{ $payment->created_at->format('M d, Y') }}</td>
+                  <td class="px-4 py-2 border text-right">
+                    &#x20B1;{{ number_format($loan->startingBalanceBefore($payment), 2) }}
+                  </td>
 
+                  <td class="px-4 py-2 border text-right">{{ number_format($loan->monthly_amortization, 2) }}</td>
                   <td class="px-4 py-2 border text-right">
                     &#x20B1;{{ number_format($payment->penalty, 2) }}
                   </td>
-                  <td class="px-4 py-2 border text-right font-semibold">
-                    &#x20B1;{{ number_format($payment->total_paid, 2) }}
-                  </td>
+                  <td class="px-4 py-2 border text-right">{{ number_format($payment->total_paid, 2) }}</td>
                   <td class="px-4 py-2 border text-right">
                     &#x20B1;{{ number_format($loan->runningTotalPaid($payment), 2) }}
                   <td class="px-4 py-2 border text-right">
                     &#x20B1;{{ number_format($loan->runningBalanceAfter($payment), 2) }}
                   </td>
-                  <td class="px-4 py-2 border">{{ $payment->created_at->format('M d, Y') }}</td>
-                  <td class="px-4 py-2 border text-center">{{ $payment->reference_id }}</td>
+                  {{-- <td class="px-4 py-2 border text-center">{{ $payment->reference_id }}</td> --}}
                 </tr>
               @empty
                 <tr>

@@ -88,49 +88,83 @@
 
       <!-- FINANCIAL OVERVIEW CHART -->
       <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
-        <h2 class="text-lg font-bold text-gray-800 mb-4">
-          Financial Overview
-        </h2>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-gray-800">
+              Financial Overview
+            </h2>
+            <p class="text-sm text-gray-500">
+              Collections & Receivables ({{ $year }})
+            </p>
+          </div>
 
-        <canvas id="financeChart" height="120"></canvas>
+          <!-- Year Filter -->
+          <form method="GET">
+            <select name="year" onchange="this.form.submit()" class="border rounded-lg px-3 py-1 text-sm">
+              @for($y = now()->year; $y >= now()->year - 5; $y--)
+                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>
+                  {{ $y }}
+                </option>
+              @endfor
+            </select>
+          </form>
+        </div>
+
+        <div class="h-[300px]">
+          <canvas id="financeChart"></canvas>
+        </div>
 
         @push('scripts')
           <script>
             document.addEventListener('DOMContentLoaded', function () {
 
+              const labels = @json($labels);
+              const collections = @json($monthlyCollections);
+              const receivables = @json($monthlyReceivables);
+
               const ctx = document.getElementById('financeChart').getContext('2d');
 
               new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
-                  labels: ['Total Collected', 'Total Income'],
+                  labels: labels,
                   datasets: [
                     {
-                      label: 'Previous Month',
-                      data: [
-                {{ $previousCollected }},
-                        {{ $previousIncome }}
-                      ],
-                      borderWidth: 1
+                      label: 'Collections',
+                      data: collections,
+                      tension: 0.4,
+                      borderWidth: 3
                     },
                     {
-                      label: 'Current Month',
-                      data: [
-                {{ $currentCollected }},
-                        {{ $currentIncome }}
-                      ],
-                      borderWidth: 1
+                      label: 'Receivables',
+                      data: receivables,
+                      tension: 0.4,
+                      borderWidth: 3
                     }
                   ]
                 },
                 options: {
                   responsive: true,
+                  maintainAspectRatio: false,
+                  interaction: {
+                    mode: 'index',
+                    intersect: false,
+                  },
                   plugins: {
-                    legend: { position: 'bottom' }
+                    legend: {
+                      position: 'bottom'
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: function (context) {
+                          return context.dataset.label + ': ₱' +
+                            context.parsed.y.toLocaleString();
+                        }
+                      }
+                    }
                   },
                   scales: {
                     y: {
-                      beginAtZero: true,
                       ticks: {
                         callback: function (value) {
                           return '₱' + value.toLocaleString();
@@ -144,7 +178,6 @@
             });
           </script>
         @endpush
-
       </div>
 
 
@@ -255,7 +288,7 @@
           @csrf
           <button type="button" @click="open = true"
             class="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold
-                                                                                                hover:bg-blue-700 transition shadow">
+                                                                                                    hover:bg-blue-700 transition shadow">
 
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18" />
@@ -307,7 +340,7 @@
 
               <button type="submit"
                 class="px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold
-                                                                                               hover:bg-blue-700 transition">
+                                                                                                   hover:bg-blue-700 transition">
                 Send Now
               </button>
             </div>
