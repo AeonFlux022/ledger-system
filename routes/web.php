@@ -82,11 +82,11 @@ Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('
 // list all borrowers from the database
 Route::get('/admin/borrowers', [BorrowerController::class, 'index'])->name('admin.borrowers.index');
 
-// show a single borrower
-Route::get('/admin/borrowers/{borrower}', [BorrowerController::class, 'show'])->name('admin.borrowers.show');
-
 // show create form for a borrower
 Route::get('/admin/borrowers/create', [BorrowerController::class, 'create'])->name('admin.borrowers.create');
+
+// show a single borrower
+Route::get('/admin/borrowers/{borrower}', [BorrowerController::class, 'show'])->name('admin.borrowers.show');
 
 // store a new borrower
 Route::post('/admin/borrowers', [BorrowerController::class, 'store'])->name('admin.borrowers.store');
@@ -182,7 +182,7 @@ Route::get('/borrowers/{borrower}/statement/pdf', [StatementController::class, '
 
 // Generate SOA in admin side
 Route::get('admin/borrowers/{borrower}/generate-soa', [BorrowerController::class, 'generateSOA'])
-     ->name('admin.borrowers.generateSOA');
+    ->name('admin.borrowers.generateSOA');
 
 Route::post(
     '/admin/loans/send-reminders',

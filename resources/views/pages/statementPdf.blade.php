@@ -65,11 +65,11 @@
       <h3>
         Loan ID: {{ $loan->id }}
         <span class="badge 
-                                @if($loan->loan_status === 'current') badge-current
-                                @elseif($loan->loan_status === 'overdue') badge-overdue
-                                @elseif($loan->loan_status === 'completed') badge-completed
-                                @else badge-default
-                                @endif">
+                                    @if($loan->loan_status === 'current') badge-current
+                                    @elseif($loan->loan_status === 'overdue') badge-overdue
+                                    @elseif($loan->loan_status === 'completed') badge-completed
+                                    @else badge-default
+                                    @endif">
           {{ ucfirst($loan->loan_status ?? 'N/A') }}
         </span>
       </h3>
@@ -96,8 +96,9 @@
             &#x20B1;{{ number_format($loan->payable_per_term, 2) }}
           </td>
         </tr>
+        {{-- add another row sa end date --}}
         <tr>
-          <td style="font-weight: bold; padding: 3px 6px;">Due Date:</td>
+          <td style="font-weight: bold; padding: 3px 6px;">Start Date:</td>
           <td style="padding: 3px 6px; text-align: right;">
             {{ \Carbon\Carbon::parse($loan->due_date)->format('M d, Y') }}
           </td>

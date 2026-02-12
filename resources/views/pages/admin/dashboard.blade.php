@@ -130,14 +130,14 @@
                   labels: labels,
                   datasets: [
                     {
-                      label: 'Collections',
-                      data: collections,
+                      label: 'Receivables',
+                      data: receivables,
                       tension: 0.4,
                       borderWidth: 3
                     },
                     {
-                      label: 'Receivables',
-                      data: receivables,
+                      label: 'Collections',
+                      data: collections,
                       tension: 0.4,
                       borderWidth: 3
                     }
@@ -185,6 +185,7 @@
 
     <div class="my-10 border-t border-gray-200"></div>
 
+
     <!-- TOP PERFORMERS -->
     <div class="mb-4">
       <h2 class="text-lg font-bold text-gray-800">
@@ -194,16 +195,17 @@
         Borrowers with the highest approved loans and payments
       </p>
     </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-10">
+
+      <!-- TOP LOAN PATRONIZER -->
       <div class="relative bg-gradient-to-br from-green-50 to-white p-6 rounded-2xl shadow border border-green-100">
 
-        <!-- Badge -->
         <span class="absolute -top-3 -left-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
           TOP LOAN PATRONIZER
         </span>
 
         <div class="flex items-center gap-4">
-          <!-- Avatar -->
           <div
             class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-lg">
             {{ strtoupper(substr($topLoanBorrower->fname ?? 'N', 0, 1)) }}
@@ -211,30 +213,41 @@
 
           <div>
             <p class="text-sm text-gray-500">Highest Loaned (Approved)</p>
+
             @if($topLoanBorrower)
               <h2 class="text-lg font-bold text-gray-800">
                 {{ $topLoanBorrower->fname }} {{ $topLoanBorrower->lname }}
               </h2>
               <p class="text-green-600 font-bold text-xl mt-1">
-                &#x20B1;{{ number_format($topLoanBorrower->total_loaned, 2) }}
+                ₱{{ number_format($topLoanBorrower->total_loaned, 2) }}
               </p>
             @else
               <p class="text-gray-400">No approved loans yet</p>
             @endif
           </div>
         </div>
+
+        <!-- Top 2–5 -->
+        <div class="mt-4 space-y-2">
+          @foreach($topLoanBorrowers->slice(1)->values() as $index => $borrower)
+            <div class="flex justify-between text-sm text-gray-600">
+              <span>#{{ $index + 2 }} {{ $borrower->fname }} {{ $borrower->lname }}</span>
+              <span class="font-semibold text-green-600">
+                ₱{{ number_format($borrower->total_loaned, 2) }}
+              </span>
+            </div>
+          @endforeach
+        </div>
       </div>
 
-
+      <!-- TOP PAYING BORROWER -->
       <div class="relative bg-gradient-to-br from-blue-50 to-white p-6 rounded-2xl shadow border border-blue-100">
 
-        <!-- Badge -->
         <span class="absolute -top-3 -left-3 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
           TOP PAYING BORROWER
         </span>
 
         <div class="flex items-center gap-4">
-          <!-- Avatar -->
           <div
             class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg">
             {{ strtoupper(substr($topPaymentBorrower->fname ?? 'N', 0, 1)) }}
@@ -242,20 +255,35 @@
 
           <div>
             <p class="text-sm text-gray-500">Highest Paying (Approved)</p>
+
             @if($topPaymentBorrower)
               <h2 class="text-lg font-bold text-gray-800">
                 {{ $topPaymentBorrower->fname }} {{ $topPaymentBorrower->lname }}
               </h2>
               <p class="text-blue-600 font-bold text-xl mt-1">
-                &#x20B1;{{ number_format($topPaymentBorrower->total_paid, 2) }}
+                ₱{{ number_format($topPaymentBorrower->total_paid, 2) }}
               </p>
             @else
               <p class="text-gray-400">No approved payments yet</p>
             @endif
           </div>
         </div>
+
+        <!-- Top 2–5 -->
+        <div class="mt-4 space-y-2">
+          @foreach($topPaymentBorrowers->slice(1)->values() as $index => $borrower)
+            <div class="flex justify-between text-sm text-gray-600">
+              <span>#{{ $index + 2 }} {{ $borrower->fname }} {{ $borrower->lname }}</span>
+              <span class="font-semibold text-blue-600">
+                ₱{{ number_format($borrower->total_paid, 2) }}
+              </span>
+            </div>
+          @endforeach
+        </div>
       </div>
+
     </div>
+
 
     <div class="my-10 border-t border-gray-200"></div>
 
@@ -287,9 +315,7 @@
           onsubmit="return confirm('Send loan reminders now? This will notify eligible borrowers via SMS.')">
           @csrf
           <button type="button" @click="open = true"
-            class="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold
-                                                                                                    hover:bg-blue-700 transition shadow">
-
+            class="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18" />
             </svg>
@@ -339,8 +365,7 @@
               </button>
 
               <button type="submit"
-                class="px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold
-                                                                                                   hover:bg-blue-700 transition">
+                class="px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
                 Send Now
               </button>
             </div>

@@ -40,7 +40,8 @@ class DashboardController extends Controller
 
     $totalEarnings = round($interestIncome + $penaltyIncome, 2);
 
-    $topLoanBorrower = Borrower::select(
+    // Top Loan Patronizers (Top 5)
+    $topLoanBorrowers = Borrower::select(
       'borrowers.id',
       'borrowers.fname',
       'borrowers.lname',
@@ -50,22 +51,27 @@ class DashboardController extends Controller
       ->where('loans.status', 'approved')
       ->groupBy('borrowers.id', 'borrowers.fname', 'borrowers.lname')
       ->orderByDesc('total_loaned')
-      ->first();
+      ->limit(5)
+      ->get();
 
-    $topPaymentBorrower = Borrower::select(
+    // Top Paying Borrowers (Top 5, real cash)
+    $topPaymentBorrowers = Borrower::select(
       'borrowers.id',
       'borrowers.fname',
       'borrowers.lname',
-      DB::raw('SUM(payments.amount) as total_paid')
+      DB::raw('SUM(payments.amount + payments.penalty) as total_paid')
     )
       ->join('loans', 'loans.borrower_id', '=', 'borrowers.id')
       ->join('payments', 'payments.loan_id', '=', 'loans.id')
       ->where('loans.status', 'approved')
       ->groupBy('borrowers.id', 'borrowers.fname', 'borrowers.lname')
       ->orderByDesc('total_paid')
-      ->first();
+      ->limit(5)
+      ->get();
 
-
+    // Hero cards
+    $topLoanBorrower = $topLoanBorrowers->first();
+    $topPaymentBorrower = $topPaymentBorrowers->first();
 
     /* =======================
        Monthly Comparison
@@ -90,41 +96,35 @@ class DashboardController extends Controller
       ->whereYear('created_at', $now->copy()->subMonth()->year)
       ->sum('penalty');
 
+    // Yearly collections and receivables for chart
 
-    /* =======================
-       Yearly Trend (Sparse)
-    ======================= */
-
-    // Collections
-    $collections = Payment::selectRaw('MONTH(created_at) as month, SUM(amount) as total')
+    $collections = Payment::selectRaw('
+        MONTH(created_at) as month,
+        SUM(amount + penalty) as total
+    ')
       ->whereYear('created_at', $year)
       ->groupBy(DB::raw('MONTH(created_at)'))
       ->pluck('total', 'month');
 
-    // Receivables (interest)
     $receivables = Loan::where('status', 'approved')
-      ->whereYear('created_at', $year)
-      ->withSum('payments', 'amount')
       ->get()
       ->groupBy(fn($loan) => $loan->created_at->month)
       ->map(
         fn($loans) =>
-        $loans->sum(
-          fn($loan) =>
-          max($loan->payments_sum_amount - $loan->loan_amount, 0)
-        )
+        $loans->sum(fn($loan) => $loan->remaining_balance)
       );
 
-    // Only months with data
+    // Build full Jan–Dec
     $labels = [];
     $monthlyCollections = [];
     $monthlyReceivables = [];
 
-    foreach ($collections as $month => $value) {
-      $labels[] = Carbon::create()->month($month)->format('M');
-      $monthlyCollections[] = $value;
-      $monthlyReceivables[] = $receivables[$month] ?? 0;
+    for ($m = 1; $m <= 12; $m++) {
+      $labels[] = Carbon::create()->month($m)->format('M');
+      $monthlyCollections[] = $collections[$m] ?? 0;
+      $monthlyReceivables[] = $receivables[$m] ?? 0;
     }
+
 
 
     return view('pages.admin.dashboard', compact(
@@ -133,6 +133,8 @@ class DashboardController extends Controller
       'loanCount',
       'approvedLoans',
       'rejectedLoans',
+      'topLoanBorrowers',
+      'topPaymentBorrowers',
       'topLoanBorrower',
       'topPaymentBorrower',
       'totalLoanAmount',
