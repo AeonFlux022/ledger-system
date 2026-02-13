@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>@yield('title', 'Admin Dashboard')</title>
   @vite('resources/css/app.css')
+  <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
@@ -69,7 +70,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="//unpkg.com/alpinejs" defer></script>
+
   <script>
     function updatePhilippineTime() {
       const now = new Date();
