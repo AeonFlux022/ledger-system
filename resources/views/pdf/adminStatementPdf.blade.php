@@ -62,13 +62,14 @@
   <!-- Loans Section -->
   @foreach($borrower->loans as $loan)
     <div class="loan-box" style="margin-top: 15px;">
-      <h3>Loan ID: {{ $loan->id }}
+      <h3>
+        Loan ID: {{ $loan->id }}
         <span class="badge 
-                  @if($loan->loan_status === 'current') badge-current
-                  @elseif($loan->loan_status === 'overdue') badge-overdue
-                  @elseif($loan->loan_status === 'completed') badge-completed
-                  @else badge-default
-                  @endif">
+                                                @if($loan->loan_status === 'current') badge-current
+                                                @elseif($loan->loan_status === 'overdue') badge-overdue
+                                                @elseif($loan->loan_status === 'completed') badge-completed
+                                                @else badge-default
+                                                @endif">
           {{ ucfirst($loan->loan_status ?? 'N/A') }}
         </span>
       </h3>
@@ -77,23 +78,49 @@
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
         <tr>
           <td style="font-weight: bold; padding: 3px 6px;">Loan Amount:</td>
-          <td style="padding: 3px 6px; text-align: right;">&#x20B1;{{ number_format($loan->loan_amount, 2) }}</td>
+          <td style="padding: 3px 6px; text-align: right;">
+            &#x20B1;{{ number_format($loan->loan_amount, 2) }}
+          </td>
           <td style="font-weight: bold; padding: 3px 6px;">Terms:</td>
-          <td style="padding: 3px 6px; text-align: right;">{{ $loan->terms }} months</td>
+          <td style="padding: 3px 6px; text-align: right;">
+            {{ $loan->terms }} months
+          </td>
         </tr>
         <tr>
           <td style="font-weight: bold; padding: 3px 6px;">Outstanding Balance:</td>
-          <td style="padding: 3px 6px; text-align: right;">&#x20B1;{{ number_format($loan->remaining_balance, 2) }}</td>
+          <td style="padding: 3px 6px; text-align: right;">
+            &#x20B1;{{ number_format($loan->remaining_balance, 2) }}
+          </td>
           <td style="font-weight: bold; padding: 3px 6px;">Payable per Term:</td>
-          <td style="padding: 3px 6px; text-align: right;">&#x20B1;{{ number_format($loan->payable_per_term, 2) }}</td>
+          <td style="padding: 3px 6px; text-align: right;">
+            &#x20B1;{{ number_format($loan->payable_per_term, 2) }}
+          </td>
         </tr>
+        @php
+          $startDate = \Carbon\Carbon::parse($loan->due_date);
+          $endDate = $startDate->copy()->addMonths(max(((int) $loan->terms) - 1, 0));
+        @endphp
+
         <tr>
-          <td style="font-weight: bold; padding: 3px 6px;">Due Date:</td>
-          <td style="padding: 3px 6px; text-align: right;">{{ \Carbon\Carbon::parse($loan->due_date)->format('M d, Y') }}
+          <td style="font-weight: bold; padding: 3px 6px;">Start Date:</td>
+          <td style="padding: 3px 6px; text-align: right;">
+            {{ $startDate->format('M d, Y') }}
           </td>
           <td style="font-weight: bold; padding: 3px 6px;">Processing Fee:</td>
-          <td style="padding: 3px 6px; text-align: right;">&#x20B1;{{ number_format($loan->processing_fee, 2) }}</td>
+          <td style="padding: 3px 6px; text-align: right;">
+            &#x20B1;{{ number_format($loan->processing_fee, 2) }}
+          </td>
         </tr>
+
+        <tr>
+          <td style="font-weight: bold; padding: 3px 6px;">End Date:</td>
+          <td style="padding: 3px 6px; text-align: right;">
+            {{ $endDate->format('M d, Y') }}
+          </td>
+          <td style="font-weight: bold; padding: 3px 6px;"></td>
+          <td style="padding: 3px 6px; text-align: right;"></td>
+        </tr>
+
       </table>
 
       <!-- Payment History -->
@@ -101,33 +128,48 @@
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
         <thead>
           <tr>
-            <th style="padding: 3px 6px;">No.</th>
-            <th style="padding: 3px 6px; text-align: right;">Amount Paid</th>
-            <th style="padding: 3px 6px;">Term</th>
-            <th style="padding: 3px 6px; text-align: right;">Penalty</th>
-            <th style="padding: 3px 6px; text-align: right;">Total Paid</th>
-            <th style="padding: 3px 6px; text-align: right;">Balance</th>
+            <th style="padding: 3px 6px;">No. of Payments</th>
             <th style="padding: 3px 6px;">Date</th>
-            <th style="padding: 3px 6px;">Reference</th>
+            <th style="padding: 3px 6px; text-align: right;">Starting Balance</th>
+            <th style="padding: 3px 6px;">Monthly Amount Due</th>
+            <th style="padding: 3px 6px; text-align: right;">Penalties</th>
+            <th style="padding: 3px 6px; text-align: right;">Total Payable Amount</th>
+            <th style="padding: 3px 6px; text-align: right;">Payment Received</th>
+            <th style="padding: 3px 6px; text-align: right;">Remaining Balance</th>
+            <th style="padding: 3px 6px; text-align: center;">Reference ID</th>
           </tr>
         </thead>
         <tbody>
-          @php
-            $runningBalance = $loan->total_payable + $loan->processing_fee;
-          @endphp
           @foreach($loan->payments as $payment)
-            @php
-              $runningBalance -= $payment->total_paid;
-            @endphp
             <tr>
-              <td style="padding: 3px 6px; text-align: center;">{{ $loop->iteration }}</td>
-              <td style="padding: 3px 6px; text-align: right;">&#x20B1;{{ number_format($payment->amount, 2) }}</td>
-              <td style="padding: 3px 6px; text-align: center;">{{ $payment->month }}</td>
-              <td style="padding: 3px 6px; text-align: right;">&#x20B1;{{ number_format($payment->penalty, 2) }}</td>
-              <td style="padding: 3px 6px; text-align: right;">&#x20B1;{{ number_format($payment->total_paid, 2) }}</td>
-              <td style="padding: 3px 6px; text-align: right;">&#x20B1;{{ number_format($runningBalance, 2) }}</td>
-              <td style="padding: 3px 6px;">{{ $payment->created_at->format('M d, Y') }}</td>
-              <td style="padding: 3px 6px; text-align: center;">{{ $payment->reference_id }}</td>
+              <td style="padding: 3px 6px; text-align: center;">
+                {{ $loop->iteration }}
+              </td>
+              <td style="padding: 3px 6px;">
+                {{ $payment->created_at->format('M d, Y') }}
+              </td>
+              <td style="padding: 3px 6px; text-align: right;">
+                &#x20B1;{{ number_format($loan->startingBalanceBefore($payment), 2) }}
+              </td>
+              <td style="padding: 3px 6px; text-align: center;">
+                {{ number_format($loan->monthly_amortization, 2) }}
+              </td>
+              <td style="padding: 3px 6px; text-align: right;">
+                &#x20B1;{{ number_format($payment->penalty, 2) }}
+              </td>
+              <td style="padding: 3px 6px; text-align: right;">
+                &#x20B1;{{ number_format($payment->total_paid, 2) }}
+              </td>
+              <td style="padding: 3px 6px; text-align: right;">
+                &#x20B1;{{ number_format($loan->runningTotalPaid($payment), 2) }}
+              </td>
+              <td style="padding: 3px 6px; text-align: right;">
+                &#x20B1;{{ number_format($loan->runningBalanceAfter($payment), 2) }}
+              </td>
+
+              <td style="padding: 3px 6px; text-align: center;">
+                {{ $payment->reference_id }}
+              </td>
             </tr>
           @endforeach
         </tbody>
@@ -139,7 +181,7 @@
           <td style="text-align: right; font-weight: bold; padding: 3px 6px; border-top: 1px solid #ccc;">
             Total Paid:
           </td>
-          <td style="text-align: right; font-weight: normal; padding: 3px 6px; border-top: 1px solid #ccc;">
+          <td style="text-align: right; padding: 3px 6px; border-top: 1px solid #ccc;">
             &#x20B1;{{ number_format($loan->payments->sum('total_paid'), 2) }}
           </td>
         </tr>
@@ -147,7 +189,7 @@
           <td style="text-align: right; font-weight: bold; padding: 3px 6px;">
             Total Penalties:
           </td>
-          <td style="text-align: right; font-weight: normal; padding: 3px 6px;">
+          <td style="text-align: right; padding: 3px 6px;">
             &#x20B1;{{ number_format($loan->payments->sum('penalty'), 2) }}
           </td>
         </tr>
@@ -155,7 +197,7 @@
           <td style="text-align: right; font-weight: bold; padding: 3px 6px; border-top: 1px solid #ccc;">
             Remaining Balance:
           </td>
-          <td style="text-align: right; font-weight: normal; padding: 3px 6px; border-top: 1px solid #ccc;">
+          <td style="text-align: right; padding: 3px 6px; border-top: 1px solid #ccc;">
             &#x20B1;{{ number_format($loan->remaining_balance, 2) }}
           </td>
         </tr>

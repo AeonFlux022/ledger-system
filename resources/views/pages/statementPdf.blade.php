@@ -65,11 +65,11 @@
       <h3>
         Loan ID: {{ $loan->id }}
         <span class="badge 
-                                    @if($loan->loan_status === 'current') badge-current
-                                    @elseif($loan->loan_status === 'overdue') badge-overdue
-                                    @elseif($loan->loan_status === 'completed') badge-completed
-                                    @else badge-default
-                                    @endif">
+                                              @if($loan->loan_status === 'current') badge-current
+                                              @elseif($loan->loan_status === 'overdue') badge-overdue
+                                              @elseif($loan->loan_status === 'completed') badge-completed
+                                              @else badge-default
+                                              @endif">
           {{ ucfirst($loan->loan_status ?? 'N/A') }}
         </span>
       </h3>
@@ -96,17 +96,31 @@
             &#x20B1;{{ number_format($loan->payable_per_term, 2) }}
           </td>
         </tr>
-        {{-- add another row sa end date --}}
+        @php
+          $startDate = \Carbon\Carbon::parse($loan->due_date);
+          $endDate = $startDate->copy()->addMonths(max(((int) $loan->terms) - 1, 0));
+        @endphp
+
         <tr>
           <td style="font-weight: bold; padding: 3px 6px;">Start Date:</td>
           <td style="padding: 3px 6px; text-align: right;">
-            {{ \Carbon\Carbon::parse($loan->due_date)->format('M d, Y') }}
+            {{ $startDate->format('M d, Y') }}
           </td>
           <td style="font-weight: bold; padding: 3px 6px;">Processing Fee:</td>
           <td style="padding: 3px 6px; text-align: right;">
             &#x20B1;{{ number_format($loan->processing_fee, 2) }}
           </td>
         </tr>
+
+        <tr>
+          <td style="font-weight: bold; padding: 3px 6px;">End Date:</td>
+          <td style="padding: 3px 6px; text-align: right;">
+            {{ $endDate->format('M d, Y') }}
+          </td>
+          <td style="font-weight: bold; padding: 3px 6px;"></td>
+          <td style="padding: 3px 6px; text-align: right;"></td>
+        </tr>
+
       </table>
 
       <!-- Payment History -->

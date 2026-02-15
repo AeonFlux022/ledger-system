@@ -106,18 +106,51 @@ class DashboardController extends Controller
       ->groupBy(DB::raw('MONTH(created_at)'))
       ->pluck('total', 'month');
 
-    $receivables = Loan::where('status', 'approved')
-      ->get()
-      ->groupBy(fn($loan) => $loan->created_at->month)
-      ->map(
-        fn($loans) =>
-        $loans->sum(fn($loan) => $loan->remaining_balance)
-      );
+    // Term-based receivables
+
+    $receivables = array_fill(1, 12, 0);
+
+    $loans = Loan::where('status', 'approved')->get();
+
+    foreach ($loans as $loan) {
+
+      // Guard: skip bad data
+      if (empty($loan->terms) || $loan->terms <= 0) {
+        continue;
+      }
+
+      if (empty($loan->loan_amount) || $loan->loan_amount <= 0) {
+        continue;
+      }
+
+      $terms = (int) $loan->terms;
+      $startDate = $loan->created_at->copy();
+
+      $monthlyAmount = round($loan->loan_amount / $terms, 2);
+
+
+      for ($i = 0; $i < $terms; $i++) {
+
+        $paymentDate = $startDate->copy()->addMonths($i);
+
+        // Only include months inside selected year
+        if ($paymentDate->year == $year) {
+          $month = $paymentDate->month;
+          $receivables[$month] = round($receivables[$month] + $monthlyAmount, 2);
+
+        }
+      }
+    }
+
 
     // Build full Jan–Dec
     $labels = [];
     $monthlyCollections = [];
     $monthlyReceivables = [];
+
+    // dd($receivables, $loans);
+    // dd($loans->pluck('loan_amount'));
+    // dd($collections, $receivables, $loans->pluck('terms'));
 
     for ($m = 1; $m <= 12; $m++) {
       $labels[] = Carbon::create()->month($m)->format('M');

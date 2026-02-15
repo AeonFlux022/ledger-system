@@ -91,6 +91,7 @@
         <div class="flex items-center justify-between mb-4">
           <div>
             <h2 class="text-lg font-bold text-gray-800">
+
               Financial Overview
             </h2>
             <p class="text-sm text-gray-500">
@@ -158,7 +159,7 @@
                       callbacks: {
                         label: function (context) {
                           return context.dataset.label + ': ₱' +
-                            context.parsed.y.toLocaleString();
+                            context.parsed.y.toFixed(2).toLocaleString();
                         }
                       }
                     }
@@ -167,7 +168,7 @@
                     y: {
                       ticks: {
                         callback: function (value) {
-                          return '₱' + value.toLocaleString();
+                          return '₱' + value.toFixed(2).toLocaleString();
                         }
                       }
                     }

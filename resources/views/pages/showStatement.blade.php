@@ -31,10 +31,10 @@
         <div class="flex items-center justify-between border-b pb-3 mb-4">
           <h3 class="text-xl font-bold text-gray-800">Loan ID: {{ $loan->id }}</h3>
           <span class="text-sm px-3 py-1 rounded-full 
-                                        @if($loan->loan_status === 'current') bg-teal-100 text-teal-800 
-                                        @elseif($loan->loan_status === 'overdue') bg-orange-100 text-orange-800 
-                                        @elseif($loan->loan_status === 'completed') bg-blue-100 text-blue-800 
-                                        @else bg-gray-100 text-gray-600 @endif">
+                                                @if($loan->loan_status === 'current') bg-teal-100 text-teal-800 
+                                                @elseif($loan->loan_status === 'overdue') bg-orange-100 text-orange-800 
+                                                @elseif($loan->loan_status === 'completed') bg-blue-100 text-blue-800 
+                                                @else bg-gray-100 text-gray-600 @endif">
             {{ ucfirst($loan->loan_status ?? 'N/A') }}
           </span>
         </div>
@@ -44,8 +44,14 @@
           <p><strong>Terms:</strong> {{ number_format($loan->terms) }} months</p>
           <p><strong>Outstanding Balance:</strong> &#x20B1;{{ number_format($loan->remaining_balance ?? 0, 2) }}</p>
           <p><strong>Payable per Term:</strong> &#x20B1;{{ number_format($loan->payable_per_term ?? 0, 2) }}</p>
-          {{-- add Starting Date and Ending Date --}}
-          <p><strong>Start Date:</strong> {{ \Carbon\Carbon::parse($loan->due_date)->format('M d, Y') }}</p>
+          @php
+            $startDate = \Carbon\Carbon::parse($loan->due_date);
+            $endDate = $startDate->copy()->addMonths(max((int) $loan->terms - 1, 0));
+          @endphp
+
+          <p><strong>Start Date:</strong> {{ $startDate->format('M d, Y') }}</p>
+          <p><strong>End Date:</strong> {{ $endDate->format('M d, Y') }}</p>
+
         </div>
 
         {{-- Payments Table --}}
